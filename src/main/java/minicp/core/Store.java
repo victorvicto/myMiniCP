@@ -35,7 +35,10 @@ public class Store extends DFSearchNode {
     public boolean add(Constraint c, boolean propagate) {
         if (!failed.getValue()) {
             boolean ok = c.setUp();
-            if (ok && propagate) return propagate();
+            if (ok && propagate) {
+                System.out.println("propagate");
+                return propagate();
+            }
             else {
                 return ok;
             }
