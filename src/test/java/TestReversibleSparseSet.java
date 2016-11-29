@@ -1,6 +1,5 @@
-import minicp.ReversibleContext;
-import minicp.ReversibleInt;
-import minicp.ReversibleSparseSet;
+import minicp.reversible.ReversibleContext;
+import minicp.reversible.ReversibleSparseSet;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -10,6 +9,7 @@ public class TestReversibleSparseSet {
 
     @Test
     public void testReversibleSparseSet() {
+
         ReversibleContext rc = new ReversibleContext();
         ReversibleSparseSet set = new ReversibleSparseSet(rc,10);
 
@@ -22,6 +22,10 @@ public class TestReversibleSparseSet {
 
         assertTrue(set.getMin() == 2);
 
+        set.remove(8);
+        set.remove(9);
+
+        assertTrue(set.getMax() == 9);
 
     }
 }

@@ -1,7 +1,20 @@
-package minicp;
+package minicp.reversible;
 
 
 public class ReversibleInt {
+
+    class TrailEntryInt implements TrailEntry {
+
+        private int v;
+
+        public TrailEntryInt(int v) {
+            this.v = v;
+        }
+
+        public void restore() {
+            ReversibleInt.this.v = v;
+        }
+    }
 
     private ReversibleContext context;
     private int v;
@@ -10,13 +23,14 @@ public class ReversibleInt {
     public ReversibleInt(ReversibleContext context, int initial) {
         this.context = context;
         v = initial;
+        lastMagic = context.magic;
     }
 
     private void trail() {
         long contextMagic = context.magic;
         if (lastMagic != contextMagic) {
             lastMagic = contextMagic;
-            context.pushOnTrail(this,v);
+            context.pushOnTrail(new TrailEntryInt(v));
         }
     }
 
@@ -32,7 +46,4 @@ public class ReversibleInt {
 
     public int getValue() { return this.v; }
 
-    public void restore(int v) {
-        this.v = v;
-    }
 }

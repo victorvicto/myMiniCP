@@ -1,9 +1,7 @@
-package minicp;
+package minicp.reversible;
 
 
-/**
- * @author Pierre Schaus pschaus@gmail.com
- */
+
 public class ReversibleSparseSet {
 
     private int [] values;
@@ -92,10 +90,10 @@ public class ReversibleSparseSet {
 
     private void updateMaxValRemoved(int val) {
         if (!isEmpty() && max.getValue() == val) {
-            assert(!hasValue(val));
+            assert(!contains(val));
             //the maximum was removed, search the new one
             for (int v = val-1; v >= min.getValue(); v--) {
-                if (hasValue(v)) {
+                if (contains(v)) {
                     max.setValue(v);
                     return;
                 }
@@ -105,10 +103,10 @@ public class ReversibleSparseSet {
 
     private void updateMinValRemoved(int val) {
         if (!isEmpty() && min.getValue() == val) {
-            assert(!hasValue(val));
+            assert(!contains(val));
             //the minimum was removed, search the new one
             for (int v = val+1; v <= max.getValue(); v++) {
-                if (hasValue(v)) {
+                if (contains(v)) {
                     min.setValue(v);
                     return;
                 }
@@ -118,7 +116,7 @@ public class ReversibleSparseSet {
 
     public boolean remove(int val) {
         assert(checkVal(val));
-        if (!hasValue(val)) return false; //the value has already been removed
+        if (!contains(val)) return false; //the value has already been removed
         int s = getSize();
         exchangePositions(val, values[s-1]);
         size.decrement();
@@ -126,7 +124,7 @@ public class ReversibleSparseSet {
         return true;
     }
 
-    public boolean hasValue(int val) {
+    public boolean contains(int val) {
         if (val < 0 || val >= n) return false;
         return indexes[val] < getSize();
     }
@@ -134,7 +132,7 @@ public class ReversibleSparseSet {
     public void removeAllBut(int v) {
         // we only have to put in first position this value and set the size to 1
         assert(checkVal(v));
-        assert(hasValue(v));
+        assert(contains(v));
         int val = values[0];
         int index = indexes[v];
         indexes[v] = 0;
@@ -144,6 +142,10 @@ public class ReversibleSparseSet {
         min.setValue(v);
         max.setValue(v);
         size.setValue(1);
+    }
+
+    public void removeAll() {
+        size.setValue(0);
     }
 
     public int removeBelow(int value) {
