@@ -24,7 +24,6 @@ public class DifferentVar extends Constraint {
 
     @Override
     public boolean propagate() {
-        System.out.println("propagate?");
         if (x.isBound()) {
             return y.remove(x.getMin());
         } else {

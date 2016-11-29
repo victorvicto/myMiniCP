@@ -11,6 +11,7 @@ import minicp.search.DFSearch;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 
 public class Sudoku {
 
@@ -28,46 +29,36 @@ public class Sudoku {
                         {2,3,4,1,7,5,0,6,8}};
 
 
-        boolean[][] masks =
-                       {{false, false, false, false, false, true, false, false, false},
-                        {false, false, false, false, false, false, false, false, true},
-                        {false, false, false, false, false, false, false, false, false},
-                        {false, false, false, false, false, false, false, false, false},
-                        {false, false, false, false, false, false, false, false, false},
-                        {false, false, false, false, false, false, false, false, false},
-                        {false, false, false, false, false, false, false, false, false},
-                        {false, false, false, false, false, false, false, false, false},
-                        {false, false, false, false, false, false, false, false, false}};
-
-
+        Random rand = new Random(0);
 
         Model cp = new Model();
 
         IntVar [][] x = new IntVar[9][9];
 
-
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 x[i][j] = new IntVar(cp,9);
-                if (masks[i][j]) {
-                    //cp.add(new EqualVal(x[i][j],puzzle[i][j]));
+                if (rand.nextInt() < 95) {
+                    cp.add(new EqualVal(x[i][j],puzzle[i][j]));
                 }
             }
         }
 
+        // allDifferent on a line
         for (IntVar [] line: x) {
             cp.add(new AllDifferentBinary(line));
         }
 
-        /*
+
+        // allDifferent on a column
         for (int j = 0; j < x.length; j++) {
             IntVar [] column = new IntVar[9];
             for (int i = 0; i < x.length; i++)
                 column[i] = x[i][j];
             cp.add(new AllDifferentBinary(column));
-        }*/
+        }
 
-        // TODO: add the blocks
+        // allDifferent on a 3x3 block
 
 
         IntVar [] xFlat = new IntVar[x.length * x.length];
@@ -85,22 +76,12 @@ public class Sudoku {
                 } else {
                     IntVar unBoundVar = unBoundVarOpt.get();
                     int v = unBoundVar.getMin();
-                    System.out.println("branch on variable "+unBoundVar+" value "+v);
-                    return branch (
-                            ()-> {
-                                // left branch
-                                System.out.println("left branch =="+v);
-                                boolean ok = cp.add(new EqualVal(unBoundVar,unBoundVar.getMin()));
-                                System.out.println("ok?"+ok);
-                                return ok;
+                    return branch(
+                            () -> { // left branch
+                                return cp.add(new EqualVal(unBoundVar, v));
                             },
-                            ()-> {
-                                // right branch
-                                System.out.println("right branch =="+v);
-                                boolean ok = cp.add(new DifferentVal(unBoundVar,unBoundVar.getMin()));
-                                System.out.println("ok?"+ok);
-                                return ok;
-
+                            () -> { // right branch
+                                return cp.add(new DifferentVal(unBoundVar, v));
                             });
                 }
             }
@@ -108,13 +89,15 @@ public class Sudoku {
 
 
         DFSearch dfs = new DFSearch(cp,myBranching);
-        dfs.start();
 
+        // count the number of solution
         int [] nSols = new int[1];
-
         dfs.onSolution(() -> {
             nSols[0] += 1;
         });
+
+        // start the search
+        dfs.start();
 
         System.out.println("#Solutions:"+nSols[0]);
 

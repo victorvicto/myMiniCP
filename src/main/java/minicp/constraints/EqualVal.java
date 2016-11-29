@@ -16,7 +16,6 @@ public class EqualVal extends Constraint {
     @Override
     public boolean setUp() {
         boolean ok = x.assign(v);
-        System.out.println("assign"+ok);
         return ok;
     }
 

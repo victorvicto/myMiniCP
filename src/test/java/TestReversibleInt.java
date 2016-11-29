@@ -26,9 +26,12 @@ public class TestReversibleInt {
         assertTrue(a.getValue() == 11);
         b.setValue(16);
         b.setValue(15);
+
         rc.pop();
         assertTrue(a.getValue() == 7);
         assertTrue(b.getValue() == 13);
+
+
 
     }
 

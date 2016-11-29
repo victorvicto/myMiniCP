@@ -38,7 +38,7 @@ public class IntVar {
 
     public int getMax() { return domain.getMax(); }
 
-    public int getSize() { return domain.getMax(); }
+    public int getSize() { return domain.getSize(); }
 
     public boolean contains(int v) { return domain.contains(v); }
 
@@ -50,7 +50,7 @@ public class IntVar {
                 enQueueAll(onBind);
             }
         }
-        return domain.isEmpty();
+        return !domain.isEmpty();
     }
 
     public boolean assign(int v) {

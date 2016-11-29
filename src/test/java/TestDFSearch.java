@@ -1,3 +1,4 @@
+
 import minicp.reversible.ReversibleContext;
 import minicp.reversible.ReversibleInt;
 import minicp.search.Alternative;
@@ -49,7 +50,6 @@ public class TestDFSearch {
 
         dfs.onSolution(() -> {
             nSols[0] += 1;
-            System.out.println(Arrays.toString(values));
         });
 
 

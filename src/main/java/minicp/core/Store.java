@@ -17,14 +17,14 @@ public class Store extends DFSearchNode {
     }
 
     public boolean propagate() {
-        boolean ok = failed.getValue();
+        boolean ok = !failed.getValue();
         while (!propagationQueue.isEmpty()) {
             Constraint c = propagationQueue.pop();
             if (ok) ok = c.propagate();
             c.inQueue = false;
         }
         propagationQueue.clear();
-        failed.setValue(ok);
+        failed.setValue(!ok);
         return ok;
     }
 
@@ -36,7 +36,6 @@ public class Store extends DFSearchNode {
         if (!failed.getValue()) {
             boolean ok = c.setUp();
             if (ok && propagate) {
-                System.out.println("propagate");
                 return propagate();
             }
             else {

@@ -18,7 +18,6 @@ public class AllDifferentBinary extends Constraint {
         for (int i = 0; i < x.length; i++) {
             for (int j = i+1; j < x.length; j++) {
                 if (!cp.add(new DifferentVar(x[i],x[j]),false)) {
-                    System.out.println("ko???");
                     return false;
                 }
             }
