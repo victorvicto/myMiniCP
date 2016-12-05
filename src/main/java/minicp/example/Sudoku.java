@@ -8,6 +8,7 @@ import minicp.core.Model;
 import minicp.search.Alternative;
 import minicp.search.Branching;
 import minicp.search.DFSearch;
+import minicp.search.Inconsistency;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -35,30 +36,37 @@ public class Sudoku {
 
         IntVar [][] x = new IntVar[9][9];
 
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                x[i][j] = new IntVar(cp,9);
-                if (rand.nextInt() < 95) {
-                    cp.add(new EqualVal(x[i][j],puzzle[i][j]));
+        try {
+
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    x[i][j] = new IntVar(cp, 9);
+                    if (rand.nextInt() < 95) {
+                        cp.add(new EqualVal(x[i][j], puzzle[i][j]));
+                    }
                 }
             }
+
+            // allDifferent on a line
+            for (IntVar[] line : x) {
+                cp.add(new AllDifferentBinary(line));
+            }
+
+
+            // allDifferent on a column
+            for (int j = 0; j < x.length; j++) {
+                IntVar[] column = new IntVar[9];
+                for (int i = 0; i < x.length; i++)
+                    column[i] = x[i][j];
+                cp.add(new AllDifferentBinary(column));
+            }
+
+            // allDifferent on a 3x3 block
+
+        } catch (Inconsistency e) {
+            System.out.println("inconsistency detected in the model");
+            return;
         }
-
-        // allDifferent on a line
-        for (IntVar [] line: x) {
-            cp.add(new AllDifferentBinary(line));
-        }
-
-
-        // allDifferent on a column
-        for (int j = 0; j < x.length; j++) {
-            IntVar [] column = new IntVar[9];
-            for (int i = 0; i < x.length; i++)
-                column[i] = x[i][j];
-            cp.add(new AllDifferentBinary(column));
-        }
-
-        // allDifferent on a 3x3 block
 
 
         IntVar [] xFlat = new IntVar[x.length * x.length];
@@ -78,10 +86,10 @@ public class Sudoku {
                     int v = unBoundVar.getMin();
                     return branch(
                             () -> { // left branch
-                                return cp.add(new EqualVal(unBoundVar, v));
+                                cp.add(new EqualVal(unBoundVar, v));
                             },
                             () -> { // right branch
-                                return cp.add(new DifferentVal(unBoundVar, v));
+                                cp.add(new DifferentVal(unBoundVar, v));
                             });
                 }
             }

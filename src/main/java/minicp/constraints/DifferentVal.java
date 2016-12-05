@@ -2,6 +2,7 @@ package minicp.constraints;
 
 import minicp.core.Constraint;
 import minicp.core.IntVar;
+import minicp.search.Inconsistency;
 
 public class DifferentVal extends Constraint {
 
@@ -14,8 +15,8 @@ public class DifferentVal extends Constraint {
     }
 
     @Override
-    public boolean setUp() {
-        return x.remove(y);
+    public void setUp() throws Inconsistency {
+        x.remove(y);
     }
 
 }

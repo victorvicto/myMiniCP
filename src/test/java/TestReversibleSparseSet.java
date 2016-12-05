@@ -52,26 +52,6 @@ public class TestReversibleSparseSet {
 
         assertEquals(10, set.getSize());
 
-        set.removeBelow(5);
-        for (int i = 0; i < 5; i++) {
-            assertFalse(set.contains(i));
-        }
-        for (int i = 5; i < 10; i++) {
-            assertTrue(set.contains(i));
-        }
-
-        rc.pop();
-        rc.push();
-
-        assertEquals(10, set.getSize());
-
-        set.removeAbove(5);
-        for (int i = 0; i <= 5; i++) {
-            assertTrue(set.contains(i));
-        }
-        for (int i = 6; i < 10; i++) {
-            assertFalse(set.contains(i));
-        }
 
     }
 }

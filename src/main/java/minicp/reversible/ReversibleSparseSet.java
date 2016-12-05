@@ -148,49 +148,6 @@ public class ReversibleSparseSet {
         size.setValue(0);
     }
 
-    public int removeBelow(int value) {
-        assert(checkVal(value));
-        assert(!isEmpty());
-        if (value < min.getValue()) {
-            return min.getValue(); // the min does not change
-        }
-        else if (value > max.getValue()) {
-            size.setValue(0);
-            return Integer.MAX_VALUE; // the set becomes empty since the new min is larger than the current max
-        }
-        else if (value == max.getValue()) {
-            // the new min is equal to the current max hence only one value in the set
-            removeAllBut(value);
-        }
-        else {
-            for (int v = min.getValue(); v < value; v++ ) {
-                remove(v);
-            }
-        }
-        return min.getValue();
-    }
-
-    public int removeAbove(int value) {
-        assert(checkVal(value));
-        assert(!isEmpty());
-        if (value >= max.getValue()) {
-            return max.getValue(); // the max does not change
-        }
-        else if (value < min.getValue()) {
-            size.setValue(0);
-            return Integer.MIN_VALUE; // the set becomes empty since the new max is smaller than the current min
-        }
-        else if (value == min.getValue()) {
-            // the new max is equal to the current min hence only one value in the set
-            removeAllBut(value);
-        }
-        else {
-            for (int v = max.getValue(); v > value; v-- ) {
-                remove(v);
-            }
-        }
-        return max.getValue();
-    }
 
     @Override
     public String toString() {

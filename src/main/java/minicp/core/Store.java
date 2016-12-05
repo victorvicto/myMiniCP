@@ -1,7 +1,9 @@
 package minicp.core;
 
 
+import minicp.search.DFSearch;
 import minicp.search.DFSearchNode;
+import minicp.search.Inconsistency;
 
 import java.util.Stack;
 
@@ -16,34 +18,31 @@ public class Store extends DFSearchNode {
         }
     }
 
-    public boolean propagate() {
-        boolean ok = !failed.getValue();
+
+    public void fixPoint() throws Inconsistency {
+        boolean failed = false;
         while (!propagationQueue.isEmpty()) {
             Constraint c = propagationQueue.pop();
-            if (ok) ok = c.propagate();
             c.inQueue = false;
-        }
-        propagationQueue.clear();
-        failed.setValue(!ok);
-        return ok;
-    }
-
-    public boolean add(Constraint c) {
-        return add(c,true);
-    }
-
-    public boolean add(Constraint c, boolean propagate) {
-        if (!failed.getValue()) {
-            boolean ok = c.setUp();
-            if (ok && propagate) {
-                return propagate();
-            }
-            else {
-                return ok;
+            if (!failed) {
+                try { c.propagate(); }
+                catch (Inconsistency e) {
+                    failed = true;
+                }
             }
         }
-        else {
-            return false;
+        if (failed) throw DFSearch.INCONSISTENCY;
+    }
+
+
+    public void add(Constraint c) throws Inconsistency {
+        add(c,true);
+    }
+
+    public void add(Constraint c, boolean fixPoint) throws Inconsistency {
+        c.setUp();
+        if (fixPoint) {
+            fixPoint();
         }
     }
 

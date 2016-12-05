@@ -1,12 +1,14 @@
 package minicp.core;
 
 
+import minicp.search.Inconsistency;
+
 import java.util.Comparator;
 
 public abstract class Constraint {
 
     protected boolean inQueue = false;
 
-    public abstract boolean setUp();
-    public boolean propagate() {return true; };
+    public abstract void setUp() throws Inconsistency;
+    public void propagate() throws Inconsistency {};
 }

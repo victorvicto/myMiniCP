@@ -2,6 +2,7 @@ package minicp.constraints;
 
 import minicp.core.Constraint;
 import minicp.core.IntVar;
+import minicp.search.Inconsistency;
 
 public class EqualVal extends Constraint {
 
@@ -14,9 +15,8 @@ public class EqualVal extends Constraint {
     }
 
     @Override
-    public boolean setUp() {
-        boolean ok = x.assign(v);
-        return ok;
+    public void setUp() throws Inconsistency{
+        x.assign(v);
     }
 
 

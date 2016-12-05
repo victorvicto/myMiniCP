@@ -2,14 +2,16 @@ import minicp.core.IntVar;
 import minicp.core.Model;
 import minicp.reversible.ReversibleContext;
 import minicp.reversible.ReversibleInt;
+import minicp.search.Inconsistency;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class TestIntVar {
+
 
     @Test
     public void testIntVar() {
@@ -20,13 +22,25 @@ public class TestIntVar {
 
         cp.push();
 
+
+        try {
+
+
         assertFalse(x.isBound());
-        assertTrue(x.remove(5));
+        x.remove(5);
         assertEquals(9,x.getSize());
-        assertTrue(x.assign(7));
+        x.assign(7);
         assertEquals(1,x.getSize());
         assertTrue(x.isBound());
-        assertFalse(x.assign(8));
+
+        } catch(Inconsistency e) { fail("should not fail here");}
+
+        try {
+            x.assign(8);
+            fail( "shoudl have failed" );
+        } catch (Inconsistency expectedException) {}
+
+
 
         cp.pop();
         cp.push();

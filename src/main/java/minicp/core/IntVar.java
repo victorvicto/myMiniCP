@@ -3,6 +3,10 @@ package minicp.core;
 
 import minicp.reversible.ReversibleSparseSet;
 import minicp.reversible.ReversibleStack;
+import minicp.search.DFSearch;
+import minicp.search.Inconsistency;
+
+import java.security.InvalidParameterException;
 
 public class IntVar {
 
@@ -12,6 +16,7 @@ public class IntVar {
     ReversibleStack<Constraint> onBind;
 
     public IntVar(Store store, int n) {
+        if (n <= 0) throw new InvalidParameterException("at least one value in the domain");
         this.store = store;
         domain = new ReversibleSparseSet(store,n);
         onDomainChange = new ReversibleStack<Constraint>(store);
@@ -42,7 +47,7 @@ public class IntVar {
 
     public boolean contains(int v) { return domain.contains(v); }
 
-    public boolean remove(int v) {
+    public void remove(int v) throws Inconsistency {
         if (domain.contains(v)) {
             domain.remove(v);
             enQueueAll(onDomainChange);
@@ -50,21 +55,20 @@ public class IntVar {
                 enQueueAll(onBind);
             }
         }
-        return !domain.isEmpty();
+        if (domain.isEmpty()) throw DFSearch.INCONSISTENCY;
     }
 
-    public boolean assign(int v) {
+    public void assign(int v) throws Inconsistency {
         if (domain.contains(v)) {
             if (domain.getSize() != 1) {
                 domain.removeAllBut(v);
                 enQueueAll(onDomainChange);
                 enQueueAll(onBind);
             }
-            return true;
         }
         else {
             domain.removeAll();
-            return false;
+            throw DFSearch.INCONSISTENCY;
         }
     }
 

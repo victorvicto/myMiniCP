@@ -3,6 +3,7 @@ package minicp.constraints;
 import minicp.core.Constraint;
 import minicp.core.IntVar;
 import minicp.core.Store;
+import minicp.search.Inconsistency;
 
 public class AllDifferentBinary extends Constraint {
 
@@ -13,16 +14,13 @@ public class AllDifferentBinary extends Constraint {
     }
 
     @Override
-    public boolean setUp() {
+    public void setUp() throws Inconsistency {
         Store cp = x[0].getStore();
         for (int i = 0; i < x.length; i++) {
             for (int j = i+1; j < x.length; j++) {
-                if (!cp.add(new DifferentVar(x[i],x[j]),false)) {
-                    return false;
-                }
+                cp.add(new DifferentVar(x[i],x[j]),false);
             }
         }
-        return true;
     }
 
 }

@@ -6,6 +6,11 @@ import java.util.List;
 
 public class DFSearch {
 
+    public static final Inconsistency INCONSISTENCY = new Inconsistency() {
+        public Object feedBack() { return null;}
+    };
+
+
     public static interface SolutionListener {
         public void solutionFound();
     }
@@ -34,14 +39,15 @@ public class DFSearch {
 
     public void dfs() {
         Alternative [] alternatives = branching.getAlternatives();
-        if (alternatives.length == 0 && !node.isFailed())
+        if (alternatives.length == 0)
             notifySolutionFound();
         else {
             for (Alternative alt : alternatives) {
                 node.push();
-                if (alt.execute()) {
+                try {
+                    alt.execute();
                     dfs();
-                }
+                } catch (Inconsistency e) {}
                 node.pop();
             }
         }

@@ -31,14 +31,11 @@ public class TestDFSearch {
                             // left branch
                             values[i.getValue()] = false;
                             i.increment();
-                            return true;
                         },
                         ()-> {
                             // right branch
                             values[i.getValue()] = true;
                             i.increment();
-                            return true;
-
                         }
                 );
             }
@@ -49,6 +46,7 @@ public class TestDFSearch {
         int [] nSols = new int[1];
 
         dfs.onSolution(() -> {
+            System.out.println(Arrays.toString(values));
             nSols[0] += 1;
         });
 

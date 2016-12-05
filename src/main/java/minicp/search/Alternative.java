@@ -1,7 +1,7 @@
 package minicp.search;
 
 public interface Alternative {
-    public boolean execute();
+    public void execute() throws Inconsistency;
 }
 
 
