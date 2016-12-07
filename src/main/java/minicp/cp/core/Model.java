@@ -17,6 +17,11 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.core;
 
 
+public class Model extends Store {
+
+
+
+}

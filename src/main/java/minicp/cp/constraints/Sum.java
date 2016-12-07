@@ -17,6 +17,37 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.constraints;
 
+import minicp.cp.core.Constraint;
+import minicp.cp.core.IntVar;
+import minicp.search.Inconsistency;
+import minicp.util.NotImplementedException;
 
+public class Sum extends Constraint {
+
+    private IntVar [] x;
+    private IntVar y;
+
+    /**
+     * Create a sum constraint that holds iff
+     * x[0]+x[1]+...+x[x.length-1] = y
+     * @param x
+     * @param y
+     */
+    public Sum(IntVar [] x, IntVar y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public void setUp() throws Inconsistency {
+        throw new minicp.util.NotImplementedException();
+    }
+
+    @Override
+    public void propagate() throws Inconsistency {
+        throw new NotImplementedException();
+    }
+
+}

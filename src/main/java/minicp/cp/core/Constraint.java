@@ -17,6 +17,17 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.core;
 
 
+import minicp.search.Inconsistency;
+
+import java.util.Comparator;
+
+public abstract class Constraint {
+
+    protected boolean inQueue = false;
+
+    public abstract void setUp() throws Inconsistency;
+    public void propagate() throws Inconsistency {};
+}

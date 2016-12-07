@@ -17,6 +17,15 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.examples;
+
+public class NQueens {
+
+    public static void main(String[] args) {
 
 
+
+
+    }
+
+}

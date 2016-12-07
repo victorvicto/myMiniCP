@@ -17,6 +17,25 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.constraints;
 
+import minicp.cp.core.Constraint;
+import minicp.cp.core.IntVar;
+import minicp.search.Inconsistency;
 
+public class DifferentVal extends Constraint {
+
+    private IntVar x;
+    private int y;
+
+    public DifferentVal(IntVar x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public void setUp() throws Inconsistency {
+        x.remove(y);
+    }
+
+}

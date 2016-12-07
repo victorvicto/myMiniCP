@@ -17,6 +17,29 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.constraints;
 
+import minicp.cp.core.Constraint;
+import minicp.cp.core.IntVar;
+import minicp.cp.core.Store;
+import minicp.search.Inconsistency;
 
+public class AllDifferentBinary extends Constraint {
+
+    private IntVar [] x;
+
+    public AllDifferentBinary(IntVar ... x) {
+        this.x = x;
+    }
+
+    @Override
+    public void setUp() throws Inconsistency {
+        Store cp = x[0].getStore();
+        for (int i = 0; i < x.length; i++) {
+            for (int j = i+1; j < x.length; j++) {
+                cp.add(new DifferentVar(x[i],x[j]),false);
+            }
+        }
+    }
+
+}

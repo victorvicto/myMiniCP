@@ -1,6 +1,29 @@
+/*
+ * This file is part of mini-cp.
+ *
+ * mini-cp is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Foobar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with mini-cp.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
+ */
+
 package minicp.reversible;
 
 
+
+
+import minicp.util.NotImplementedException;
+import java.util.NoSuchElementException;
 
 public class ReversibleSparseSet {
 
@@ -11,6 +34,11 @@ public class ReversibleSparseSet {
     private ReversibleInt max;
     private int n;
 
+    /**
+     * Creates a ReversibleSparseSet containing the elements {0,...,n-1}.
+     * @param rc
+     * @param n > 0
+     */
     public ReversibleSparseSet(ReversibleContext rc, int n) {
         this.n = n;
         size = new ReversibleInt(rc,n);
@@ -24,6 +52,15 @@ public class ReversibleSparseSet {
         }
     }
 
+    /**
+     * Creates a ReversibleSparseSet containing the elements {min,...,max}.
+     * @param rc
+     * @param min
+     * @param max >= min
+     */
+    public ReversibleSparseSet(ReversibleContext rc, int min, int max) {
+        throw new NotImplementedException();
+    }
 
     private void exchangePositions(int val1, int val2) {
         assert(checkVal(val1));
@@ -52,22 +89,17 @@ public class ReversibleSparseSet {
         return res;
     }
 
+
     /**
-     * @return set the first values of dest to the ones
-     *         of the set and return the size of the set
+     * set the first values of <code>dest</code> to the ones
+     * prsent in the set
+     * @param dest, an array large enough dest.length >= getSize()
+     * @return the size of the set
      */
     public int fillArray(int [] dest) {
         int s = size.getValue();
         System.arraycopy(values, 0, dest, 0, s);
         return s;
-    }
-
-
-    /**
-     * remove all elements in the set
-     */
-    public void empty() {
-        size.setValue(0);
     }
 
     /**
@@ -77,11 +109,26 @@ public class ReversibleSparseSet {
         return getSize() == 0;
     }
 
+    /**
+     * @return the size of the set
+     */
     public int getSize() { return size.getValue(); }
 
-    public int getMin() { return min.getValue(); }
+    /**
+     * @return the minimum value in the set
+     */
+    public int getMin() {
+        if (isEmpty()) throw new NoSuchElementException();
+        return min.getValue();
+    }
 
-    public int getMax() { return max.getValue(); }
+    /**
+     * @return the maximum value in the set
+     */
+    public int getMax() {
+        if (isEmpty()) throw new NoSuchElementException();
+        else return max.getValue();
+    }
 
     private void updateBoundsValRemoved(int val) {
         updateMaxValRemoved(val);
@@ -114,6 +161,11 @@ public class ReversibleSparseSet {
         }
     }
 
+    /**
+     * Remove val from the set
+     * @param val
+     * @return true if val was in the set, false otherwise
+     */
     public boolean remove(int val) {
         assert(checkVal(val));
         if (!contains(val)) return false; //the value has already been removed
@@ -124,11 +176,20 @@ public class ReversibleSparseSet {
         return true;
     }
 
+    /**
+     * Check is the val is in the set
+     * @param val
+     * @return
+     */
     public boolean contains(int val) {
         if (val < 0 || val >= n) return false;
         return indexes[val] < getSize();
     }
 
+    /**
+     * Removes all the element from the set except v
+     * @param v is an element in the set
+     */
     public void removeAllBut(int v) {
         // we only have to put in first position this value and set the size to 1
         assert(checkVal(v));
@@ -144,8 +205,29 @@ public class ReversibleSparseSet {
         size.setValue(1);
     }
 
+    /**
+     * Remove all the values in the set
+     */
     public void removeAll() {
         size.setValue(0);
+    }
+
+    /**
+     * Remove all the values < value in the set
+     * @param value
+     * @return the new minimum
+     */
+    public int removeBelow(int value) {
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Remove all the values > value in the set
+     * @param value
+     * @return the new maximum
+     */
+    public int removeAbove(int value) {
+        throw new NotImplementedException();
     }
 
 
@@ -161,6 +243,8 @@ public class ReversibleSparseSet {
         b.append("}");
         return b.toString();
     }
+
+
 
 }
 

@@ -17,6 +17,36 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.constraints;
 
+import minicp.cp.core.Constraint;
+import minicp.cp.core.IntVar;
+import minicp.search.Inconsistency;
 
+public class DifferentVar extends Constraint {
+
+    private IntVar x,y;
+
+    public DifferentVar(IntVar x, IntVar y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public void setUp() throws Inconsistency {
+        x.propagateOnBind(this);
+        y.propagateOnBind(this);
+        if (x.isBound() || y.isBound()) {
+            propagate();
+        }
+    }
+
+    @Override
+    public void propagate() throws Inconsistency {
+        if (x.isBound()) {
+            y.remove(x.getMin());
+        } else {
+            x.remove(y.getMin());
+        }
+    }
+}

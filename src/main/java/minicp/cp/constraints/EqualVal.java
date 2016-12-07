@@ -17,6 +17,26 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.constraints;
+
+import minicp.cp.core.Constraint;
+import minicp.cp.core.IntVar;
+import minicp.search.Inconsistency;
+
+public class EqualVal extends Constraint {
+
+    private IntVar x;
+    private int v;
+
+    public EqualVal(IntVar x, int v) {
+        this.x = x;
+        this.v = v;
+    }
+
+    @Override
+    public void setUp() throws Inconsistency{
+        x.assign(v);
+    }
 
 
+}

@@ -17,6 +17,38 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.constraints;
+
+import minicp.cp.core.IntVar;
+import minicp.cp.core.Model;
+import minicp.search.Inconsistency;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 
+public class DiffVarTest {
+
+    @Test
+    public void diffVar() {
+        Model cp  = new Model();
+
+        IntVar x = new IntVar(cp,10);
+        IntVar y = new IntVar(cp,10);
+
+        try {
+            cp.add(new DifferentVar(x,y));
+
+            cp.add(new EqualVal(x,6));
+
+        } catch (Inconsistency e) {
+            assert(false);
+        }
+
+
+        assertFalse(y.contains(6));
+
+    }
+
+
+}
