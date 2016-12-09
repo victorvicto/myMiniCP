@@ -116,6 +116,11 @@ Don't forget to terminate your ``setUp`` method by a call to ``propagate``.
             :linenos:
             :lines: 27-50
 
+AllDifferent Forward Checking
+=================================
+
+Implement a dedicated algorithm for the all-different.
+
 
 Binary first fail branching
 =================================================================
@@ -139,7 +144,19 @@ N-Queens
 ===========
 
 Implement a model for the N-Queens.
-Counte the number of solution for 8x8 chessboard.
+Count the number of solution for a 8x8 chessboard.
+
+
+Discrepancy Search
+=================================================================
+
+Implement ``DiscrepancyBranching``, a branching that can wrap any branching
+to limit the discrepancy of the branching.
+
+Depth First Search
+=================================================================
+
+Replace the recursive DFS search by a non recursive implementation using an explicit stack.
 
 
 Magic Square
@@ -147,6 +164,39 @@ Magic Square
 
 Implement a model for the Magic-Square
 Count the number of solution for a 5x5 magic square.
+
+
+Objective Function and Branch and Bound
+========================
+
+TODO
+
+Circuit Constraint
+========================
+
+TODO
+
+Element Constraint
+========================
+
+TODO
+
+Restarts
+========================
+
+TODO
+
+Watched Literals: The or (clause) constraint
+========================
+
+TODO
+
+
+LNS
+========================
+
+TODO
+
 
 
 

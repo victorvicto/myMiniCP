@@ -62,16 +62,57 @@ public class DFSearchTest {
         int [] nSols = new int[1];
 
         dfs.onSolution(() -> {
-            System.out.println(Arrays.toString(values));
             nSols[0] += 1;
         });
 
 
-        dfs.start();
+        SearchStatistics stats = dfs.start();
 
         assert(nSols[0] == 16);
+        assert(stats.nSolutions == 16);
+        assert(stats.nFailures == 0);
+        assert(stats.nNodes == (16+8+4+2));
 
+    }
 
+    @Test
+    public void testDFSSearchLimit() {
+        DFSearchNode node = new DFSearchNode();
+        ReversibleInt i = new ReversibleInt(node,0);
+        boolean [] values = new boolean[4];
+
+        Branching myBranching = new Branching() {
+            @Override
+            public Alternative[] getAlternatives() {
+                if (i.getValue() >= values.length)
+                    return SOLUTION;
+                else return branch (
+                        ()-> {
+                            // left branch
+                            values[i.getValue()] = false;
+                            i.increment();
+                        },
+                        ()-> {
+                            // right branch
+                            values[i.getValue()] = true;
+                            i.increment();
+                        }
+                );
+            }
+        };
+
+        DFSearch dfs = new DFSearch(node,myBranching);
+
+        int [] nSols = new int[1];
+
+        dfs.onSolution(() -> {
+            nSols[0] += 1;
+        });
+
+        // stop search after 2 solutions
+        SearchStatistics stats = dfs.start(stat -> stat.nSolutions >= 2);
+
+        assert(stats.nSolutions == 2);
 
     }
 

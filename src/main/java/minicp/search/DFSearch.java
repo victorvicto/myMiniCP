@@ -52,21 +52,35 @@ public class DFSearch {
         solutionListeners.forEach(s -> s.solutionFound());
     }
 
-    public void start() {
-        dfs();
+    public SearchStatistics start(SearchLimit limit) {
+        SearchStatistics statistics = new SearchStatistics();
+        try {
+            dfs(statistics,limit);
+        } catch (StopSearchException e) {}
+        return statistics;
     }
 
-    public void dfs() {
+    public SearchStatistics start() {
+        return start(statistics -> false);
+    }
+
+    private void dfs(SearchStatistics statistics,SearchLimit limit) {
+        if (limit.stopSearch(statistics)) throw new StopSearchException();
         Alternative [] alternatives = branching.getAlternatives();
-        if (alternatives.length == 0)
+        if (alternatives.length == 0) {
+            statistics.nSolutions++;
             notifySolutionFound();
+        }
         else {
             for (Alternative alt : alternatives) {
                 node.push();
                 try {
+                    statistics.nNodes++;
                     alt.execute();
-                    dfs();
-                } catch (Inconsistency e) {}
+                    dfs(statistics,limit);
+                } catch (Inconsistency e) {
+                    statistics.nFailures++;
+                }
                 node.pop();
             }
         }
