@@ -30,6 +30,28 @@ import static org.junit.Assert.assertTrue;
 
 public class ReversibleSparseSetTest {
 
+
+    @Test
+    public void testExample() {
+
+        ReversibleContext rc = new ReversibleContext();
+        ReversibleSparseSet set = new ReversibleSparseSet(rc,9);
+
+        rc.push();
+
+        set.remove(4);
+        set.remove(6);
+
+        assertFalse(set.contains(4));
+        assertFalse(set.contains(6));
+
+        rc.pop();
+
+        assertTrue(set.contains(4));
+        assertTrue(set.contains(6));
+
+    }
+
     @Test
     public void testReversibleSparseSet() {
 

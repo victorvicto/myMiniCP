@@ -19,8 +19,11 @@
 
 package minicp.reversible;
 
-
+/**
+ * A TrailEntry is aimed to be
+ * stacked on a ReversibleContext
+ * through the method @see {@link minicp.reversible.ReversibleContext#pushOnTrail(TrailEntry)}
+ */
 public interface TrailEntry {
-
     public void restore();
 }

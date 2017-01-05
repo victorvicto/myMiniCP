@@ -33,7 +33,7 @@ public class DifferentVar extends Constraint {
     }
 
     @Override
-    public void setUp() throws Inconsistency {
+    public void setup() throws Inconsistency {
         x.propagateOnBind(this);
         y.propagateOnBind(this);
         if (x.isBound() || y.isBound()) {

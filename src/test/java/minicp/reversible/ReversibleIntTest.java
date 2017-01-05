@@ -17,15 +17,61 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;import minicp.reversible.ReversibleContext;
-import minicp.reversible.ReversibleInt;
+package minicp.reversible;
+
+
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
 public class ReversibleIntTest {
+
+    @Test
+    public void testExample() {
+
+        ReversibleContext rc = new ReversibleContext();
+
+        // Two reversible int's inside the reversible context rc
+        ReversibleInt a = new ReversibleInt(rc,5);
+        ReversibleInt b = new ReversibleInt(rc,9);
+
+        a.setValue(7);
+        b.setValue(13);
+
+        // Record current state a=7, b=1 and increase the level to 0
+        rc.push();
+        assertEquals(0,rc.getLevel());
+
+        a.setValue(10);
+        b.setValue(13);
+        a.setValue(11);
+
+        // Record current state a=11, b=13 and increase the level to 1
+        rc.push();
+        assertEquals(1,rc.getLevel());
+
+        a.setValue(4);
+        b.setValue(9);
+
+        // Restore the state recorded at the top level 1: a=11, b=13
+        // and remove the state of that level
+        rc.pop();
+
+        assertEquals(11,a.getValue());
+        assertEquals(13,b.getValue());
+        assertEquals(0,rc.getLevel());
+
+        // Restore the state recorded at the top level 0: a=7, b=13
+        // and remove the state of that level
+        rc.pop();
+
+        assertEquals(7,a.getValue());
+        assertEquals(13,b.getValue());
+        assertEquals(-1,rc.getLevel());
+
+    }
+
 
     @Test
     public void testReversibleInt() {
@@ -49,8 +95,6 @@ public class ReversibleIntTest {
         rc.pop();
         assertTrue(a.getValue() == 7);
         assertTrue(b.getValue() == 13);
-
-
 
     }
 

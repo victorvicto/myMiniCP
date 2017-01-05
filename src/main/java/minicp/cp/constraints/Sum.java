@@ -41,7 +41,7 @@ public class Sum extends Constraint {
     }
 
     @Override
-    public void setUp() throws Inconsistency {
+    public void setup() throws Inconsistency {
         throw new minicp.util.NotImplementedException();
     }
 

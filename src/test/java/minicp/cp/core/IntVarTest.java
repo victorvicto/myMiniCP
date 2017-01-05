@@ -91,7 +91,7 @@ public class IntVarTest {
         Constraint cons = new Constraint() {
 
             @Override
-            public void setUp() throws Inconsistency {
+            public void setup() throws Inconsistency {
                 x.propagateOnBind(this);
                 y.propagateOnDomainChange(this);
             }
@@ -229,7 +229,7 @@ public class IntVarTest {
             Constraint cons = new Constraint() {
 
                 @Override
-                public void setUp() throws Inconsistency {
+                public void setup() throws Inconsistency {
                     x.propagateOnBoundChange(this);
                     y.propagateOnDomainChange(this);
                 }
@@ -282,7 +282,7 @@ public class IntVarTest {
             Constraint cons = new Constraint() {
 
                 @Override
-                public void setUp() throws Inconsistency {
+                public void setup() throws Inconsistency {
                     x.propagateOnBoundChange(this);
                 }
 
@@ -322,7 +322,7 @@ public class IntVarTest {
             Constraint cons = new Constraint() {
 
                 @Override
-                public void setUp() throws Inconsistency {
+                public void setup() throws Inconsistency {
                     x.propagateOnBoundChange(this);
                 }
 

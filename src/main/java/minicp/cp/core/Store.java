@@ -37,7 +37,6 @@ public class Store extends DFSearchNode {
         }
     }
 
-
     public void fixPoint() throws Inconsistency {
         boolean failed = false;
         while (!propagationQueue.isEmpty()) {
@@ -53,13 +52,12 @@ public class Store extends DFSearchNode {
         if (failed) throw DFSearch.INCONSISTENCY;
     }
 
-
     public void add(Constraint c) throws Inconsistency {
         add(c,true);
     }
 
     public void add(Constraint c, boolean fixPoint) throws Inconsistency {
-        c.setUp();
+        c.setup();
         if (fixPoint) {
             fixPoint();
         }

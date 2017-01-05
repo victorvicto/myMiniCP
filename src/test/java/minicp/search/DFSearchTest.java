@@ -17,19 +17,56 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.search;import minicp.reversible.ReversibleInt;
-import minicp.search.Alternative;
-import minicp.search.Branching;
-import minicp.search.DFSearch;
-import minicp.search.DFSearchNode;
-import org.junit.Test;
+package minicp.search;
 
+import minicp.reversible.ReversibleInt;
+
+import org.junit.Test;
 import java.util.Arrays;
 
 
 
 
 public class DFSearchTest {
+
+    @Test
+    public void testExample1() {
+        DFSearchNode node = new DFSearchNode();
+        ReversibleInt i = new ReversibleInt(node,0);
+        int [] values = new int[3];
+
+        Branching myBranching = new Branching() {
+            @Override
+            public Alternative[] getAlternatives() {
+                if (i.getValue() >= values.length)
+                    return SOLUTION;
+                else return branch (
+                        ()-> { // left branch
+                            values[i.getValue()] = 0;
+                            i.increment();
+                        },
+                        ()-> { // right branch
+                            values[i.getValue()] = 1;
+                            i.increment();
+                        }
+                );
+            }
+        };
+
+        DFSearch dfs = new DFSearch(node,myBranching);
+
+        dfs.onSolution(() -> {
+            // System.out.println(Arrays.toString(values));
+        });
+
+        SearchStatistics stats = dfs.start();
+
+        assert(stats.nSolutions == 8);
+        assert(stats.nFailures == 0);
+        assert(stats.nNodes == (8+4+2));
+    }
+
+
 
     @Test
     public void testDFS() {

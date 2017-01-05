@@ -25,7 +25,6 @@ import java.util.Stack;
 public class ReversibleContext {
 
     public long magic = 0;
-
     private Stack<TrailEntry> trail = new Stack<TrailEntry>();
     private Stack<Integer>    trailLimit = new Stack<Integer>();
 

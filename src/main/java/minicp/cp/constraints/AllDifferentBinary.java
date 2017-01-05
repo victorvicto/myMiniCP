@@ -33,7 +33,7 @@ public class AllDifferentBinary extends Constraint {
     }
 
     @Override
-    public void setUp() throws Inconsistency {
+    public void setup() throws Inconsistency {
         Store cp = x[0].getStore();
         for (int i = 0; i < x.length; i++) {
             for (int j = i+1; j < x.length; j++) {

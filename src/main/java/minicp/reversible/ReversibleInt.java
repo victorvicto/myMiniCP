@@ -24,7 +24,7 @@ public class ReversibleInt {
 
     class TrailEntryInt implements TrailEntry {
 
-        private int v;
+        private final int v;
 
         public TrailEntryInt(int v) {
             this.v = v;

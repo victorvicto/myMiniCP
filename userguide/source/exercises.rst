@@ -107,8 +107,8 @@ As a consequence you will only remove impossible values by updating
 the domains using ``removeBelow,removeAbove``.
 
 Your implementation should only register to the bound change events ``onBoundChange``
-in the ``setUp`` implementation.
-Don't forget to terminate your ``setUp`` method by a call to ``propagate``.
+in the ``setup`` implementation.
+Don't forget to terminate your ``setup`` method by a call to ``propagate``.
 
 
 .. literalinclude:: ../../src/main/java/minicp/cp/constraints/Sum.java

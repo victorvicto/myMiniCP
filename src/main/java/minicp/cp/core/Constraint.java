@@ -28,6 +28,6 @@ public abstract class Constraint {
 
     protected boolean inQueue = false;
 
-    public abstract void setUp() throws Inconsistency;
+    public abstract void setup() throws Inconsistency;
     public void propagate() throws Inconsistency {};
 }

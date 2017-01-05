@@ -25,7 +25,11 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo', 'sphinx.ext.pngmath', 'sphinx.ext.mathjax', 'sphinx.ext.viewcode']
+
+import javalink
+extensions = ['sphinx.ext.todo', 'sphinx.ext.pngmath', 'sphinx.ext.mathjax', 'sphinx.ext.viewcode', 'javalink']
+
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -249,3 +253,16 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+
+# -- Options for java link ------------------------------------------------
+
+javalink_classpath = [
+    javalink.find_rt_jar(),
+    '/Users/pschaus/Documents/IdeaProjects/minicp/target/scala-2.10/classes/'
+]
+
+javalink_docroots = [
+    'http://docs.oracle.com/javase/7/docs/api/',
+    {'root': '/Users/pschaus/Documents/IdeaProjects/minicp/target/scala-2.10/api/', 'base': '../../../target/scala-2.10/api/'}
+]
