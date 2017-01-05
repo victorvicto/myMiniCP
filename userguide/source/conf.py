@@ -133,7 +133,7 @@ html_favicon = "_static/favicon.ico"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ['_static','../../target/scala-2.10/api']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -259,10 +259,12 @@ texinfo_documents = [
 
 javalink_classpath = [
     javalink.find_rt_jar(),
-    '/Users/pschaus/Documents/IdeaProjects/minicp/target/scala-2.10/classes/'
+    #'/Users/pschaus/Documents/IdeaProjects/minicp/target/scala-2.10/classes/'
+    '../../target/scala-2.10/classes/'
 ]
 
 javalink_docroots = [
     'http://docs.oracle.com/javase/7/docs/api/',
-    {'root': '/Users/pschaus/Documents/IdeaProjects/minicp/target/scala-2.10/api/', 'base': '../../../target/scala-2.10/api/'}
+    #{'root': './api','base': './api'}
+    {'root': '../../target/scala-2.10/api/', 'base': './_static/'}
 ]

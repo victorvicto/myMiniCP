@@ -451,3 +451,5 @@ during the propagation through the ``remove`` method:
 Although you can already probably guess how it is implemented,
 we invite you to read the code of :javaref:`minicp.cp.core.IntVar` to learn
 more about the implementation of the similar ``assign`` operation.
+
+hello

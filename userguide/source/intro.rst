@@ -19,10 +19,14 @@ You are also welcome to report any mistake or bug.
 Install mini-cp
 =======================================
 
+
+Minicp is available from bitbucket_.
+The `Javavadoc API <_static/index.html>`_.
+
 We recommend using IntelliJ.
 mini-cp is built using sbt_.
 From IntelliJ_ you can simply import the project.
-For you can do:
+Or alternatively from command line you can do you can do:
 
 .. code-block:: none
 
@@ -33,6 +37,8 @@ For you can do:
     > run
     > run-main
 
+
+.. _bitbucket: https://bitbucket.org/pschaus/minicp
 .. _IntelliJ: https://www.jetbrains.com/idea/
 .. _sbt: http://www.scala-sbt.org
 
@@ -62,7 +68,7 @@ If you use find this document useful for your research you can cite:
 	  author = "{Laurent Michel, Pierre Schaus, Pascal Van Hentenryck}",
 	  title = "Learning Constraint Programming step-by-step with mini-cp",
 	  year = {2016},
-	  note = {Available from \texttt{http://...}},
+	  note = {Available from \texttt{www.info.ucl.ac.be/~pschaus/minicp}},
 	}
 
 
