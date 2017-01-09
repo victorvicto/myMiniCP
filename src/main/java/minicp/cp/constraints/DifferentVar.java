@@ -26,10 +26,17 @@ import minicp.search.Inconsistency;
 public class DifferentVar extends Constraint {
 
     private IntVar x,y;
+    private int      c;
 
-    public DifferentVar(IntVar x, IntVar y) {
+    public DifferentVar(IntVar x, IntVar y) { // x == y + c
         this.x = x;
         this.y = y;
+        this.c = 0;
+    }
+    public DifferentVar(IntVar x, IntVar y,int c) { // x == y + c
+        this.x = x;
+        this.y = y;
+        this.c = c;
     }
 
     @Override
@@ -44,9 +51,9 @@ public class DifferentVar extends Constraint {
     @Override
     public void propagate() throws Inconsistency {
         if (x.isBound()) {
-            y.remove(x.getMin());
+            y.remove(x.getMin() - c);
         } else {
-            x.remove(y.getMin());
+            x.remove(y.getMin() + c);
         }
     }
 }
