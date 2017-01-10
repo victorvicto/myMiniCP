@@ -100,17 +100,17 @@ public class IntVarTest {
         try {
             cp.add(cons);
             x.remove(8);
-            cp.fixPoint();
+            cp.getEngine().fixPoint();
             assertFalse(propagateCalled);
             x.assign(4);
-            cp.fixPoint();
+            cp.getEngine().fixPoint();
             assertTrue(propagateCalled);
             propagateCalled = false;
             y.remove(10);
-            cp.fixPoint();
+            cp.getEngine().fixPoint();
             assertFalse(propagateCalled);
             y.remove(9);
-            cp.fixPoint();
+            cp.getEngine().fixPoint();
             assertTrue(propagateCalled);
 
         } catch (Status inconsistency) {
@@ -241,21 +241,21 @@ public class IntVarTest {
             try {
                 cp.add(cons);
                 x.remove(8);
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertFalse(propagateCalled);
                 x.remove(9);
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertTrue(propagateCalled);
                 propagateCalled = false;
                 x.assign(4);
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertTrue(propagateCalled);
                 propagateCalled = false;
                 y.remove(10);
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertFalse(propagateCalled);
                 y.remove(2);
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertTrue(propagateCalled);
 
             } catch (Status inconsistency) {
@@ -293,10 +293,10 @@ public class IntVarTest {
             try {
                 cp.add(cons);
                 x.remove(8);
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertFalse(propagateCalled);
                 assertEquals(7,x.removeAbove(8));
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertTrue(propagateCalled);
 
             } catch (Status inconsistency) {
@@ -333,15 +333,15 @@ public class IntVarTest {
             try {
                 cp.add(cons);
                 x.remove(3);
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertFalse(propagateCalled);
                 assertEquals(4,x.removeBelow(3));
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertTrue(propagateCalled);
                 propagateCalled = false;
 
                 assertEquals(5,x.removeBelow(5));
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
                 assertTrue(propagateCalled);
                 propagateCalled = false;
 

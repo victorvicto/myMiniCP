@@ -84,7 +84,7 @@ public class SumTest {
 
                 x[0].removeBelow(1);
                 x[1].assign(0);
-                cp.fixPoint();
+                cp.getEngine().fixPoint();
 
                 assertEquals(5,x[0].getMax());
                 assertEquals(0,x[2].getMin());

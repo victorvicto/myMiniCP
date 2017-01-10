@@ -20,6 +20,7 @@
 package minicp.cp.core;
 
 
+import minicp.reversible.ReversibleContext;
 import minicp.search.Alternative;
 import minicp.search.Branching;
 import minicp.search.Choice;
@@ -27,20 +28,25 @@ import minicp.search.Choice;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Solver extends Engine {
-    public static interface SolutionListener {
-        public void solutionFound();
+public class Solver {
+    private Engine  engine = new Engine();
+    private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
+
+    @FunctionalInterface
+    public interface SolutionListener {
+        void solutionFound();
     }
-    private List<SolutionListener> solutionListeners;
     public void onSolution(SolutionListener listener) {
         solutionListeners.add(listener);
     }
     public void notifySolutionFound() {
         solutionListeners.forEach(s -> s.solutionFound());
     }
-    public Solver() {
-        solutionListeners = new LinkedList<SolutionListener>();
-    }
+    public Engine getEngine() { return engine;}
+    public ReversibleContext getContext() { return engine.getContext();}
+    public void add(Constraint c) throws Status { engine.add(c);}
+    public void add(Constraint c, boolean enforceFixPoint) throws Status { engine.add(c,enforceFixPoint);}
+
     @FunctionalInterface
     public interface Filter {
         boolean call(IntVar x);

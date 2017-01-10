@@ -21,11 +21,15 @@ package minicp.cp.core;
 
 import minicp.reversible.ReversibleContext;
 import java.util.Stack;
+import java.util.Vector;
 
 public class Engine {
     private ReversibleContext context = new ReversibleContext();
     private Stack<Constraint> propagationQueue = new Stack<>();
-
+    private Vector<IntVar>  vars = new Vector<>(2);
+    public void registerVar(IntVar x) {
+        vars.add(x);
+    }
     public void enqueue(Constraint c) {
         if (!c.inQueue) {
             c.inQueue = true;
@@ -56,6 +60,5 @@ public class Engine {
         c.setup();
         if (enforceFixPoint) fixPoint();
     }
-
 }
 

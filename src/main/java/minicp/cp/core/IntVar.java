@@ -30,20 +30,21 @@ import java.util.Set;
 
 public class IntVar {
 
-    Engine engine;
-    ReversibleSparseSet domain;
-    ReversibleStack<Constraint> onDomainChange;
-    ReversibleStack<Constraint> onBind;
+    private Engine engine;
+    private ReversibleSparseSet domain;
+    private ReversibleStack<Constraint> onDomainChange;
+    private ReversibleStack<Constraint> onBind;
 
     /**
      * Create a variable with the elements {0,...,n-1}
      * as initial domain
-     * @param engine
+     * @param cp
      * @param n > 0
      */
-    public IntVar(Engine engine, int n) {
+    public IntVar(Solver cp, int n) {
         if (n <= 0) throw new InvalidParameterException("at least one value in the domain");
-        this.engine = engine;
+        engine = cp.getEngine();
+        engine.registerVar(this);
         domain = new ReversibleSparseSet(engine.getContext(),n);
         onDomainChange = new ReversibleStack<Constraint>(engine.getContext());
         onBind = new ReversibleStack<Constraint>(engine.getContext());
@@ -52,21 +53,21 @@ public class IntVar {
     /**
      * Create a variable with the elements {min,...,max}
      * as initial domain
-     * @param engine
+     * @param cp
      * @param min
      * @param max >= min
      */
-    public IntVar(Engine store, int min, int max) throws Status {
+    public IntVar(Solver cp, int min, int max) throws Status {
         if (min > max) throw new InvalidParameterException("at least one value in the domain");
         throw new Status(Status.Type.NotImplemented);
     }
 
     /**
      * Create a variable with values as initial domain
-     * @param engine
+     * @param cp
      * @param values
      */
-    public IntVar(Engine store, Set<Integer> values) throws Status {
+    public IntVar(Solver cp, Set<Integer> values) throws Status {
         throw new Status(Status.Type.NotImplemented);
     }
 
