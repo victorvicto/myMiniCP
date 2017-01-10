@@ -40,10 +40,13 @@ Add a new constructor allowing to create a ReversibleSparseSet from any range be
     :lines: 54-62
 
 You will need to modify the code of the class to do so.
+The test to execute is :javaref:`minicp.reversible.ReversibleSparseSetTest`.
+
 
 
 ReversibleSparseSet: removeBelow/removeAbove methods
 =================================================================
+
 
 
 

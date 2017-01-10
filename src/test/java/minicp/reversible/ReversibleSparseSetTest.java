@@ -19,7 +19,8 @@
 
 package minicp.reversible;
 
-
+import java.util.Arrays;
+import java.util.Set;
 import minicp.util.NotImplementedException;
 import org.junit.Test;
 
@@ -58,6 +59,8 @@ public class ReversibleSparseSetTest {
         ReversibleContext rc = new ReversibleContext();
         ReversibleSparseSet set = new ReversibleSparseSet(rc,10);
 
+        assertTrue(toSet(set.toArray()).equals(toSet(new int[]{0,1,2,3,4,5,6,7,8,9})));
+
         rc.push();
 
         set.remove(1);
@@ -68,6 +71,7 @@ public class ReversibleSparseSetTest {
         set.remove(8);
         set.remove(9);
 
+        assertTrue(toSet(set.toArray()).equals(toSet(new int[]{0,1,2,3,4,5,6,7})));
         assertTrue(set.getMax() == 7);
 
         rc.pop();
@@ -89,12 +93,22 @@ public class ReversibleSparseSetTest {
             if (i != 2) assertFalse(set.contains(i));
         }
         assertTrue(set.contains(2));
+        assertTrue(toSet(set.toArray()).equals(toSet(new int[]{2})));
+
 
         rc.pop();
         rc.push();
 
         assertEquals(10, set.getSize());
 
+    }
+
+    private Set<Integer> toSet(int... values) {
+        Set<Integer> set = new java.util.HashSet<Integer>();
+        for (int v: values) {
+            set.add(v);
+        }
+        return set;
     }
 
     @Test
@@ -108,6 +122,7 @@ public class ReversibleSparseSetTest {
             for (int i = -5; i <= 5; i++) {
                 assertTrue(set.contains(i));
             }
+            assertTrue(toSet(set.toArray()).equals(toSet(new int[]{-5,-4,-3,-2,-1,0,1,2,3,4,5})));
 
             rc.push();
 
