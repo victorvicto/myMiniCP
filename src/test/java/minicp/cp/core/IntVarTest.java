@@ -208,8 +208,8 @@ public class IntVarTest {
             assertEquals(6,x.getSize());
 
 
-        } catch (NotImplementedException e) {
-            e.print();
+        } catch (Status e) {
+            System.out.format("Error: %s\n",e);
         }
     }
 

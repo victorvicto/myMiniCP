@@ -93,7 +93,7 @@ public class IntVar {
      * the max or min value of the domain of this variable changes
      * @param c
      */
-    public void propagateOnBoundChange(Constraint c) {
+    public void propagateOnBoundChange(Constraint c) throws Status {
         throw new Status(Status.Type.NotImplemented);
     }
 
