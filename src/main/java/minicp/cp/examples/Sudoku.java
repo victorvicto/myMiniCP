@@ -20,18 +20,18 @@
 package minicp.cp.examples;
 
 import minicp.cp.constraints.AllDifferentBinary;
-import minicp.cp.constraints.DifferentVal;
 import minicp.cp.constraints.EqualVal;
+import minicp.cp.constraints.DifferentVal;
 import minicp.cp.core.IntVar;
-import minicp.cp.core.Model;
-import minicp.search.Alternative;
+import minicp.cp.core.Solver;
+import minicp.cp.core.Status;
 import minicp.search.Branching;
 import minicp.search.DFSearch;
-import minicp.search.Inconsistency;
+import minicp.search.Choice;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Arrays;
 
 public class Sudoku {
 
@@ -51,7 +51,7 @@ public class Sudoku {
 
         Random rand = new Random(0);
 
-        Model cp = new Model();
+        Solver cp = new Solver();
 
         IntVar [][] x = new IntVar[9][9];
 
@@ -82,7 +82,7 @@ public class Sudoku {
 
             // allDifferent on a 3x3 block
 
-        } catch (Inconsistency e) {
+        } catch (Status e) {
             System.out.println("inconsistency detected in the model");
             return;
         }
@@ -93,17 +93,20 @@ public class Sudoku {
             System.arraycopy(x[i],0,xFlat,i * x.length,x.length);
         }
 
+        // count the number of solution
+        int [] nSols = new int[1];
+        cp.onSolution(() -> {
+            nSols[0] += 1;
+        });
 
-        Branching myBranching = new Branching() {
-            @Override
-            public Alternative[] getAlternatives() {
+        Choice myBranching = ()  -> {
                 Optional<IntVar> unBoundVarOpt = Arrays.stream(xFlat).filter(var -> !var.isBound()).findFirst();
                 if (!unBoundVarOpt.isPresent()) {
-                    return SOLUTION;
+                    return Branching.EMPTY;
                 } else {
                     IntVar unBoundVar = unBoundVarOpt.get();
                     int v = unBoundVar.getMin();
-                    return branch(
+                    return Branching.branch(
                             () -> { // left branch
                                 cp.add(new EqualVal(unBoundVar, v));
                             },
@@ -111,17 +114,10 @@ public class Sudoku {
                                 cp.add(new DifferentVal(unBoundVar, v));
                             });
                 }
-            }
-        };
-
+            };
 
         DFSearch dfs = new DFSearch(cp,myBranching);
 
-        // count the number of solution
-        int [] nSols = new int[1];
-        dfs.onSolution(() -> {
-            nSols[0] += 1;
-        });
 
         // start the search
         dfs.start();

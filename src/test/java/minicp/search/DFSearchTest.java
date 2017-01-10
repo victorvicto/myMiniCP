@@ -22,25 +22,21 @@ package minicp.search;
 import minicp.reversible.ReversibleInt;
 
 import org.junit.Test;
-import java.util.Arrays;
-
-
+import minicp.cp.core.Solver;
 
 
 public class DFSearchTest {
 
     @Test
     public void testExample1() {
-        DFSearchNode node = new DFSearchNode();
-        ReversibleInt i = new ReversibleInt(node,0);
+        Solver cp = new Solver();
+        ReversibleInt i = new ReversibleInt(cp.getContext(),0);
         int [] values = new int[3];
 
-        Branching myBranching = new Branching() {
-            @Override
-            public Alternative[] getAlternatives() {
+        Choice myBranching = () -> {
                 if (i.getValue() >= values.length)
-                    return SOLUTION;
-                else return branch (
+                    return Branching.EMPTY;
+                else return Branching.branch(
                         ()-> { // left branch
                             values[i.getValue()] = 0;
                             i.increment();
@@ -50,14 +46,14 @@ public class DFSearchTest {
                             i.increment();
                         }
                 );
-            }
-        };
+            };
 
-        DFSearch dfs = new DFSearch(node,myBranching);
-
-        dfs.onSolution(() -> {
+        cp.onSolution(() -> {
             // System.out.println(Arrays.toString(values));
         });
+
+        DFSearch dfs = new DFSearch(cp,myBranching);
+
 
         SearchStatistics stats = dfs.start();
 
@@ -70,16 +66,14 @@ public class DFSearchTest {
 
     @Test
     public void testDFS() {
-        DFSearchNode node = new DFSearchNode();
-        ReversibleInt i = new ReversibleInt(node,0);
+        Solver cp = new Solver();
+        ReversibleInt i = new ReversibleInt(cp.getContext(),0);
         boolean [] values = new boolean[4];
 
-        Branching myBranching = new Branching() {
-            @Override
-            public Alternative[] getAlternatives() {
+        Choice myBranching = () -> {
                 if (i.getValue() >= values.length)
-                    return SOLUTION;
-                else return branch (
+                    return Branching.EMPTY;
+                else return Branching.branch (
                         ()-> {
                             // left branch
                             values[i.getValue()] = false;
@@ -91,16 +85,16 @@ public class DFSearchTest {
                             i.increment();
                         }
                 );
-            }
-        };
-
-        DFSearch dfs = new DFSearch(node,myBranching);
+            };
 
         int [] nSols = new int[1];
-
-        dfs.onSolution(() -> {
+        cp.onSolution(() -> {
             nSols[0] += 1;
         });
+
+        DFSearch dfs = new DFSearch(cp,myBranching);
+
+
 
 
         SearchStatistics stats = dfs.start();
@@ -114,16 +108,14 @@ public class DFSearchTest {
 
     @Test
     public void testDFSSearchLimit() {
-        DFSearchNode node = new DFSearchNode();
-        ReversibleInt i = new ReversibleInt(node,0);
+        Solver cp = new Solver();
+        ReversibleInt i = new ReversibleInt(cp.getContext(),0);
         boolean [] values = new boolean[4];
 
-        Branching myBranching = new Branching() {
-            @Override
-            public Alternative[] getAlternatives() {
+        Choice myBranching = () -> {
                 if (i.getValue() >= values.length)
-                    return SOLUTION;
-                else return branch (
+                    return Branching.EMPTY;
+                else return Branching.branch (
                         ()-> {
                             // left branch
                             values[i.getValue()] = false;
@@ -135,16 +127,15 @@ public class DFSearchTest {
                             i.increment();
                         }
                 );
-            }
-        };
-
-        DFSearch dfs = new DFSearch(node,myBranching);
+            };
 
         int [] nSols = new int[1];
-
-        dfs.onSolution(() -> {
+        cp.onSolution(() -> {
             nSols[0] += 1;
         });
+
+        DFSearch dfs = new DFSearch(cp,myBranching);
+
 
         // stop search after 2 solutions
         SearchStatistics stats = dfs.start(stat -> stat.nSolutions >= 2);

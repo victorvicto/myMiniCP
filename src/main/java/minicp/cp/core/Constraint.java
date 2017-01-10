@@ -18,16 +18,12 @@
  */
 
 package minicp.cp.core;
-
-
-import minicp.search.Inconsistency;
-
-import java.util.Comparator;
+import minicp.cp.core.Status;
 
 public abstract class Constraint {
 
     protected boolean inQueue = false;
 
-    public abstract void setup() throws Inconsistency;
-    public void propagate() throws Inconsistency {};
+    public abstract void setup() throws Status;
+    public void propagate() throws Status {}
 }

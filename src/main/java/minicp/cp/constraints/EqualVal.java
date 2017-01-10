@@ -21,21 +21,21 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
-import minicp.search.Inconsistency;
+import minicp.cp.core.Status;
 
 public class EqualVal extends Constraint {
 
-    private IntVar x;
-    private int v;
+    private IntVar _x;
+    private int    _v;
 
     public EqualVal(IntVar x, int v) {
-        this.x = x;
-        this.v = v;
+        _x = x;
+        _v = v;
     }
 
     @Override
-    public void setup() throws Inconsistency{
-        x.assign(v);
+    public void setup() throws Status {
+        _x.assign(_v);
     }
 
 

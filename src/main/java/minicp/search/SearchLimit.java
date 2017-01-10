@@ -19,6 +19,7 @@
 
 package minicp.search;
 
+@FunctionalInterface
 public interface SearchLimit {
     public boolean stopSearch(SearchStatistics statistics);
 }

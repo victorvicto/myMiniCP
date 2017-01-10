@@ -22,20 +22,18 @@ package minicp.cp.examples;
 import minicp.cp.constraints.DifferentVal;
 import minicp.cp.constraints.EqualVal;
 import minicp.cp.core.IntVar;
-import minicp.cp.core.Model;
+import minicp.cp.core.Solver;
+import minicp.cp.core.Status;
+import minicp.cp.core.Box;
 import minicp.cp.constraints.DifferentVar;
-import minicp.search.Alternative;
 import minicp.search.Branching;
 import minicp.search.DFSearch;
-import minicp.search.Inconsistency;
-
-import java.util.Arrays;
-import java.util.Optional;
+import minicp.search.SearchStatistics;
 
 public class NQueens {
 
     public static void main(String[] args) {
-        Model cp = new Model();
+        Solver cp = new Solver();
         int n = 8;
         IntVar [] q = new IntVar[n];
 
@@ -50,44 +48,28 @@ public class NQueens {
                     cp.add(new DifferentVar(q[i], q[j],j-i));
                 }
 
-            Branching myBranching = new Branching() {
-                @Override
-                public Alternative[] getAlternatives() {
-                    Optional<IntVar> result = Arrays.stream(q).filter(var -> !var.isBound()).findFirst();
-                    if (!result.isPresent()) {
-                        return SOLUTION;
-                    } else {
-                        IntVar qk = result.get();
-                        int v = qk.getMin();
-                        return branch(
-                                () -> { // left branch
-                                    cp.add(new EqualVal(qk, v));
-                                },
-                                () -> { // right branch
-                                    cp.add(new DifferentVal(qk, v));
-                                });
-                    }
-                }
-            };
-
-
-            DFSearch dfs = new DFSearch(cp,myBranching);
-
             // count the number of solution
-            int [] nSols = new int[1];
-            dfs.onSolution(() -> {
-                nSols[0] += 1;
-            });
+            Box<Integer>  nbSols = new Box<>(0);
+            cp.onSolution(() -> nbSols.set(nbSols.get() + 1));
 
-            // start the search
-            dfs.start();
+            SearchStatistics stats = new DFSearch(cp,
+                    cp.selectMin(q,
+                        qi -> qi.getSize() > 1,
+                        qi -> qi.getSize(),
+                        qi -> {
+                            int v = qi.getMin();
+                            return Branching.branch(
+                                    () -> { cp.add(new EqualVal(qi,v));},
+                                    () -> { cp.add(new DifferentVal(qi,v));}
+                            );
+                        }
+                    )
+            ).start();
 
-            System.out.println("#Solutions:"+nSols[0]);
+            System.out.println("#Solutions:"+nbSols.get());
 
-
-        } catch(Inconsistency c) {
+        } catch(Status c) {
             System.out.println("inconsistency detected in the model");
         }
     }
-
 }

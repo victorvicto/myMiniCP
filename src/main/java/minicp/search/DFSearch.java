@@ -19,39 +19,21 @@
 
 package minicp.search;
 
-
-import java.util.LinkedList;
-import java.util.List;
+import minicp.cp.core.Solver;
+import minicp.cp.core.Status;
+import minicp.reversible.ReversibleContext;
 
 public class DFSearch {
 
-    public static final Inconsistency INCONSISTENCY = new Inconsistency() {
-        public Object feedBack() { return null;}
-    };
+    private Choice branching;
+    private Solver    cps;
+    private ReversibleContext ctx;
 
-
-    public static interface SolutionListener {
-        public void solutionFound();
-    }
-
-    private List<SolutionListener> solutionListeners;
-    private Branching branching;
-    private DFSearchNode node;
-
-    public DFSearch(DFSearchNode root, Branching branching) {
-        this.node = root;
+    public DFSearch(Solver cp, Choice branching) {
+        this.cps = cp;
+        this.ctx = cps.getContext();
         this.branching = branching;
-        solutionListeners = new LinkedList<SolutionListener>();
     }
-
-    public void onSolution(SolutionListener listener) {
-        solutionListeners.add(listener);
-    }
-
-    private void notifySolutionFound() {
-        solutionListeners.forEach(s -> s.solutionFound());
-    }
-
     public SearchStatistics start(SearchLimit limit) {
         SearchStatistics statistics = new SearchStatistics();
         try {
@@ -64,26 +46,26 @@ public class DFSearch {
         return start(statistics -> false);
     }
 
+
     private void dfs(SearchStatistics statistics,SearchLimit limit) {
         if (limit.stopSearch(statistics)) throw new StopSearchException();
         Alternative [] alternatives = branching.getAlternatives();
         if (alternatives.length == 0) {
             statistics.nSolutions++;
-            notifySolutionFound();
+            cps.notifySolutionFound();
         }
         else {
             for (Alternative alt : alternatives) {
-                node.push();
+                ctx.push();
                 try {
                     statistics.nNodes++;
                     alt.execute();
                     dfs(statistics,limit);
-                } catch (Inconsistency e) {
+                } catch (Status e) {
                     statistics.nFailures++;
                 }
-                node.pop();
+                ctx.pop();
             }
         }
     }
-
 }

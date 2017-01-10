@@ -20,14 +20,14 @@
 package minicp.cp.constraints;
 
 import minicp.cp.core.IntVar;
-import minicp.cp.core.Model;
-import minicp.search.Inconsistency;
+import minicp.cp.core.Solver;
 import minicp.util.NotImplementedException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import minicp.cp.core.Status;
 
 
 public class SumTest {
@@ -35,21 +35,17 @@ public class SumTest {
     @Test
     public void sum1() {
         try {
-            try {
 
-                Model cp = new Model();
-                IntVar[] x = new IntVar[]{new IntVar(cp, 0, 5), new IntVar(cp, 1, 5), new IntVar(cp, 0, 5)};
-                IntVar y = new IntVar(cp, 0, 100);
-                cp.add(new Sum(x, y));
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{new IntVar(cp, 0, 5), new IntVar(cp, 1, 5), new IntVar(cp, 0, 5)};
+            IntVar y = new IntVar(cp, 0, 100);
+            cp.add(new Sum(x, y));
 
-                assertEquals(1, y.getMin());
-                assertEquals(15, y.getMax());
+            assertEquals(1, y.getMin());
+            assertEquals(15, y.getMax());
 
-            } catch (Inconsistency e) {
-                fail("should not fail");
-            }
-        } catch (NotImplementedException e) {
-            e.print();
+        } catch (Status e) {
+            System.out.format("Error: %s\n",e.toString());
         }
 
     }
@@ -59,7 +55,7 @@ public class SumTest {
         try {
             try {
 
-                Model cp = new Model();
+                Solver cp = new Solver();
                 IntVar[] x = new IntVar[]{new IntVar(cp, -5, 5), new IntVar(cp, 1, 2), new IntVar(cp, 0, 1)};
                 IntVar y = new IntVar(cp, 0, 100);
                 cp.add(new Sum(x, y));
@@ -68,7 +64,7 @@ public class SumTest {
                 assertEquals(0, y.getMin());
                 assertEquals(8, y.getMax());
 
-            } catch (Inconsistency e) {
+            } catch (Status e) {
                 fail("should not fail");
             }
         } catch (NotImplementedException e) {
@@ -81,7 +77,7 @@ public class SumTest {
         try {
             try {
 
-                Model cp = new Model();
+                Solver cp = new Solver();
                 IntVar[] x = new IntVar[]{new IntVar(cp, -5, 5), new IntVar(cp, 1, 2), new IntVar(cp, 0, 1)};
                 IntVar y = new IntVar(cp, 5, 5);
                 cp.add(new Sum(x, y));
@@ -95,7 +91,7 @@ public class SumTest {
                 assertEquals(4,x[2].getMax());
 
 
-            } catch (Inconsistency e) {
+            } catch (Status e) {
                 fail("should not fail");
             }
         } catch (NotImplementedException e) {

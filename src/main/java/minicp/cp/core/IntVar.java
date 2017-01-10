@@ -22,8 +22,6 @@ package minicp.cp.core;
 
 import minicp.reversible.ReversibleSparseSet;
 import minicp.reversible.ReversibleStack;
-import minicp.search.DFSearch;
-import minicp.search.Inconsistency;
 import minicp.util.NotImplementedException;
 
 
@@ -32,7 +30,7 @@ import java.util.Set;
 
 public class IntVar {
 
-    Store store;
+    Engine engine;
     ReversibleSparseSet domain;
     ReversibleStack<Constraint> onDomainChange;
     ReversibleStack<Constraint> onBind;
@@ -40,36 +38,36 @@ public class IntVar {
     /**
      * Create a variable with the elements {0,...,n-1}
      * as initial domain
-     * @param store
+     * @param engine
      * @param n > 0
      */
-    public IntVar(Store store, int n) {
+    public IntVar(Engine engine, int n) {
         if (n <= 0) throw new InvalidParameterException("at least one value in the domain");
-        this.store = store;
-        domain = new ReversibleSparseSet(store,n);
-        onDomainChange = new ReversibleStack<Constraint>(store);
-        onBind = new ReversibleStack<Constraint>(store);
+        this.engine = engine;
+        domain = new ReversibleSparseSet(engine.getContext(),n);
+        onDomainChange = new ReversibleStack<Constraint>(engine.getContext());
+        onBind = new ReversibleStack<Constraint>(engine.getContext());
     }
 
     /**
      * Create a variable with the elements {min,...,max}
      * as initial domain
-     * @param store
+     * @param engine
      * @param min
      * @param max >= min
      */
-    public IntVar(Store store, int min, int max) {
+    public IntVar(Engine store, int min, int max) throws Status {
         if (min > max) throw new InvalidParameterException("at least one value in the domain");
-        throw new NotImplementedException();
+        throw new Status(Status.Type.NotImplemented);
     }
 
     /**
      * Create a variable with values as initial domain
-     * @param store
+     * @param engine
      * @param values
      */
-    public IntVar(Store store, Set<Integer> values) {
-        throw new NotImplementedException();
+    public IntVar(Engine store, Set<Integer> values) throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
     /**
@@ -96,16 +94,16 @@ public class IntVar {
      * @param c
      */
     public void propagateOnBoundChange(Constraint c) {
-        throw new NotImplementedException();
+        throw new Status(Status.Type.NotImplemented);
     }
 
     private void enQueueAll(ReversibleStack<Constraint> constraints) {
         for (int i = 0; i < constraints.size(); i++) {
-            store.enqueue(constraints.get(i));
+            engine.enqueue(constraints.get(i));
         }
     }
 
-    public Store getStore() { return store; }
+    public Engine getEngine() { return engine; }
 
     public int getMin() { return domain.getMin(); };
 
@@ -122,9 +120,9 @@ public class IntVar {
     /**
      * Remove the value v from the domain
      * @param v
-     * @throws Inconsistency
+     * @throws Status
      */
-    public void remove(int v) throws Inconsistency {
+    public void remove(int v) throws Status {
         if (domain.contains(v)) {
             domain.remove(v);
             enQueueAll(onDomainChange);
@@ -132,16 +130,16 @@ public class IntVar {
                 enQueueAll(onBind);
             }
         }
-        if (domain.isEmpty()) throw DFSearch.INCONSISTENCY;
+        if (domain.isEmpty()) throw new Status(Status.Type.Failure);
     }
 
     /**
      * Assign the value v i.e.
      * remove every value different from v
      * @param v
-     * @throws Inconsistency
+     * @throws Status
      */
-    public void assign(int v) throws Inconsistency {
+    public void assign(int v) throws Status {
         if (domain.contains(v)) {
             if (domain.getSize() != 1) {
                 domain.removeAllBut(v);
@@ -151,7 +149,7 @@ public class IntVar {
         }
         else {
             domain.removeAll();
-            throw DFSearch.INCONSISTENCY;
+            throw new Status(Status.Type.Failure);
         }
     }
 
@@ -159,20 +157,20 @@ public class IntVar {
      * Remove all the values < value
      * @param value
      * @return the new minimum
-     * @throws Inconsistency
+     * @throws Status
      */
-    public int removeBelow(int value) throws Inconsistency {
-        throw new NotImplementedException();
+    public int removeBelow(int value) throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
     /**
      * Remove all the values > valu
      * @param value
      * @return the new maximum
-     * @throws Inconsistency
+     * @throws Status
      */
-    public int removeAbove(int value) throws Inconsistency {
-        throw new NotImplementedException();
+    public int removeAbove(int value) throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
     /**

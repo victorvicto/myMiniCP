@@ -19,16 +19,12 @@
 
 package minicp.cp.core;
 
-
-import minicp.search.DFSearch;
-import minicp.search.DFSearchNode;
-import minicp.search.Inconsistency;
-
+import minicp.reversible.ReversibleContext;
 import java.util.Stack;
 
-public class Store extends DFSearchNode {
-
-    Stack<Constraint> propagationQueue = new Stack<>();
+public class Engine {
+    private ReversibleContext context = new ReversibleContext();
+    private Stack<Constraint> propagationQueue = new Stack<>();
 
     public void enqueue(Constraint c) {
         if (!c.inQueue) {
@@ -36,31 +32,29 @@ public class Store extends DFSearchNode {
             propagationQueue.add(c);
         }
     }
-
-    public void fixPoint() throws Inconsistency {
+    public ReversibleContext getContext() { return context;}
+    public void fixPoint() throws Status {
         boolean failed = false;
         while (!propagationQueue.isEmpty()) {
             Constraint c = propagationQueue.pop();
             c.inQueue = false;
             if (!failed) {
                 try { c.propagate(); }
-                catch (Inconsistency e) {
+                catch (Status e) {
                     failed = true;
                 }
             }
         }
-        if (failed) throw DFSearch.INCONSISTENCY;
+        if (failed) throw new Status(Status.Type.Failure);
     }
 
-    public void add(Constraint c) throws Inconsistency {
+    public void add(Constraint c) throws Status {
         add(c,true);
     }
 
-    public void add(Constraint c, boolean fixPoint) throws Inconsistency {
+    public void add(Constraint c, boolean enforceFixPoint) throws Status {
         c.setup();
-        if (fixPoint) {
-            fixPoint();
-        }
+        if (enforceFixPoint) fixPoint();
     }
 
 }

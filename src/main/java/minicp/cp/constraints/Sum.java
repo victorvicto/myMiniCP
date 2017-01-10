@@ -21,8 +21,7 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
-import minicp.search.Inconsistency;
-import minicp.util.NotImplementedException;
+import minicp.cp.core.Status;
 
 public class Sum extends Constraint {
 
@@ -41,13 +40,13 @@ public class Sum extends Constraint {
     }
 
     @Override
-    public void setup() throws Inconsistency {
-        throw new minicp.util.NotImplementedException();
+    public void setup() throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
     @Override
-    public void propagate() throws Inconsistency {
-        throw new NotImplementedException();
+    public void propagate() throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
 }

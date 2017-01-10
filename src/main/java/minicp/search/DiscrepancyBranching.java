@@ -21,6 +21,7 @@ package minicp.search;
 
 
 import minicp.reversible.ReversibleInt;
+import minicp.cp.core.Engine;
 import minicp.util.NotImplementedException;
 
 /**
@@ -32,7 +33,7 @@ public abstract class DiscrepancyBranching {
 
     ReversibleInt currentDiscrepancy;
 
-    public DiscrepancyBranching(DFSearchNode node, Branching b, int maxDiscrepancy) {
+    public DiscrepancyBranching(Engine engine, Branching b, int maxDiscrepancy) {
         throw new NotImplementedException();
     }
 

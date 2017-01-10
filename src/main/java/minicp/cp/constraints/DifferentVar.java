@@ -21,7 +21,7 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
-import minicp.search.Inconsistency;
+import minicp.cp.core.Status;
 
 public class DifferentVar extends Constraint {
 
@@ -40,7 +40,7 @@ public class DifferentVar extends Constraint {
     }
 
     @Override
-    public void setup() throws Inconsistency {
+    public void setup() throws Status {
         x.propagateOnBind(this);
         y.propagateOnBind(this);
         if (x.isBound() || y.isBound()) {
@@ -49,7 +49,7 @@ public class DifferentVar extends Constraint {
     }
 
     @Override
-    public void propagate() throws Inconsistency {
+    public void propagate() throws Status {
         if (x.isBound()) {
             y.remove(x.getMin() - c);
         } else {
