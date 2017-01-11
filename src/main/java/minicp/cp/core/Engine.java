@@ -36,6 +36,8 @@ public class Engine {
             propagationQueue.add(c);
         }
     }
+    public void push() { context.push();}
+    public void pop()  { context.pop();}
     public ReversibleContext getContext() { return context;}
     public void fixPoint() throws Status {
         boolean failed = false;

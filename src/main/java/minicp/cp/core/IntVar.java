@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class IntVar {
 
-    private Engine engine;
+    private Solver                  cp;
     private ReversibleSparseSet domain;
     private ReversibleStack<Constraint> onDomainChange;
     private ReversibleStack<Constraint> onBind;
@@ -43,7 +43,8 @@ public class IntVar {
      */
     public IntVar(Solver cp, int n) {
         if (n <= 0) throw new InvalidParameterException("at least one value in the domain");
-        engine = cp.getEngine();
+        this.cp = cp;
+        Engine engine = cp.getEngine();
         engine.registerVar(this);
         domain = new ReversibleSparseSet(engine.getContext(),n);
         onDomainChange = new ReversibleStack<Constraint>(engine.getContext());
@@ -99,12 +100,12 @@ public class IntVar {
     }
 
     private void enQueueAll(ReversibleStack<Constraint> constraints) {
-        for (int i = 0; i < constraints.size(); i++) {
+        Engine engine = cp.getEngine();
+        for (int i = 0; i < constraints.size(); i++)
             engine.enqueue(constraints.get(i));
-        }
     }
 
-    public Engine getEngine() { return engine; }
+    public Engine getEngine() { return cp.getEngine(); }
 
     public int getMin() { return domain.getMin(); };
 

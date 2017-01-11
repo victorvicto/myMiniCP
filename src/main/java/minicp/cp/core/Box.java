@@ -9,4 +9,5 @@ public class Box<T> {
     public Box(T v) { _value = v;}
     public T get() { return _value;}
     public void set(T v) { _value = v;}
+    public String toString() { return _value.toString();}
 }

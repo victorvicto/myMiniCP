@@ -19,6 +19,7 @@
 
 package minicp.cp.examples;
 
+import minicp.cp.Factory;
 import minicp.cp.constraints.DifferentVal;
 import minicp.cp.constraints.EqualVal;
 import minicp.cp.core.IntVar;
@@ -35,20 +36,17 @@ public class NQueens {
     public static void main(String[] args) {
         Solver cp = new Solver();
         int n = 8;
-        IntVar [] q = new IntVar[n];
+        IntVar [] q = Factory.makeIntVarArray(cp,n,n);
 
         try {
             for (int i = 0; i < n; i++)
-                q[i] = new IntVar(cp, n);
-
-            for (int i = 0; i < n; i++)
                 for (int j = i + 1; j < n; j++) {
-                    cp.add(new DifferentVar(q[i], q[j]));
-                    cp.add(new DifferentVar(q[i], q[j],i-j));
-                    cp.add(new DifferentVar(q[i], q[j],j-i));
+                    cp.add(Factory.makeDifferentVar(q[i], q[j]));
+                    cp.add(Factory.makeDifferentVar(q[i], q[j],i-j));
+                    cp.add(Factory.makeDifferentVar(q[i], q[j],j-i));
                 }
 
-            // count the number of solution
+            // count the number of solution (manually)
             Box<Integer>  nbSols = new Box<>(0);
             cp.onSolution(() -> nbSols.set(nbSols.get() + 1));
 
@@ -66,8 +64,8 @@ public class NQueens {
                     )
             ).start();
 
-            System.out.println("#Solutions:"+nbSols.get());
-
+            System.out.format("#Solutions: %s\n",nbSols);
+            System.out.format("Statistics: %s\n",stats);
         } catch(Status c) {
             System.out.println("inconsistency detected in the model");
         }

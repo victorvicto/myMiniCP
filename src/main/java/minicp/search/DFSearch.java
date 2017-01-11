@@ -20,18 +20,18 @@
 package minicp.search;
 
 import minicp.cp.core.Solver;
+import minicp.cp.core.Engine;
 import minicp.cp.core.Status;
-import minicp.reversible.ReversibleContext;
 
 public class DFSearch {
 
     private Choice branching;
-    private Solver    cps;
-    private ReversibleContext ctx;
+    private Solver       cps;
+    private Engine       eng;
 
     public DFSearch(Solver cp, Choice branching) {
         this.cps = cp;
-        this.ctx = cps.getContext();
+        this.eng = cps.getEngine();
         this.branching = branching;
     }
     public SearchStatistics start(SearchLimit limit) {
@@ -56,7 +56,7 @@ public class DFSearch {
         }
         else {
             for (Alternative alt : alternatives) {
-                ctx.push();
+                eng.push();
                 try {
                     statistics.nNodes++;
                     alt.execute();
@@ -64,7 +64,7 @@ public class DFSearch {
                 } catch (Status e) {
                     statistics.nFailures++;
                 }
-                ctx.pop();
+                eng.pop();
             }
         }
     }

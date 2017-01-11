@@ -19,17 +19,15 @@
 
 package minicp.cp.core;
 
-
 import minicp.reversible.ReversibleContext;
-import minicp.search.Alternative;
-import minicp.search.Branching;
 import minicp.search.Choice;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class Solver {
-    private Engine  engine = new Engine();
+    private Engine     engine = new Engine();
+    private Explorer explorer = new Explorer();
     private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
 
     @FunctionalInterface
@@ -43,36 +41,12 @@ public class Solver {
         solutionListeners.forEach(s -> s.solutionFound());
     }
     public Engine getEngine() { return engine;}
+    // Delegations to the engine.
     public ReversibleContext getContext() { return engine.getContext();}
     public void add(Constraint c) throws Status { engine.add(c);}
     public void add(Constraint c, boolean enforceFixPoint) throws Status { engine.add(c,enforceFixPoint);}
-
-    @FunctionalInterface
-    public interface Filter {
-        boolean call(IntVar x);
-    }
-    @FunctionalInterface
-    public interface ValueFun {
-        float call(IntVar x);
-    }
-    @FunctionalInterface
-    public interface BranchOn {
-        Alternative[] call(IntVar x);
-    }
-
-    public Choice selectMin(IntVar[] x,Filter p,ValueFun f,BranchOn body) {
-        return () -> {
-            IntVar  sel   = null;
-            for(IntVar xi : x) {
-                if (p.call(xi)) {
-                    sel = sel==null ||  (f.call(xi) < f.call(sel)) ? xi : sel;
-                }
-            }
-            if (sel == null) {
-                return Branching.EMPTY;
-            } else {
-                return body.call(sel);
-            }
-        };
+    // Delegation to the explorer.
+    public <T> Choice selectMin(T[] x,Explorer.Filter<T> p,Explorer.ValueFun<T> f,Explorer.BranchOn<T> body) {
+        return explorer.selectMin(x,p,f,body);
     }
 }
