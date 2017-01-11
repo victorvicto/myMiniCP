@@ -22,7 +22,7 @@ package minicp.search;
 
 import minicp.reversible.ReversibleInt;
 import minicp.cp.core.Engine;
-import minicp.util.NotImplementedException;
+import minicp.cp.core.Status;
 
 /**
  * Branching wrapper that ensures that
@@ -33,11 +33,11 @@ public abstract class DiscrepancyBranching {
 
     ReversibleInt currentDiscrepancy;
 
-    public DiscrepancyBranching(Engine engine, Branching b, int maxDiscrepancy) {
-        throw new NotImplementedException();
+    public DiscrepancyBranching(Engine engine, Branching b, int maxD) throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
-    public Alternative[] getAlternatives() {
+    public Alternative[] getAlternatives() throws Status {
         // Hint:
         // Let b.alts denote b.getAlternatives()
         // Filter-out alternatives from b.alts that would exceed maxDiscrepancy
@@ -45,6 +45,6 @@ public abstract class DiscrepancyBranching {
         // such that the execute method of the wrapped alternatives
         // augment the currentDiscrepancy depending on its position
         // +0 for b.alts[0], ..., +i for b.alts[i]
-        throw new NotImplementedException();
+        throw new Status(Status.Type.NotImplemented);
     }
 }

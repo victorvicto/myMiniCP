@@ -21,7 +21,10 @@ package minicp.cp.core;
 import minicp.cp.core.Status;
 
 public abstract class Constraint {
-
+    @FunctionalInterface
+    public interface Closure {
+        void call() throws Status;
+    }
     protected boolean inQueue = false;
 
     public abstract void setup() throws Status;

@@ -25,16 +25,13 @@ import java.util.Vector;
 
 public class Engine {
     private ReversibleContext context = new ReversibleContext();
-    private Stack<Constraint> propagationQueue = new Stack<>();
+    private Stack<Constraint.Closure> propagationQueue = new Stack<>();
     private Vector<IntVar>  vars = new Vector<>(2);
     public void registerVar(IntVar x) {
         vars.add(x);
     }
-    public void enqueue(Constraint c) {
-        if (!c.inQueue) {
-            c.inQueue = true;
-            propagationQueue.add(c);
-        }
+    public void enqueue(Constraint.Closure c) {
+        propagationQueue.add(c);
     }
     public void push() { context.push();}
     public void pop()  { context.pop();}
@@ -42,10 +39,9 @@ public class Engine {
     public void fixPoint() throws Status {
         boolean failed = false;
         while (!propagationQueue.isEmpty()) {
-            Constraint c = propagationQueue.pop();
-            c.inQueue = false;
+            Constraint.Closure c = propagationQueue.pop();
             if (!failed) {
-                try { c.propagate(); }
+                try { c.call(); }
                 catch (Status e) {
                     failed = true;
                 }

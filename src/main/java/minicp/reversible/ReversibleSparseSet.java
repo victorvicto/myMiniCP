@@ -19,10 +19,8 @@
 
 package minicp.reversible;
 
-
-
-
-import minicp.util.NotImplementedException;
+import com.sun.tools.corba.se.idl.constExpr.Not;
+import minicp.cp.core.Status;
 import java.util.NoSuchElementException;
 
 public class ReversibleSparseSet {
@@ -58,8 +56,8 @@ public class ReversibleSparseSet {
      * @param min
      * @param max >= min
      */
-    public ReversibleSparseSet(ReversibleContext rc, int min, int max) {
-        throw new NotImplementedException();
+    public ReversibleSparseSet(ReversibleContext rc, int min, int max) throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
     private void exchangePositions(int val1, int val2) {
@@ -217,8 +215,8 @@ public class ReversibleSparseSet {
      * @param value
      * @return the new minimum
      */
-    public int removeBelow(int value) {
-        throw new NotImplementedException();
+    public int removeBelow(int value) throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
     /**
@@ -226,8 +224,8 @@ public class ReversibleSparseSet {
      * @param value
      * @return the new maximum
      */
-    public int removeAbove(int value) {
-        throw new NotImplementedException();
+    public int removeAbove(int value) throws Status {
+        throw new Status(Status.Type.NotImplemented);
     }
 
 

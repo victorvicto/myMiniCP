@@ -32,11 +32,8 @@ public class EqualVal extends Constraint {
         _x = x;
         _v = v;
     }
-
     @Override
     public void setup() throws Status {
         _x.assign(_v);
     }
-
-
 }

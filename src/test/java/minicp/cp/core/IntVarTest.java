@@ -19,9 +19,7 @@
 
 package minicp.cp.core;
 
-import minicp.util.NotImplementedException;
 import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -88,12 +86,8 @@ public class IntVarTest {
 
             @Override
             public void setup() throws Status {
-                x.propagateOnBind(this);
-                y.propagateOnDomainChange(this);
-            }
-            @Override
-            public void propagate() throws Status {
-                propagateCalled = true;
+                x.whenBind(() -> propagateCalled = true);
+                y.whenDomainChange(() -> propagateCalled = true);
             }
         };
 
@@ -163,8 +157,6 @@ public class IntVarTest {
 
         } catch(Status s) {
             System.out.println("Error: " + s.toString());
-        } catch (NotImplementedException e) {
-            e.print();
         }
     }
 
@@ -217,53 +209,42 @@ public class IntVarTest {
     @Test
     public void onBoundChange() {
 
-        try {
+        Solver cp = new Solver();
 
-            Solver cp = new Solver();
+        IntVar x = new IntVar(cp, 10);
+        IntVar y = new IntVar(cp, 10);
 
-            IntVar x = new IntVar(cp, 10);
-            IntVar y = new IntVar(cp, 10);
+        Constraint cons = new Constraint() {
 
-            Constraint cons = new Constraint() {
-
-                @Override
-                public void setup() throws Status {
-                    x.propagateOnBoundChange(this);
-                    y.propagateOnDomainChange(this);
-                }
-
-                @Override
-                public void propagate() throws Status {
-                    propagateCalled = true;
-                }
-            };
-
-            try {
-                cp.add(cons);
-                x.remove(8);
-                cp.getEngine().fixPoint();
-                assertFalse(propagateCalled);
-                x.remove(9);
-                cp.getEngine().fixPoint();
-                assertTrue(propagateCalled);
-                propagateCalled = false;
-                x.assign(4);
-                cp.getEngine().fixPoint();
-                assertTrue(propagateCalled);
-                propagateCalled = false;
-                y.remove(10);
-                cp.getEngine().fixPoint();
-                assertFalse(propagateCalled);
-                y.remove(2);
-                cp.getEngine().fixPoint();
-                assertTrue(propagateCalled);
-
-            } catch (Status inconsistency) {
-                fail("should not fail");
+            @Override
+            public void setup() throws Status {
+                x.whenBind(() -> propagateCalled  = true);
+                y.whenDomainChange(() -> propagateCalled = true);
             }
+        };
 
-        } catch (NotImplementedException e) {
-            e.print();
+        try {
+            cp.add(cons);
+            x.remove(8);
+            cp.getEngine().fixPoint();
+            assertFalse(propagateCalled);
+            x.remove(9);
+            cp.getEngine().fixPoint();
+            assertTrue(propagateCalled);
+            propagateCalled = false;
+            x.assign(4);
+            cp.getEngine().fixPoint();
+            assertTrue(propagateCalled);
+            propagateCalled = false;
+            y.remove(10);
+            cp.getEngine().fixPoint();
+            assertFalse(propagateCalled);
+            y.remove(2);
+            cp.getEngine().fixPoint();
+            assertTrue(propagateCalled);
+
+        } catch (Status inconsistency) {
+            fail("should not fail");
         }
     }
 
@@ -271,93 +252,58 @@ public class IntVarTest {
     @Test
     public void removeAbove() {
 
-        try {
-
-            Solver cp = new Solver();
-
-            IntVar x = new IntVar(cp, 10);
-
-            Constraint cons = new Constraint() {
-
-                @Override
-                public void setup() throws Status {
-                    x.propagateOnBoundChange(this);
-                }
-
-                @Override
-                public void propagate() throws Status {
-                    propagateCalled = true;
-                }
-            };
-
-            try {
-                cp.add(cons);
-                x.remove(8);
-                cp.getEngine().fixPoint();
-                assertFalse(propagateCalled);
-                assertEquals(7,x.removeAbove(8));
-                cp.getEngine().fixPoint();
-                assertTrue(propagateCalled);
-
-            } catch (Status inconsistency) {
-                fail("should not fail");
+        Solver cp = new Solver();
+        IntVar x = new IntVar(cp, 10);
+        Constraint cons = new Constraint() {
+            @Override
+            public void setup() throws Status {
+                x.whenBoundsChange(() -> propagateCalled = true);
             }
+        };
 
-        } catch (NotImplementedException e) {
-            e.print();
+        try {
+            cp.add(cons);
+            x.remove(8);
+            cp.getEngine().fixPoint();
+            assertFalse(propagateCalled);
+            assertEquals(7,x.removeAbove(8));
+            cp.getEngine().fixPoint();
+            assertTrue(propagateCalled);
+
+        } catch (Status inconsistency) {
+            fail("should not fail");
         }
     }
 
     @Test
     public void removeBelow() {
 
-        try {
+        Solver cp = new Solver();
+        IntVar x = new IntVar(cp, 10);
+        Constraint cons = new Constraint() {
 
-            Solver cp = new Solver();
-
-            IntVar x = new IntVar(cp, 10);
-
-            Constraint cons = new Constraint() {
-
-                @Override
-                public void setup() throws Status {
-                    x.propagateOnBoundChange(this);
-                }
-
-                @Override
-                public void propagate() throws Status {
-                    propagateCalled = true;
-                }
-            };
-
-            try {
-                cp.add(cons);
-                x.remove(3);
-                cp.getEngine().fixPoint();
-                assertFalse(propagateCalled);
-                assertEquals(4,x.removeBelow(3));
-                cp.getEngine().fixPoint();
-                assertTrue(propagateCalled);
-                propagateCalled = false;
-
-                assertEquals(5,x.removeBelow(5));
-                cp.getEngine().fixPoint();
-                assertTrue(propagateCalled);
-                propagateCalled = false;
-
-
-            } catch (Status inconsistency) {
-                fail("should not fail");
+            @Override
+            public void setup() throws Status {
+                x.whenBoundsChange(() -> propagateCalled = true);
             }
+        };
 
-        } catch (NotImplementedException e) {
-            e.print();
+        try {
+            cp.add(cons);
+            x.remove(3);
+            cp.getEngine().fixPoint();
+            assertFalse(propagateCalled);
+            assertEquals(4,x.removeBelow(3));
+            cp.getEngine().fixPoint();
+            assertTrue(propagateCalled);
+            propagateCalled = false;
+
+            assertEquals(5,x.removeBelow(5));
+            cp.getEngine().fixPoint();
+            assertTrue(propagateCalled);
+            propagateCalled = false;
+        } catch (Status s) {
+            fail("should not fail with:" + s);
         }
     }
-
-
-
-
-
-
 }

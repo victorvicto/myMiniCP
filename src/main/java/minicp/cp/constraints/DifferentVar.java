@@ -25,35 +25,28 @@ import minicp.cp.core.Status;
 
 public class DifferentVar extends Constraint {
 
-    private IntVar x,y;
-    private int      c;
+    private IntVar x, y;
+    private int c;
 
-    public DifferentVar(IntVar x, IntVar y) { // x == y + c
+    public DifferentVar(IntVar x, IntVar y) { // x != y + c
         this.x = x;
         this.y = y;
         this.c = 0;
     }
-    public DifferentVar(IntVar x, IntVar y,int c) { // x == y + c
+    public DifferentVar(IntVar x, IntVar y, int c) { // x != y + c
         this.x = x;
         this.y = y;
         this.c = c;
     }
-
     @Override
     public void setup() throws Status {
-        x.propagateOnBind(this);
-        y.propagateOnBind(this);
-        if (x.isBound() || y.isBound()) {
-            propagate();
-        }
-    }
-
-    @Override
-    public void propagate() throws Status {
-        if (x.isBound()) {
-            y.remove(x.getMin() - c);
-        } else {
+        if (y.isBound())
             x.remove(y.getMin() + c);
+        else if (x.isBound())
+            y.remove(x.getMin() - c);
+        else {
+            x.whenBind(() -> y.remove(x.getMin() - c));
+            y.whenBind(() -> x.remove(y.getMin() + c));
         }
     }
 }

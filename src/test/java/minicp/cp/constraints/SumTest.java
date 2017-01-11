@@ -21,7 +21,6 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
-import minicp.util.NotImplementedException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -53,49 +52,41 @@ public class SumTest {
     @Test
     public void sum2() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar[] x = new IntVar[]{new IntVar(cp, -5, 5), new IntVar(cp, 1, 2), new IntVar(cp, 0, 1)};
-                IntVar y = new IntVar(cp, 0, 100);
-                cp.add(new Sum(x, y));
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{new IntVar(cp, -5, 5), new IntVar(cp, 1, 2), new IntVar(cp, 0, 1)};
+            IntVar y = new IntVar(cp, 0, 100);
+            cp.add(new Sum(x, y));
 
-                assertEquals(-3, x[0].getMin());
-                assertEquals(0, y.getMin());
-                assertEquals(8, y.getMax());
+            assertEquals(-3, x[0].getMin());
+            assertEquals(0, y.getMin());
+            assertEquals(8, y.getMax());
 
-            } catch (Status e) {
-                fail("should not fail");
-            }
-        } catch (NotImplementedException e) {
-            e.print();
+        } catch (Status e) {
+            fail("should not fail");
         }
     }
 
     @Test
     public void sum3() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar[] x = new IntVar[]{new IntVar(cp, -5, 5), new IntVar(cp, 1, 2), new IntVar(cp, 0, 1)};
-                IntVar y = new IntVar(cp, 5, 5);
-                cp.add(new Sum(x, y));
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{new IntVar(cp, -5, 5), new IntVar(cp, 1, 2), new IntVar(cp, 0, 1)};
+            IntVar y = new IntVar(cp, 5, 5);
+            cp.add(new Sum(x, y));
 
-                x[0].removeBelow(1);
-                x[1].assign(0);
-                cp.getEngine().fixPoint();
+            x[0].removeBelow(1);
+            x[1].assign(0);
+            cp.getEngine().fixPoint();
 
-                assertEquals(5,x[0].getMax());
-                assertEquals(0,x[2].getMin());
-                assertEquals(4,x[2].getMax());
+            assertEquals(5,x[0].getMax());
+            assertEquals(0,x[2].getMin());
+            assertEquals(4,x[2].getMax());
 
 
-            } catch (Status e) {
-                fail("should not fail");
-            }
-        } catch (NotImplementedException e) {
-            e.print();
+        } catch (Status e) {
+            fail("should not fail:" + e);
         }
     }
 

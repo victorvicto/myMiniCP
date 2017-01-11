@@ -19,8 +19,7 @@
 
 package minicp.reversible;
 
-
-import minicp.util.NotImplementedException;
+import minicp.cp.core.Status;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -133,8 +132,8 @@ public class ReversibleSparseSetTest {
                 assertTrue(set.contains(i));
             }
 
-        } catch (NotImplementedException e) {
-            e.print();
+        } catch (Status e) {
+            System.out.println("error:" + e);
         }
     }
 
@@ -175,8 +174,8 @@ public class ReversibleSparseSetTest {
                 assertTrue(set.contains(i));
             }
 
-        } catch (NotImplementedException e) {
-            e.print();
+        } catch (Status e) {
+            System.out.println("error: " + e);
         }
     }
 
@@ -215,8 +214,8 @@ public class ReversibleSparseSetTest {
                 assertTrue(set.contains(i));
             }
 
-        } catch (NotImplementedException e) {
-            e.print();
+        } catch (Status e) {
+            System.out.println("error:" + e);
         }
     }
 }

@@ -22,9 +22,6 @@ package minicp.cp.core;
 
 import minicp.reversible.ReversibleSparseSet;
 import minicp.reversible.ReversibleStack;
-import minicp.util.NotImplementedException;
-
-
 import java.security.InvalidParameterException;
 import java.util.Set;
 
@@ -32,8 +29,9 @@ public class IntVar {
 
     private Solver                  cp;
     private ReversibleSparseSet domain;
-    private ReversibleStack<Constraint> onDomainChange;
-    private ReversibleStack<Constraint> onBind;
+    private ReversibleStack<Constraint.Closure> onDomainChange;
+    private ReversibleStack<Constraint.Closure> onBind;
+    private ReversibleStack<Constraint.Closure> onBounds;
 
     /**
      * Create a variable with the elements {0,...,n-1}
@@ -47,8 +45,9 @@ public class IntVar {
         Engine engine = cp.getEngine();
         engine.registerVar(this);
         domain = new ReversibleSparseSet(engine.getContext(),n);
-        onDomainChange = new ReversibleStack<Constraint>(engine.getContext());
-        onBind = new ReversibleStack<Constraint>(engine.getContext());
+        onDomainChange = new ReversibleStack<>(engine.getContext());
+        onBind = new ReversibleStack<>(engine.getContext());
+        onBounds = new ReversibleStack<>(engine.getContext());
     }
 
     /**
@@ -77,7 +76,7 @@ public class IntVar {
      * of this variable changes
      * @param c
      */
-    public void propagateOnDomainChange(Constraint c) {
+    public void whenDomainChange(Constraint.Closure c) {
         onDomainChange.push(c);
     }
 
@@ -86,7 +85,7 @@ public class IntVar {
      * of this variable is reduced to a single value
      * @param c
      */
-    public void propagateOnBind(Constraint c) {
+    public void whenBind(Constraint.Closure c) {
         onBind.push(c);
     }
 
@@ -95,11 +94,11 @@ public class IntVar {
      * the max or min value of the domain of this variable changes
      * @param c
      */
-    public void propagateOnBoundChange(Constraint c) throws Status {
-        throw new Status(Status.Type.NotImplemented);
+    public void whenBoundsChange(Constraint.Closure c) throws Status {
+        onBounds.push(c);
     }
 
-    private void enQueueAll(ReversibleStack<Constraint> constraints) {
+    private void enQueueAll(ReversibleStack<Constraint.Closure> constraints) {
         Engine engine = cp.getEngine();
         for (int i = 0; i < constraints.size(); i++)
             engine.enqueue(constraints.get(i));
