@@ -29,9 +29,9 @@ public class IntVar {
 
     private Solver                  cp;
     private ReversibleSparseSet domain;
-    private ReversibleStack<Constraint.Closure> onDomainChange;
-    private ReversibleStack<Constraint.Closure> onBind;
-    private ReversibleStack<Constraint.Closure> onBounds;
+    private ReversibleStack<Constraint> onDomainChange;
+    private ReversibleStack<Constraint> onBind;
+    private ReversibleStack<Constraint> onBounds;
 
     /**
      * Create a variable with the elements {0,...,n-1}
@@ -76,8 +76,8 @@ public class IntVar {
      * of this variable changes
      * @param c
      */
-    public void whenDomainChange(Constraint.Closure c) {
-        onDomainChange.push(c);
+    public void whenDomainChange(ConstraintClosure.Closure c) {
+        onDomainChange.push(new ConstraintClosure(c));
     }
 
     /**
@@ -85,8 +85,8 @@ public class IntVar {
      * of this variable is reduced to a single value
      * @param c
      */
-    public void whenBind(Constraint.Closure c) {
-        onBind.push(c);
+    public void whenBind(ConstraintClosure.Closure c) {
+        onBind.push(new ConstraintClosure(c));
     }
 
     /**
@@ -94,11 +94,11 @@ public class IntVar {
      * the max or min value of the domain of this variable changes
      * @param c
      */
-    public void whenBoundsChange(Constraint.Closure c) throws Status {
-        onBounds.push(c);
+    public void whenBoundsChange(ConstraintClosure.Closure c) throws Status {
+        onBounds.push(new ConstraintClosure(c));
     }
 
-    private void enQueueAll(ReversibleStack<Constraint.Closure> constraints) {
+    private void enQueueAll(ReversibleStack<Constraint> constraints) {
         Engine engine = cp.getEngine();
         for (int i = 0; i < constraints.size(); i++)
             engine.enqueue(constraints.get(i));

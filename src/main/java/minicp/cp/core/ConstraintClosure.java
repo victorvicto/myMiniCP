@@ -18,12 +18,28 @@
  */
 
 package minicp.cp.core;
-import minicp.cp.core.Status;
 
-public abstract class Constraint {
 
-    protected boolean inQueue = false;
+public class ConstraintClosure extends Constraint {
 
-    public abstract void setup() throws Status;
-    public void propagate() throws Status {}
+    @FunctionalInterface
+    public interface Closure {
+        void call() throws Status;
+    }
+
+    private final Closure c;
+
+    public ConstraintClosure(Closure c) {
+        this.c = c;
+    }
+
+    @Override
+    public void setup() throws Status {
+
+    }
+
+    @Override
+    public void propagate() throws Status {
+        c.call();
+    }
 }

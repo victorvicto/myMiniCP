@@ -76,7 +76,7 @@ public class IntVarTest {
 
     @Test
     public void onDomainChangeOnBind() {
-
+        propagateCalled = false;
         Solver cp  = new Solver();
 
         IntVar x = new IntVar(cp,10);
@@ -230,8 +230,7 @@ public class IntVarTest {
             assertFalse(propagateCalled);
             x.remove(9);
             cp.getEngine().fixPoint();
-            assertTrue(propagateCalled);
-            propagateCalled = false;
+            assertFalse(propagateCalled);
             x.assign(4);
             cp.getEngine().fixPoint();
             assertTrue(propagateCalled);
@@ -239,6 +238,7 @@ public class IntVarTest {
             y.remove(10);
             cp.getEngine().fixPoint();
             assertFalse(propagateCalled);
+            propagateCalled = false;
             y.remove(2);
             cp.getEngine().fixPoint();
             assertTrue(propagateCalled);

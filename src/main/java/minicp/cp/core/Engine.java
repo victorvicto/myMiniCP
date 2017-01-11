@@ -20,28 +20,38 @@
 package minicp.cp.core;
 
 import minicp.reversible.ReversibleContext;
+import minicp.search.DFSearch;
+
 import java.util.Stack;
 import java.util.Vector;
 
 public class Engine {
     private ReversibleContext context = new ReversibleContext();
-    private Stack<Constraint.Closure> propagationQueue = new Stack<>();
+    private Stack<Constraint> propagationQueue = new Stack<>();
     private Vector<IntVar>  vars = new Vector<>(2);
     public void registerVar(IntVar x) {
         vars.add(x);
     }
-    public void enqueue(Constraint.Closure c) {
-        propagationQueue.add(c);
-    }
+
     public void push() { context.push();}
     public void pop()  { context.pop();}
     public ReversibleContext getContext() { return context;}
+
+
+    public void enqueue(Constraint c) {
+        if (!c.inQueue) {
+            c.inQueue = true;
+            propagationQueue.add(c);
+        }
+    }
+
     public void fixPoint() throws Status {
         boolean failed = false;
         while (!propagationQueue.isEmpty()) {
-            Constraint.Closure c = propagationQueue.pop();
+            Constraint c = propagationQueue.pop();
+            c.inQueue = false;
             if (!failed) {
-                try { c.call(); }
+                try { c.propagate(); }
                 catch (Status e) {
                     failed = true;
                 }

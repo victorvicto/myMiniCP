@@ -19,7 +19,6 @@
 
 package minicp.reversible;
 
-import com.sun.tools.corba.se.idl.constExpr.Not;
 import minicp.cp.core.Status;
 import java.util.NoSuchElementException;
 
