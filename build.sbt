@@ -1,6 +1,7 @@
-
 autoCompilerPlugins := true
+
 jacoco.settings
+
 lazy val root = (project in file(".")).settings(
     name := "minicp",
     libraryDependencies += "junit" % "junit" % "4.12" % "test",
