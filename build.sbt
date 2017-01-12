@@ -1,5 +1,6 @@
 
 autoCompilerPlugins := true
+jacoco.settings
 
 lazy val root = (project in file(".")).settings(
     name := "minicp",
