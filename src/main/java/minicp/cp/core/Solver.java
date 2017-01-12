@@ -20,33 +20,56 @@
 package minicp.cp.core;
 
 import minicp.reversible.ReversibleContext;
-import minicp.search.Choice;
+import minicp.search.DFSearch;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Stack;
+import java.util.Vector;
 
 public class Solver {
-    private Engine     engine = new Engine();
-    private Explorer explorer = new Explorer();
-    private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
 
-    @FunctionalInterface
-    public interface SolutionListener {
-        void solutionFound();
+    private ReversibleContext context = new ReversibleContext();
+    private Stack<Constraint> propagationQueue = new Stack<>();
+    private Vector<IntVar>  vars = new Vector<>(2);
+    public void registerVar(IntVar x) {
+        vars.add(x);
     }
-    public void onSolution(SolutionListener listener) {
-        solutionListeners.add(listener);
+
+    public void push() { context.push();}
+    public void pop()  { context.pop();}
+
+    public ReversibleContext getContext() { return context;}
+
+
+    public void enqueue(Constraint c) {
+        if (!c.inQueue) {
+            c.inQueue = true;
+            propagationQueue.add(c);
+        }
     }
-    public void notifySolutionFound() {
-        solutionListeners.forEach(s -> s.solutionFound());
+
+    public void fixPoint() throws Status {
+        boolean failed = false;
+        while (!propagationQueue.isEmpty()) {
+            Constraint c = propagationQueue.pop();
+            c.inQueue = false;
+            if (!failed) {
+                try { c.propagate(); }
+                catch (Status e) {
+                    failed = true;
+                }
+            }
+        }
+        if (failed) throw new Status(Status.Type.Failure);
     }
-    public Engine getEngine() { return engine;}
-    // Delegations to the engine.
-    public ReversibleContext getContext() { return engine.getContext();}
-    public void add(Constraint c) throws Status { engine.add(c);}
-    public void add(Constraint c, boolean enforceFixPoint) throws Status { engine.add(c,enforceFixPoint);}
-    // Delegation to the explorer.
-    public <T> Choice selectMin(T[] x,Explorer.Filter<T> p,Explorer.ValueFun<T> f,Explorer.BranchOn<T> body) {
-        return explorer.selectMin(x,p,f,body);
+
+    public void add(Constraint c) throws Status {
+        add(c,true);
     }
+
+    public void add(Constraint c, boolean enforceFixPoint) throws Status {
+        c.setup();
+        if (enforceFixPoint) fixPoint();
+    }
+
 }
+

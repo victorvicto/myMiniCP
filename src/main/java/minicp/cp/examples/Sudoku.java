@@ -93,11 +93,7 @@ public class Sudoku {
             System.arraycopy(x[i],0,xFlat,i * x.length,x.length);
         }
 
-        // count the number of solution
-        int [] nSols = new int[1];
-        cp.onSolution(() -> {
-            nSols[0] += 1;
-        });
+
 
         Choice myBranching = ()  -> {
                 Optional<IntVar> unBoundVarOpt = Arrays.stream(xFlat).filter(var -> !var.isBound()).findFirst();
@@ -116,7 +112,12 @@ public class Sudoku {
                 }
             };
 
-        DFSearch dfs = new DFSearch(cp,myBranching);
+        DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
+        // count the number of solution
+        int [] nSols = new int[1];
+        dfs.onSolution(() -> {
+            nSols[0] += 1;
+        });
 
 
         // start the search

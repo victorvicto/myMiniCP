@@ -22,12 +22,13 @@ package minicp.cp.core;
 
 import minicp.reversible.ReversibleSparseSet;
 import minicp.reversible.ReversibleStack;
+
 import java.security.InvalidParameterException;
 import java.util.Set;
 
 public class IntVar {
 
-    private Solver                  cp;
+    private Solver cp;
     private ReversibleSparseSet domain;
     private ReversibleStack<Constraint> onDomainChange;
     private ReversibleStack<Constraint> onBind;
@@ -42,12 +43,15 @@ public class IntVar {
     public IntVar(Solver cp, int n) {
         if (n <= 0) throw new InvalidParameterException("at least one value in the domain");
         this.cp = cp;
-        Engine engine = cp.getEngine();
-        engine.registerVar(this);
-        domain = new ReversibleSparseSet(engine.getContext(),n);
-        onDomainChange = new ReversibleStack<>(engine.getContext());
-        onBind = new ReversibleStack<>(engine.getContext());
-        onBounds = new ReversibleStack<>(engine.getContext());
+        cp.registerVar(this);
+        domain = new ReversibleSparseSet(cp.getContext(),n);
+        onDomainChange = new ReversibleStack<>(cp.getContext());
+        onBind = new ReversibleStack<>(cp.getContext());
+        onBounds = new ReversibleStack<>(cp.getContext());
+    }
+
+    public Solver getSolver() {
+        return cp;
     }
 
     /**
@@ -99,12 +103,9 @@ public class IntVar {
     }
 
     private void enQueueAll(ReversibleStack<Constraint> constraints) {
-        Engine engine = cp.getEngine();
         for (int i = 0; i < constraints.size(); i++)
-            engine.enqueue(constraints.get(i));
+            cp.enqueue(constraints.get(i));
     }
-
-    public Engine getEngine() { return cp.getEngine(); }
 
     public int getMin() { return domain.getMin(); };
 

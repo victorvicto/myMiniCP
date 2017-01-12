@@ -19,10 +19,10 @@
 
 package minicp.search;
 
+import minicp.cp.core.Solver;
 import minicp.reversible.ReversibleInt;
 
 import org.junit.Test;
-import minicp.cp.core.Solver;
 
 
 public class DFSearchTest {
@@ -48,11 +48,13 @@ public class DFSearchTest {
                 );
             };
 
-        cp.onSolution(() -> {
+
+
+        DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
+
+        dfs.onSolution(() -> {
             // System.out.println(Arrays.toString(values));
         });
-
-        DFSearch dfs = new DFSearch(cp,myBranching);
 
 
         SearchStatistics stats = dfs.start();
@@ -88,12 +90,13 @@ public class DFSearchTest {
             };
 
         int [] nSols = new int[1];
-        cp.onSolution(() -> {
+
+
+        DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
+
+        dfs.onSolution(() -> {
             nSols[0] += 1;
         });
-
-        DFSearch dfs = new DFSearch(cp,myBranching);
-
 
 
 
@@ -129,12 +132,14 @@ public class DFSearchTest {
                 );
             };
 
+
+
+        DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
+
         int [] nSols = new int[1];
-        cp.onSolution(() -> {
+        dfs.onSolution(() -> {
             nSols[0] += 1;
         });
-
-        DFSearch dfs = new DFSearch(cp,myBranching);
 
 
         // stop search after 2 solutions

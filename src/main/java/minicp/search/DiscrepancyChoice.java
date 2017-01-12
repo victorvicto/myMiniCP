@@ -20,8 +20,8 @@
 package minicp.search;
 
 
+import minicp.reversible.ReversibleContext;
 import minicp.reversible.ReversibleInt;
-import minicp.cp.core.Engine;
 import minicp.cp.core.Status;
 
 /**
@@ -29,11 +29,12 @@ import minicp.cp.core.Status;
  * that the alternatives created are always within the
  * discrepancy limit
  */
-public abstract class DiscrepancyBranching {
+
+public abstract class DiscrepancyChoice {
 
     ReversibleInt currentDiscrepancy;
 
-    public DiscrepancyBranching(Engine engine, Branching b, int maxD) throws Status {
+    public DiscrepancyChoice(ReversibleContext context, Choice choice, int maxD) throws Status {
         throw new Status(Status.Type.NotImplemented);
     }
 

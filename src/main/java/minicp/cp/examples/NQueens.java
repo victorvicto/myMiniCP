@@ -26,10 +26,10 @@ import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
 import minicp.cp.core.Status;
 import minicp.cp.core.Box;
-import minicp.cp.constraints.DifferentVar;
 import minicp.search.Branching;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
+import static minicp.search.Selector.*;
 
 public class NQueens {
 
@@ -48,10 +48,11 @@ public class NQueens {
 
             // count the number of solution (manually)
             Box<Integer>  nbSols = new Box<>(0);
-            cp.onSolution(() -> nbSols.set(nbSols.get() + 1));
 
-            SearchStatistics stats = new DFSearch(cp,
-                    cp.selectMin(q,
+
+
+            SearchStatistics stats = new DFSearch(cp.getContext(),
+                    selectMin(q,
                         qi -> qi.getSize() > 1,
                         qi -> qi.getSize(),
                         qi -> {
@@ -62,6 +63,8 @@ public class NQueens {
                             );
                         }
                     )
+            ).onSolution( () ->
+                    nbSols.set(nbSols.get() + 1)
             ).start();
 
             System.out.format("#Solutions: %s\n",nbSols);

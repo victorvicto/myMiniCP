@@ -19,21 +19,39 @@
 
 package minicp.search;
 
-import minicp.cp.core.Solver;
-import minicp.cp.core.Engine;
 import minicp.cp.core.Status;
+import minicp.reversible.ReversibleContext;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class DFSearch {
 
     private Choice branching;
-    private Solver       cps;
-    private Engine       eng;
+    private ReversibleContext context;
 
-    public DFSearch(Solver cp, Choice branching) {
-        this.cps = cp;
-        this.eng = cps.getEngine();
+    private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
+
+
+    // @Laurent:  I think solution listener must remain in DFSSearch
+    // because this is the place where the solution concept is defined (solution = no alternative and not failure)
+    @FunctionalInterface
+    public interface SolutionListener {
+        void solutionFound();
+    }
+    public DFSearch onSolution(SolutionListener listener) {
+        solutionListeners.add(listener);
+        return this;
+    }
+    public void notifySolutionFound() {
+        solutionListeners.forEach(s -> s.solutionFound());
+    }
+
+    public DFSearch(ReversibleContext context, Choice branching) {
+        this.context = context;
         this.branching = branching;
     }
+
     public SearchStatistics start(SearchLimit limit) {
         SearchStatistics statistics = new SearchStatistics();
         try {
@@ -47,16 +65,16 @@ public class DFSearch {
     }
 
 
-    private void dfs(SearchStatistics statistics,SearchLimit limit) {
+    private void dfs(SearchStatistics statistics, SearchLimit limit) {
         if (limit.stopSearch(statistics)) throw new StopSearchException();
         Alternative [] alternatives = branching.getAlternatives();
         if (alternatives.length == 0) {
             statistics.nSolutions++;
-            cps.notifySolutionFound();
+            notifySolutionFound();
         }
         else {
             for (Alternative alt : alternatives) {
-                eng.push();
+                context.push();
                 try {
                     statistics.nNodes++;
                     alt.execute();
@@ -64,7 +82,7 @@ public class DFSearch {
                 } catch (Status e) {
                     statistics.nFailures++;
                 }
-                eng.pop();
+                context.pop();
             }
         }
     }

@@ -2,14 +2,15 @@ package minicp.cp;
 
 import minicp.cp.constraints.DifferentVar;
 import minicp.cp.core.Constraint;
-import minicp.cp.core.Solver;
 import minicp.cp.core.IntVar;
+import minicp.cp.core.Solver;
+
 /**
  * Created by ldm on 1/10/17.
  */
 public class Factory {
     // Factory
-    static public IntVar[] makeIntVarArray(Solver cp,int n,int sz) {
+    static public IntVar[] makeIntVarArray(Solver cp, int n, int sz) {
         IntVar[] rv = new IntVar[n];
         for(int i=0;i<n;i++)
             rv[i] = new IntVar(cp,sz);

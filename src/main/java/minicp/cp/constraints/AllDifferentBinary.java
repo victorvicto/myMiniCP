@@ -21,8 +21,8 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
+import minicp.cp.core.Solver;
 import minicp.cp.core.Status;
-import minicp.cp.core.Engine;
 
 public class AllDifferentBinary extends Constraint {
 
@@ -34,7 +34,7 @@ public class AllDifferentBinary extends Constraint {
 
     @Override
     public void setup() throws Status {
-        Engine cp = x[0].getEngine();
+        Solver cp = x[0].getSolver();
         for (int i = 0; i < x.length; i++) {
             for (int j = i+1; j < x.length; j++) {
                 cp.add(new DifferentVar(x[i],x[j]),false);
