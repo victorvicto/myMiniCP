@@ -22,7 +22,11 @@ package minicp.search;
 import minicp.cp.core.Solver;
 import minicp.reversible.ReversibleInt;
 
+import static minicp.search.Selector.*;
+import minicp.util.Counter;
+import minicp.util.InconsistencyException;
 import org.junit.Test;
+import scala.Int;
 
 
 public class DFSearchTest {
@@ -35,8 +39,8 @@ public class DFSearchTest {
 
         Choice myBranching = () -> {
                 if (i.getValue() >= values.length)
-                    return Branching.EMPTY;
-                else return Branching.branch(
+                    return EMPTY;
+                else return branch(
                         ()-> { // left branch
                             values[i.getValue()] = 0;
                             i.increment();
@@ -74,8 +78,8 @@ public class DFSearchTest {
 
         Choice myBranching = () -> {
                 if (i.getValue() >= values.length)
-                    return Branching.EMPTY;
-                else return Branching.branch (
+                    return EMPTY;
+                else return branch (
                         ()-> {
                             // left branch
                             values[i.getValue()] = false;
@@ -89,20 +93,21 @@ public class DFSearchTest {
                 );
             };
 
-        int [] nSols = new int[1];
+
+        Counter nSols = new Counter();
 
 
         DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
 
         dfs.onSolution(() -> {
-            nSols[0] += 1;
+           nSols.incr();
         });
 
 
 
         SearchStatistics stats = dfs.start();
 
-        assert(nSols[0] == 16);
+        assert(nSols.getValue() == 16);
         assert(stats.nSolutions == 16);
         assert(stats.nFailures == 0);
         assert(stats.nNodes == (16+8+4+2));
@@ -116,9 +121,10 @@ public class DFSearchTest {
         boolean [] values = new boolean[4];
 
         Choice myBranching = () -> {
-                if (i.getValue() >= values.length)
-                    return Branching.EMPTY;
-                else return Branching.branch (
+                if (i.getValue() >= values.length) {
+                    return branch(() -> {throw new InconsistencyException();});
+                }
+                else return branch (
                         ()-> {
                             // left branch
                             values[i.getValue()] = false;
@@ -136,16 +142,17 @@ public class DFSearchTest {
 
         DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
 
-        int [] nSols = new int[1];
-        dfs.onSolution(() -> {
-            nSols[0] += 1;
+        Counter nFails = new Counter();
+        dfs.onFail(() -> {
+            nFails.incr();
         });
 
 
         // stop search after 2 solutions
-        SearchStatistics stats = dfs.start(stat -> stat.nSolutions >= 2);
+        SearchStatistics stats = dfs.start(stat -> stat.nFailures >= 3);
 
-        assert(stats.nSolutions == 2);
+        assert(stats.nSolutions == 0);
+        assert(stats.nFailures == 3);
 
     }
 

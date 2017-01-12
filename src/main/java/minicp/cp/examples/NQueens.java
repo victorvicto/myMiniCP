@@ -26,7 +26,6 @@ import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
 import minicp.util.InconsistencyException;
 import minicp.util.Box;
-import minicp.search.Branching;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import static minicp.search.Selector.*;
@@ -57,7 +56,7 @@ public class NQueens {
                         qi -> qi.getSize(),
                         qi -> {
                             int v = qi.getMin();
-                            return Branching.branch(
+                            return branch(
                                     () -> { cp.add(new EqualVal(qi,v));},
                                     () -> { cp.add(new DifferentVal(qi,v));}
                             );

@@ -31,10 +31,9 @@ public class DFSearch {
     private ReversibleContext context;
 
     private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
+    private List<FailListener> failListeners = new LinkedList<FailListener>();
 
 
-    // @Laurent:  I think solution listener must remain in DFSSearch
-    // because this is the place where the solution concept is defined (solution = no alternative and not failure)
     @FunctionalInterface
     public interface SolutionListener {
         void solutionFound();
@@ -43,8 +42,23 @@ public class DFSearch {
         solutionListeners.add(listener);
         return this;
     }
+
     public void notifySolutionFound() {
         solutionListeners.forEach(s -> s.solutionFound());
+    }
+
+    @FunctionalInterface
+    public interface FailListener {
+        void failure();
+    }
+
+    public DFSearch onFail(FailListener listener) {
+        failListeners.add(listener);
+        return this;
+    }
+
+    public void notifyFailure() {
+        failListeners.forEach(s -> s.failure());
     }
 
     public DFSearch(ReversibleContext context, Choice branching) {
@@ -80,6 +94,7 @@ public class DFSearch {
                     alt.execute();
                     dfs(statistics,limit);
                 } catch (InconsistencyException e) {
+                    notifyFailure();
                     statistics.nFailures++;
                 }
                 context.pop();

@@ -25,9 +25,9 @@ import minicp.cp.constraints.DifferentVal;
 import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
 import minicp.util.InconsistencyException;
-import minicp.search.Branching;
 import minicp.search.DFSearch;
 import minicp.search.Choice;
+import static minicp.search.Selector.*;
 
 import java.util.Optional;
 import java.util.Random;
@@ -98,11 +98,11 @@ public class Sudoku {
         Choice myBranching = ()  -> {
                 Optional<IntVar> unBoundVarOpt = Arrays.stream(xFlat).filter(var -> !var.isBound()).findFirst();
                 if (!unBoundVarOpt.isPresent()) {
-                    return Branching.EMPTY;
+                    return EMPTY;
                 } else {
                     IntVar unBoundVar = unBoundVarOpt.get();
                     int v = unBoundVar.getMin();
-                    return Branching.branch(
+                    return branch(
                             () -> { // left branch
                                 cp.add(new EqualVal(unBoundVar, v));
                             },
