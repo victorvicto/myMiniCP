@@ -8,7 +8,6 @@ lazy val root = (project in file(".")).settings(
     javacOptions ++= Seq("-source", "8", "-target", "8"),
     javacOptions in doc := Seq("-source", "1.8"),
     javaOptions in run += "-Xmx2G"
-    
   )
 
 
