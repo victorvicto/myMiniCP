@@ -24,7 +24,7 @@ ReversibleContext
 ------------------
 
 The trailing mechanism is implemented
-into the class :javaref:`minicp.reversible.ReversibleContext`.
+into the class :javaref:`minicp.reversible.State`.
 
 
 
@@ -67,7 +67,7 @@ The objects that are stacked and able to restore the state implements the
 
 
 The ``restore`` method is the one that is called when ``pop`` is executed on the context to restore the state.
-A :javaref:`minicp.reversible.ReversibleContext` internally contains two stacks:
+A :javaref:`minicp.reversible.State` internally contains two stacks:
 
 * ``trail`` that stacks  ``TrailEntry`` objects making it possible to restore the state.
 * ``trailLimit`` that stacks the current size of ``trail`` when a ``push`` operation occurs. This allows to delimit the number ``TrailEntry`` that need to be restored whenever a pop operation is executed.
@@ -105,7 +105,7 @@ would be restored.
 
 
 Although you can already probably guess how it is implemented,
-we invite you to read the code of :javaref:`minicp.reversible.ReversibleContext` to learn
+we invite you to read the code of :javaref:`minicp.reversible.State` to learn
 more about the implementation of the ``pop`` operation.
 
 

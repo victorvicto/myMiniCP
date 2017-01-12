@@ -13,7 +13,7 @@ public interface IntDomain {
     boolean isBound();
     String toString();
     void remove(int v,Notifier x) throws InconsistencyException;
-    void assign(int v,Notifier x) throws InconsistencyException;
-    int removeBelow(int value,Notifier x) throws InconsistencyException;
-    int removeAbove(int value,Notifier x) throws InconsistencyException;
+    void removeAllBut(int v,Notifier x) throws InconsistencyException;
+    void removeBelow(int value,Notifier x) throws InconsistencyException;
+    void removeAbove(int value,Notifier x) throws InconsistencyException;
 }

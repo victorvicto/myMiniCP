@@ -21,8 +21,8 @@ package minicp.reversible;
 
 /**
  * A TrailEntry is aimed to be
- * stacked on a ReversibleContext
- * through the method @see {@link minicp.reversible.ReversibleContext#pushOnTrail(TrailEntry)}
+ * stacked on a State
+ * through the method @see {@link State#pushOnTrail(TrailEntry)}
  */
 public interface TrailEntry {
     public void restore();

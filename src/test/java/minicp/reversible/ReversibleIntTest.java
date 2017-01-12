@@ -30,7 +30,7 @@ public class ReversibleIntTest {
     @Test
     public void testExample() {
 
-        ReversibleContext rc = new ReversibleContext();
+        State rc = new State();
 
         // Two reversible int's inside the reversible context rc
         ReversibleInt a = new ReversibleInt(rc,5);
@@ -75,7 +75,7 @@ public class ReversibleIntTest {
 
     @Test
     public void testReversibleInt() {
-        ReversibleContext rc = new ReversibleContext();
+        State rc = new State();
         ReversibleInt a = new ReversibleInt(rc,5);
         ReversibleInt b = new ReversibleInt(rc,5);
         assertTrue(a.getValue() == 5);
@@ -101,7 +101,7 @@ public class ReversibleIntTest {
     @Test
     public void testPopAll() {
 
-        ReversibleContext rc = new ReversibleContext();
+        State rc = new State();
         ReversibleInt a = new ReversibleInt(rc,5);
         ReversibleInt b = new ReversibleInt(rc,5);
 
@@ -160,7 +160,7 @@ public class ReversibleIntTest {
     @Test
     public void testPopUntill() {
 
-        ReversibleContext rc = new ReversibleContext();
+        State rc = new State();
         ReversibleInt a = new ReversibleInt(rc,5);
         ReversibleInt b = new ReversibleInt(rc,5);
 

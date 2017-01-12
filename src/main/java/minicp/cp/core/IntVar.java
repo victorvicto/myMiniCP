@@ -19,8 +19,6 @@
 
 package minicp.cp.core;
 
-
-import minicp.reversible.ReversibleSparseSet;
 import minicp.reversible.ReversibleStack;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
@@ -32,9 +30,11 @@ public class IntVar implements Notifier {
 
     private Solver cp;
     private IntDomain domain;
-    private ReversibleStack<Constraint> onDomainChange;
+    private ReversibleStack<Constraint> onDomain;
     private ReversibleStack<Constraint> onBind;
     private ReversibleStack<Constraint> onBounds;
+    private ReversibleStack<Constraint> onMin;
+    private ReversibleStack<Constraint> onMax;
 
     /**
      * Create a variable with the elements {0,...,n-1}
@@ -47,9 +47,11 @@ public class IntVar implements Notifier {
         this.cp = cp;
         cp.registerVar(this);
         domain = new SparseSetDomain(cp.getContext(),n);
-        onDomainChange = new ReversibleStack<>(cp.getContext());
-        onBind = new ReversibleStack<>(cp.getContext());
+        onDomain = new ReversibleStack<>(cp.getContext());
+        onBind  = new ReversibleStack<>(cp.getContext());
         onBounds = new ReversibleStack<>(cp.getContext());
+        onMin = new ReversibleStack<>(cp.getContext());
+        onMax = new ReversibleStack<>(cp.getContext());
     }
 
     public Solver getSolver() {
@@ -77,13 +79,26 @@ public class IntVar implements Notifier {
         throw new NotImplementedException();
     }
 
+
+    /**
+     * @return true if and only if the domain has a single value
+     */
+    public boolean isBound() {
+        return domain.getSize() == 1;
+    }
+
+    @Override
+    public String toString() {
+        return domain.toString();
+    }
+
     /**
      * Ask that c.propagate() is called whenever the domain change
      * of this variable changes
      * @param c
      */
     public void whenDomainChange(ConstraintClosure.Closure c) {
-        onDomainChange.push(new ConstraintClosure(cp,c));
+        onDomain.push(new ConstraintClosure(cp,c));
     }
 
     /**
@@ -110,7 +125,7 @@ public class IntVar implements Notifier {
      * @param c
      */
     public void propagateOnDomainChange(Constraint c) {
-        onDomainChange.push(c);
+        onDomain.push(c);
     }
 
     /**
@@ -127,9 +142,7 @@ public class IntVar implements Notifier {
      * the max or min value of the domain of this variable changes
      * @param c
      */
-    public void propagateOnBoundChange(Constraint c) {
-        throw new NotImplementedException();
-    }
+    public void propagateOnBoundChange(Constraint c) { onBounds.push(c);}
 
 
     private void enQueueAll(ReversibleStack<Constraint> constraints) {
@@ -152,14 +165,9 @@ public class IntVar implements Notifier {
      * @throws InconsistencyException
      */
     public void remove(int v) throws InconsistencyException {
-        if (domain.contains(v)) {
-            domain.remove(v);
-            enQueueAll(onDomainChange);
-            if (domain.getSize() == 1) {
-                enQueueAll(onBind);
-            }
-        }
-        if (domain.isEmpty()) throw new InconsistencyException();
+        if (domain.contains(v))
+            domain.remove(v,this);
+        if (domain.getSize()==0) throw new InconsistencyException();
     }
 
     /**
@@ -170,16 +178,10 @@ public class IntVar implements Notifier {
      */
     public void assign(int v) throws InconsistencyException {
         if (domain.contains(v)) {
-            if (domain.getSize() != 1) {
-                domain.removeAllBut(v);
-                enQueueAll(onDomainChange);
-                enQueueAll(onBind);
-            }
+            if (domain.getSize() != 1)
+                domain.removeAllBut(v,this);
         }
-        else {
-            domain.removeAll();
-            throw new InconsistencyException();
-        }
+        else throw new InconsistencyException();
     }
 
     /**
@@ -202,28 +204,25 @@ public class IntVar implements Notifier {
         throw new NotImplementedException();
     }
 
-    /**
-     * @return true if and only if the domain has a single value
-     */
-    public boolean isBound() {
-        return domain.getSize() == 1;
-    }
-
-    @Override
-    public String toString() {
-        return domain.toString();
-    }
-
     public void bindEvt() {
-
+        enQueueAll(onDomain);
+        enQueueAll(onBind);
     }
     public void domainEvt(int dsz) {
-
+        enQueueAll(onDomain);
+        if (dsz == 1)
+            enQueueAll(onBind);
     }
     public void updateMinEvt(int dsz) {
-
+        enQueueAll(onMin);
+        enQueueAll(onBounds);
+        if (dsz == 1)
+            enQueueAll(onBind);
     }
     public void updateMaxEvt(int dsz) {
-
+        enQueueAll(onMax);
+        enQueueAll(onBounds);
+        if (dsz == 1)
+            enQueueAll(onBind);
     }
 }

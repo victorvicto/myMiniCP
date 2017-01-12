@@ -36,7 +36,7 @@ public class ReversibleSparseSetTest {
     @Test
     public void testExample() {
 
-        ReversibleContext rc = new ReversibleContext();
+        State rc = new State();
         ReversibleSparseSet set = new ReversibleSparseSet(rc,9);
 
         rc.push();
@@ -57,7 +57,7 @@ public class ReversibleSparseSetTest {
     @Test
     public void testReversibleSparseSet() {
 
-        ReversibleContext rc = new ReversibleContext();
+        State rc = new State();
         ReversibleSparseSet set = new ReversibleSparseSet(rc,10);
 
         assertTrue(toSet(set.toArray()).equals(toSet(new int[]{0,1,2,3,4,5,6,7,8,9})));
@@ -116,7 +116,7 @@ public class ReversibleSparseSetTest {
 
         try {
 
-            ReversibleContext rc = new ReversibleContext();
+            State rc = new State();
             ReversibleSparseSet set = new ReversibleSparseSet(rc,-5,5);
 
             for (int i = -5; i <= 5; i++) {
@@ -157,7 +157,7 @@ public class ReversibleSparseSetTest {
 
         try {
 
-            ReversibleContext rc = new ReversibleContext();
+            State rc = new State();
             ReversibleSparseSet set = new ReversibleSparseSet(rc,-5,5);
 
             for (int i = -5; i <= 5; i++) {
@@ -199,7 +199,7 @@ public class ReversibleSparseSetTest {
 
         try {
 
-            ReversibleContext rc = new ReversibleContext();
+            State rc = new State();
             ReversibleSparseSet set = new ReversibleSparseSet(rc,-5,5);
 
             for (int i = -5; i <= 5; i++) {

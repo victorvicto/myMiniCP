@@ -17,9 +17,8 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;import minicp.reversible.ReversibleBool;
-import minicp.reversible.ReversibleContext;
-import minicp.reversible.ReversibleInt;
+package minicp.reversible;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +30,7 @@ public class ReversibleBoolTest {
 
     @Test
     public void testReversibleBool() {
-        ReversibleContext rc = new ReversibleContext();
+        State rc = new State();
 
         ReversibleBool b1 = new ReversibleBool(rc,true);
         ReversibleBool b2 = new ReversibleBool(rc,false);

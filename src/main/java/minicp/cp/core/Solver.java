@@ -19,7 +19,7 @@
 
 package minicp.cp.core;
 
-import minicp.reversible.ReversibleContext;
+import minicp.reversible.State;
 import minicp.util.InconsistencyException;
 
 import java.util.Stack;
@@ -27,7 +27,7 @@ import java.util.Vector;
 
 public class Solver {
 
-    private ReversibleContext context = new ReversibleContext();
+    private State context = new State();
     private Stack<Constraint> propagationQueue = new Stack<>();
     private Vector<IntVar>  vars = new Vector<>(2);
     public void registerVar(IntVar x) {
@@ -37,7 +37,7 @@ public class Solver {
     public void push() { context.push();}
     public void pop()  { context.pop();}
 
-    public ReversibleContext getContext() { return context;}
+    public State getContext() { return context;}
 
 
     public void schedule(Constraint c) {

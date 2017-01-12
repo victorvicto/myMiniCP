@@ -37,7 +37,7 @@ public class ReversibleSparseSet {
      * @param rc
      * @param n > 0
      */
-    public ReversibleSparseSet(ReversibleContext rc, int n) {
+    public ReversibleSparseSet(State rc, int n) {
         this.n = n;
         size = new ReversibleInt(rc,n);
         min = new ReversibleInt(rc,0);
@@ -56,7 +56,7 @@ public class ReversibleSparseSet {
      * @param min
      * @param max >= min
      */
-    public ReversibleSparseSet(ReversibleContext rc, int min, int max) {
+    public ReversibleSparseSet(State rc, int min, int max) {
         throw new NotImplementedException();
     }
 
