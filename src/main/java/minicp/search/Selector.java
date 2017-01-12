@@ -2,6 +2,12 @@ package minicp.search;
 
 public class Selector {
 
+    public static final Alternative[] EMPTY = new Alternative[0];
+
+    public static Alternative[] branch(Alternative... alternatives) {
+        return alternatives;
+    }
+
     @FunctionalInterface
     public interface Filter<T> {
         boolean call(T x);
@@ -26,7 +32,7 @@ public class Selector {
                 }
             }
             if (sel == null) {
-                return Branching.EMPTY;
+                return EMPTY;
             } else {
                 return body.call(sel);
             }
