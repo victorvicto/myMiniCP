@@ -20,8 +20,8 @@
 package minicp.cp.constraints;
 
 import minicp.cp.core.IntVar;
-import minicp.cp.core.Model;
-import minicp.search.Inconsistency;
+import minicp.cp.core.Solver;
+import minicp.util.InconsistencyException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -31,7 +31,7 @@ public class DiffVarTest {
 
     @Test
     public void diffVar() {
-        Model cp  = new Model();
+        Solver cp  = new Solver();
 
         IntVar x = new IntVar(cp,10);
         IntVar y = new IntVar(cp,10);
@@ -41,7 +41,7 @@ public class DiffVarTest {
 
             cp.add(new EqualVal(x,6));
 
-        } catch (Inconsistency e) {
+        } catch (InconsistencyException e) {
             assert(false);
         }
 

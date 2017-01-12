@@ -19,8 +19,11 @@
 
 package minicp.search;
 
+import minicp.util.InconsistencyException;
+
+@FunctionalInterface
 public interface Alternative {
-    public void execute() throws Inconsistency;
+    void execute() throws InconsistencyException;
 }
 
 

@@ -235,14 +235,7 @@ Depth First Search
 
 Depth First Search (DFS) is a core algorithm of any CP solver.
 Mini-cp comes with a search framework for DFS.
-This search relies on :javaref:`minicp.search.DFSearchNode` that directly extends
-:javaref:`minicp.reversible.ReversibleContext`:
-
-
-.. literalinclude:: ../../src/main/java/minicp/search/DFSearchNode.java
-    :language: java
-    :linenos:
-    :lines: 25-28
+This search relies on :javaref:`minicp.search.DFSearch`:
 
 
 A :javaref:`minicp.search.Branching` object is in charge of controlling and shaping the search tree:

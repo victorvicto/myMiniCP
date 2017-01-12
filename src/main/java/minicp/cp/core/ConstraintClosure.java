@@ -17,6 +17,32 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
-package minicp.reversible;
+package minicp.cp.core;
 
 
+import minicp.util.InconsistencyException;
+
+public class ConstraintClosure extends Constraint {
+
+    @FunctionalInterface
+    public interface Closure {
+        void call() throws InconsistencyException;
+    }
+
+    private final Closure c;
+
+    public ConstraintClosure(Solver cp, Closure c) {
+        super(cp);
+        this.c = c;
+    }
+
+    @Override
+    public void setup() throws InconsistencyException {
+
+    }
+
+    @Override
+    public void propagate() throws InconsistencyException {
+        c.call();
+    }
+}

@@ -22,54 +22,86 @@ package minicp.cp.core;
 
 import minicp.reversible.ReversibleSparseSet;
 import minicp.reversible.ReversibleStack;
-import minicp.search.DFSearch;
-import minicp.search.Inconsistency;
+import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
-
 
 import java.security.InvalidParameterException;
 import java.util.Set;
 
 public class IntVar {
 
-    Store store;
-    ReversibleSparseSet domain;
-    ReversibleStack<Constraint> onDomainChange;
-    ReversibleStack<Constraint> onBind;
+    private Solver cp;
+    private ReversibleSparseSet domain;
+    private ReversibleStack<Constraint> onDomainChange;
+    private ReversibleStack<Constraint> onBind;
+    private ReversibleStack<Constraint> onBounds;
 
     /**
      * Create a variable with the elements {0,...,n-1}
      * as initial domain
-     * @param store
+     * @param cp
      * @param n > 0
      */
-    public IntVar(Store store, int n) {
+    public IntVar(Solver cp, int n) {
         if (n <= 0) throw new InvalidParameterException("at least one value in the domain");
-        this.store = store;
-        domain = new ReversibleSparseSet(store,n);
-        onDomainChange = new ReversibleStack<Constraint>(store);
-        onBind = new ReversibleStack<Constraint>(store);
+        this.cp = cp;
+        cp.registerVar(this);
+        domain = new ReversibleSparseSet(cp.getContext(),n);
+        onDomainChange = new ReversibleStack<>(cp.getContext());
+        onBind = new ReversibleStack<>(cp.getContext());
+        onBounds = new ReversibleStack<>(cp.getContext());
+    }
+
+    public Solver getSolver() {
+        return cp;
     }
 
     /**
      * Create a variable with the elements {min,...,max}
      * as initial domain
-     * @param store
+     * @param cp
      * @param min
      * @param max >= min
      */
-    public IntVar(Store store, int min, int max) {
+    public IntVar(Solver cp, int min, int max) {
         if (min > max) throw new InvalidParameterException("at least one value in the domain");
         throw new NotImplementedException();
     }
 
     /**
      * Create a variable with values as initial domain
-     * @param store
+     * @param cp
      * @param values
      */
-    public IntVar(Store store, Set<Integer> values) {
+    public IntVar(Solver cp, Set<Integer> values) {
         throw new NotImplementedException();
+    }
+
+    /**
+     * Ask that c.propagate() is called whenever the domain change
+     * of this variable changes
+     * @param c
+     */
+    public void whenDomainChange(ConstraintClosure.Closure c) {
+        onDomainChange.push(new ConstraintClosure(cp,c));
+    }
+
+    /**
+     * Ask that c.propagate() is called whenever the domain
+     * of this variable is reduced to a single value
+     * @param c
+     */
+    public void whenBind(ConstraintClosure.Closure c) {
+        onBind.push(new ConstraintClosure(cp,c));
+    }
+
+    /**
+     * Ask that c.propagate() is called whenever
+     * the max or min value of the domain of this variable changes
+     * @param c
+     */
+    public void whenBoundsChange(ConstraintClosure.Closure c) throws InconsistencyException {
+        onBounds.push(new ConstraintClosure(cp,c));
     }
 
     /**
@@ -99,13 +131,11 @@ public class IntVar {
         throw new NotImplementedException();
     }
 
-    private void enQueueAll(ReversibleStack<Constraint> constraints) {
-        for (int i = 0; i < constraints.size(); i++) {
-            store.enqueue(constraints.get(i));
-        }
-    }
 
-    public Store getStore() { return store; }
+    private void enQueueAll(ReversibleStack<Constraint> constraints) {
+        for (int i = 0; i < constraints.size(); i++)
+            cp.schedule(constraints.get(i));
+    }
 
     public int getMin() { return domain.getMin(); };
 
@@ -122,9 +152,9 @@ public class IntVar {
     /**
      * Remove the value v from the domain
      * @param v
-     * @throws Inconsistency
+     * @throws InconsistencyException
      */
-    public void remove(int v) throws Inconsistency {
+    public void remove(int v) throws InconsistencyException {
         if (domain.contains(v)) {
             domain.remove(v);
             enQueueAll(onDomainChange);
@@ -132,16 +162,16 @@ public class IntVar {
                 enQueueAll(onBind);
             }
         }
-        if (domain.isEmpty()) throw DFSearch.INCONSISTENCY;
+        if (domain.isEmpty()) throw new InconsistencyException();
     }
 
     /**
      * Assign the value v i.e.
      * remove every value different from v
      * @param v
-     * @throws Inconsistency
+     * @throws InconsistencyException
      */
-    public void assign(int v) throws Inconsistency {
+    public void assign(int v) throws InconsistencyException {
         if (domain.contains(v)) {
             if (domain.getSize() != 1) {
                 domain.removeAllBut(v);
@@ -151,7 +181,7 @@ public class IntVar {
         }
         else {
             domain.removeAll();
-            throw DFSearch.INCONSISTENCY;
+            throw new InconsistencyException();
         }
     }
 
@@ -159,9 +189,9 @@ public class IntVar {
      * Remove all the values < value
      * @param value
      * @return the new minimum
-     * @throws Inconsistency
+     * @throws InconsistencyException
      */
-    public int removeBelow(int value) throws Inconsistency {
+    public int removeBelow(int value) throws InconsistencyException {
         throw new NotImplementedException();
     }
 
@@ -169,9 +199,9 @@ public class IntVar {
      * Remove all the values > valu
      * @param value
      * @return the new maximum
-     * @throws Inconsistency
+     * @throws InconsistencyException
      */
-    public int removeAbove(int value) throws Inconsistency {
+    public int removeAbove(int value) throws InconsistencyException {
         throw new NotImplementedException();
     }
 

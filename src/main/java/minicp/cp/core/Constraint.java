@@ -18,16 +18,28 @@
  */
 
 package minicp.cp.core;
-
-
-import minicp.search.Inconsistency;
-
-import java.util.Comparator;
+import minicp.reversible.ReversibleBool;
+import minicp.util.InconsistencyException;
 
 public abstract class Constraint {
 
-    protected boolean inQueue = false;
+    private final Solver cp;
+    protected boolean scheduled = false;
+    protected final ReversibleBool active;
 
-    public abstract void setup() throws Inconsistency;
-    public void propagate() throws Inconsistency {};
+    public Constraint(Solver cp) {
+        this.cp = cp;
+        active = new ReversibleBool(cp.getContext(),true);
+    }
+
+    public boolean isActive() {
+        return active.getValue();
+    }
+
+    public void deactivate() {
+        active.setValue(false);
+    }
+
+    public abstract void setup() throws InconsistencyException;
+    public void propagate() throws InconsistencyException {}
 }

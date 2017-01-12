@@ -20,23 +20,26 @@
 package minicp.search;
 
 
+import minicp.reversible.ReversibleContext;
 import minicp.reversible.ReversibleInt;
 import minicp.util.NotImplementedException;
+import minicp.util.InconsistencyException;
 
 /**
  * Branching wrapper that ensures that
  * that the alternatives created are always within the
  * discrepancy limit
  */
-public abstract class DiscrepancyBranching {
+
+public abstract class DiscrepancyChoice {
 
     ReversibleInt currentDiscrepancy;
 
-    public DiscrepancyBranching(DFSearchNode node, Branching b, int maxDiscrepancy) {
+    public DiscrepancyChoice(ReversibleContext context, Choice choice, int maxD) throws InconsistencyException {
         throw new NotImplementedException();
     }
 
-    public Alternative[] getAlternatives() {
+    public Alternative[] getAlternatives() throws InconsistencyException {
         // Hint:
         // Let b.alts denote b.getAlternatives()
         // Filter-out alternatives from b.alts that would exceed maxDiscrepancy

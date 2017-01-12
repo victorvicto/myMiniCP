@@ -21,11 +21,9 @@ package minicp.search;
 
 public abstract class Branching {
 
-    public static final Alternative[] SOLUTION = new Alternative[0];
+    public static final Alternative[] EMPTY = new Alternative[0];
 
-    public Alternative[] branch(Alternative... alternatives) {
+    public static Alternative[] branch(Alternative... alternatives) {
         return alternatives;
     }
-
-    public abstract Alternative[] getAlternatives();
 }

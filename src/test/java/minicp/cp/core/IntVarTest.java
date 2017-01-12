@@ -19,15 +19,11 @@
 
 package minicp.cp.core;
 
-import minicp.reversible.ReversibleContext;
-import minicp.reversible.ReversibleSparseSet;
-import minicp.search.Inconsistency;
+import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
 import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -39,12 +35,12 @@ public class IntVarTest {
 
     @Test
     public void testIntVar() {
-        Model cp  = new Model();
+        Solver cp  = new Solver();
 
         IntVar x = new IntVar(cp,10);
         IntVar y = new IntVar(cp,10);
 
-        cp.push();
+        cp.getContext().push();
 
 
         try {
@@ -58,17 +54,17 @@ public class IntVarTest {
         assertEquals(7,x.getMin());
         assertEquals(7,x.getMax());
 
-        } catch(Inconsistency e) { fail("should not fail here");}
+        } catch(InconsistencyException e) { fail("should not fail here");}
 
         try {
             x.assign(8);
             fail( "should have failed" );
-        } catch (Inconsistency expectedException) {}
+        } catch (InconsistencyException expectedException) {}
 
 
 
-        cp.pop();
-        cp.push();
+        cp.getContext().pop();
+        cp.getContext().push();
 
         assertFalse(x.isBound());
         assertEquals(10,x.getSize());
@@ -82,22 +78,18 @@ public class IntVarTest {
 
     @Test
     public void onDomainChangeOnBind() {
-
-        Model cp  = new Model();
+        propagateCalled = false;
+        Solver cp  = new Solver();
 
         IntVar x = new IntVar(cp,10);
         IntVar y = new IntVar(cp,10);
 
-        Constraint cons = new Constraint() {
+        Constraint cons = new Constraint(cp) {
 
             @Override
-            public void setup() throws Inconsistency {
-                x.propagateOnBind(this);
-                y.propagateOnDomainChange(this);
-            }
-            @Override
-            public void propagate() throws Inconsistency {
-                propagateCalled = true;
+            public void setup() throws InconsistencyException {
+                x.whenBind(() -> propagateCalled = true);
+                y.whenDomainChange(() -> propagateCalled = true);
             }
         };
 
@@ -117,7 +109,7 @@ public class IntVarTest {
             cp.fixPoint();
             assertTrue(propagateCalled);
 
-        } catch (Inconsistency inconsistency) {
+        } catch (InconsistencyException inconsistency) {
             fail("should not fail");
         }
     }
@@ -127,7 +119,7 @@ public class IntVarTest {
 
         try {
 
-            Model cp  = new Model();
+            Solver cp  = new Solver();
 
             IntVar x = new IntVar(cp,-10,10);
 
@@ -147,12 +139,12 @@ public class IntVarTest {
                 assertTrue(x.isBound());
                 assertEquals(-4,x.getMin());
 
-            } catch(Inconsistency e) { fail("should not fail here");}
+            } catch(InconsistencyException e) { fail("should not fail here");}
 
             try {
                 x.assign(8);
                 fail( "should have failed" );
-            } catch (Inconsistency expectedException) {}
+            } catch (InconsistencyException expectedException) {}
 
 
             cp.pop();
@@ -171,12 +163,13 @@ public class IntVarTest {
     }
 
 
+
     @Test
     public void arbitrarySetDomains() {
 
         try {
 
-            Model cp  = new Model();
+            Solver cp  = new Solver();
 
 
             Set<Integer> dom = new HashSet<>(Arrays.asList(-7,-10,6,9,10,12));
@@ -193,12 +186,12 @@ public class IntVarTest {
                 }
 
                 x.assign(-7);
-            } catch(Inconsistency e) { fail("should not fail here");}
+            } catch(InconsistencyException e) { fail("should not fail here");}
 
             try {
                 x.assign(-10);
                 fail( "should have failed" );
-            } catch (Inconsistency expectedException) {}
+            } catch (InconsistencyException expectedException) {}
 
 
             cp.pop();
@@ -219,55 +212,45 @@ public class IntVarTest {
     @Test
     public void onBoundChange() {
 
-        try {
+        Solver cp = new Solver();
 
-            Model cp = new Model();
+        IntVar x = new IntVar(cp, 10);
+        IntVar y = new IntVar(cp, 10);
 
-            IntVar x = new IntVar(cp, 10);
-            IntVar y = new IntVar(cp, 10);
+        Constraint cons = new Constraint(cp) {
 
-            Constraint cons = new Constraint() {
-
-                @Override
-                public void setup() throws Inconsistency {
-                    x.propagateOnBoundChange(this);
-                    y.propagateOnDomainChange(this);
-                }
-
-                @Override
-                public void propagate() throws Inconsistency {
-                    propagateCalled = true;
-                }
-            };
-
-            try {
-                cp.add(cons);
-                x.remove(8);
-                cp.fixPoint();
-                assertFalse(propagateCalled);
-                x.remove(9);
-                cp.fixPoint();
-                assertTrue(propagateCalled);
-                propagateCalled = false;
-                x.assign(4);
-                cp.fixPoint();
-                assertTrue(propagateCalled);
-                propagateCalled = false;
-                y.remove(10);
-                cp.fixPoint();
-                assertFalse(propagateCalled);
-                y.remove(2);
-                cp.fixPoint();
-                assertTrue(propagateCalled);
-
-            } catch (Inconsistency inconsistency) {
-                fail("should not fail");
+            @Override
+            public void setup() throws InconsistencyException {
+                x.whenBind(() -> propagateCalled  = true);
+                y.whenDomainChange(() -> propagateCalled = true);
             }
+        };
 
-        } catch (NotImplementedException e) {
-            e.print();
+        try {
+            cp.add(cons);
+            x.remove(8);
+            cp.fixPoint();
+            assertFalse(propagateCalled);
+            x.remove(9);
+            cp.fixPoint();
+            assertFalse(propagateCalled);
+            x.assign(4);
+            cp.fixPoint();
+            assertTrue(propagateCalled);
+            propagateCalled = false;
+            y.remove(10);
+            cp.fixPoint();
+            assertFalse(propagateCalled);
+            propagateCalled = false;
+            y.remove(2);
+            cp.fixPoint();
+            assertTrue(propagateCalled);
+
+        } catch (InconsistencyException inconsistency) {
+            fail("should not fail");
         }
     }
+
 
 
     @Test
@@ -275,19 +258,19 @@ public class IntVarTest {
 
         try {
 
-            Model cp = new Model();
+            Solver cp = new Solver();
 
             IntVar x = new IntVar(cp, 10);
 
-            Constraint cons = new Constraint() {
+            Constraint cons = new Constraint(cp) {
 
                 @Override
-                public void setup() throws Inconsistency {
+                public void setup() throws InconsistencyException {
                     x.propagateOnBoundChange(this);
                 }
 
                 @Override
-                public void propagate() throws Inconsistency {
+                public void propagate() throws InconsistencyException {
                     propagateCalled = true;
                 }
             };
@@ -301,7 +284,7 @@ public class IntVarTest {
                 cp.fixPoint();
                 assertTrue(propagateCalled);
 
-            } catch (Inconsistency inconsistency) {
+            } catch (InconsistencyException inconsistency) {
                 fail("should not fail");
             }
 
@@ -315,19 +298,19 @@ public class IntVarTest {
 
         try {
 
-            Model cp = new Model();
+            Solver cp = new Solver();
 
             IntVar x = new IntVar(cp, 10);
 
-            Constraint cons = new Constraint() {
+            Constraint cons = new Constraint(cp) {
 
                 @Override
-                public void setup() throws Inconsistency {
+                public void setup() throws InconsistencyException {
                     x.propagateOnBoundChange(this);
                 }
 
                 @Override
-                public void propagate() throws Inconsistency {
+                public void propagate() throws InconsistencyException {
                     propagateCalled = true;
                 }
             };
@@ -348,7 +331,7 @@ public class IntVarTest {
                 propagateCalled = false;
 
 
-            } catch (Inconsistency inconsistency) {
+            } catch (InconsistencyException inconsistency) {
                 fail("should not fail");
             }
 
@@ -356,10 +339,4 @@ public class IntVarTest {
             e.print();
         }
     }
-
-
-
-
-
-
 }

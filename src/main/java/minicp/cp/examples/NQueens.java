@@ -19,75 +19,58 @@
 
 package minicp.cp.examples;
 
+import minicp.cp.Factory;
 import minicp.cp.constraints.DifferentVal;
 import minicp.cp.constraints.EqualVal;
 import minicp.cp.core.IntVar;
-import minicp.cp.core.Model;
-import minicp.cp.constraints.DifferentVar;
-import minicp.search.Alternative;
+import minicp.cp.core.Solver;
+import minicp.util.InconsistencyException;
+import minicp.util.Box;
 import minicp.search.Branching;
 import minicp.search.DFSearch;
-import minicp.search.Inconsistency;
-
-import java.util.Arrays;
-import java.util.Optional;
+import minicp.search.SearchStatistics;
+import static minicp.search.Selector.*;
 
 public class NQueens {
 
     public static void main(String[] args) {
-        Model cp = new Model();
+        Solver cp = new Solver();
         int n = 8;
-        IntVar [] q = new IntVar[n];
+        IntVar [] q = Factory.makeIntVarArray(cp,n,n);
 
         try {
             for (int i = 0; i < n; i++)
-                q[i] = new IntVar(cp, n);
-
-            for (int i = 0; i < n; i++)
                 for (int j = i + 1; j < n; j++) {
-                    cp.add(new DifferentVar(q[i], q[j]));
-                    cp.add(new DifferentVar(q[i], q[j],i-j));
-                    cp.add(new DifferentVar(q[i], q[j],j-i));
+                    cp.add(Factory.makeDifferentVar(q[i], q[j]));
+                    cp.add(Factory.makeDifferentVar(q[i], q[j],i-j));
+                    cp.add(Factory.makeDifferentVar(q[i], q[j],j-i));
                 }
 
-            Branching myBranching = new Branching() {
-                @Override
-                public Alternative[] getAlternatives() {
-                    Optional<IntVar> result = Arrays.stream(q).filter(var -> !var.isBound()).findFirst();
-                    if (!result.isPresent()) {
-                        return SOLUTION;
-                    } else {
-                        IntVar qk = result.get();
-                        int v = qk.getMin();
-                        return branch(
-                                () -> { // left branch
-                                    cp.add(new EqualVal(qk, v));
-                                },
-                                () -> { // right branch
-                                    cp.add(new DifferentVal(qk, v));
-                                });
-                    }
-                }
-            };
+            // count the number of solution (manually)
+            Box<Integer>  nbSols = new Box<>(0);
 
 
-            DFSearch dfs = new DFSearch(cp,myBranching);
 
-            // count the number of solution
-            int [] nSols = new int[1];
-            dfs.onSolution(() -> {
-                nSols[0] += 1;
-            });
+            SearchStatistics stats = new DFSearch(cp.getContext(),
+                    selectMin(q,
+                        qi -> qi.getSize() > 1,
+                        qi -> qi.getSize(),
+                        qi -> {
+                            int v = qi.getMin();
+                            return Branching.branch(
+                                    () -> { cp.add(new EqualVal(qi,v));},
+                                    () -> { cp.add(new DifferentVal(qi,v));}
+                            );
+                        }
+                    )
+            ).onSolution( () ->
+                    nbSols.set(nbSols.get() + 1)
+            ).start();
 
-            // start the search
-            dfs.start();
-
-            System.out.println("#Solutions:"+nSols[0]);
-
-
-        } catch(Inconsistency c) {
+            System.out.format("#Solutions: %s\n",nbSols);
+            System.out.format("Statistics: %s\n",stats);
+        } catch(InconsistencyException c) {
             System.out.println("inconsistency detected in the model");
         }
     }
-
 }

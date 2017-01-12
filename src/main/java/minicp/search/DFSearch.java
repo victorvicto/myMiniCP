@@ -19,37 +19,37 @@
 
 package minicp.search;
 
+import minicp.reversible.ReversibleContext;
+import minicp.util.InconsistencyException;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class DFSearch {
 
-    public static final Inconsistency INCONSISTENCY = new Inconsistency() {
-        public Object feedBack() { return null;}
-    };
+    private Choice branching;
+    private ReversibleContext context;
+
+    private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
 
 
-    public static interface SolutionListener {
-        public void solutionFound();
+    // @Laurent:  I think solution listener must remain in DFSSearch
+    // because this is the place where the solution concept is defined (solution = no alternative and not failure)
+    @FunctionalInterface
+    public interface SolutionListener {
+        void solutionFound();
     }
-
-    private List<SolutionListener> solutionListeners;
-    private Branching branching;
-    private DFSearchNode node;
-
-    public DFSearch(DFSearchNode root, Branching branching) {
-        this.node = root;
-        this.branching = branching;
-        solutionListeners = new LinkedList<SolutionListener>();
-    }
-
-    public void onSolution(SolutionListener listener) {
+    public DFSearch onSolution(SolutionListener listener) {
         solutionListeners.add(listener);
+        return this;
+    }
+    public void notifySolutionFound() {
+        solutionListeners.forEach(s -> s.solutionFound());
     }
 
-    private void notifySolutionFound() {
-        solutionListeners.forEach(s -> s.solutionFound());
+    public DFSearch(ReversibleContext context, Choice branching) {
+        this.context = context;
+        this.branching = branching;
     }
 
     public SearchStatistics start(SearchLimit limit) {
@@ -64,7 +64,8 @@ public class DFSearch {
         return start(statistics -> false);
     }
 
-    private void dfs(SearchStatistics statistics,SearchLimit limit) {
+
+    private void dfs(SearchStatistics statistics, SearchLimit limit) {
         if (limit.stopSearch(statistics)) throw new StopSearchException();
         Alternative [] alternatives = branching.getAlternatives();
         if (alternatives.length == 0) {
@@ -73,17 +74,16 @@ public class DFSearch {
         }
         else {
             for (Alternative alt : alternatives) {
-                node.push();
+                context.push();
                 try {
                     statistics.nNodes++;
                     alt.execute();
                     dfs(statistics,limit);
-                } catch (Inconsistency e) {
+                } catch (InconsistencyException e) {
                     statistics.nFailures++;
                 }
-                node.pop();
+                context.pop();
             }
         }
     }
-
 }

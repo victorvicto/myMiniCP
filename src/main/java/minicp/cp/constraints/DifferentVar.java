@@ -21,39 +21,34 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
-import minicp.search.Inconsistency;
+import minicp.util.InconsistencyException;
 
 public class DifferentVar extends Constraint {
 
-    private IntVar x,y;
-    private int      c;
+    private IntVar x, y;
+    private int c;
 
-    public DifferentVar(IntVar x, IntVar y) { // x == y + c
+    public DifferentVar(IntVar x, IntVar y) { // x != y + c
+        super(x.getSolver());
         this.x = x;
         this.y = y;
         this.c = 0;
     }
-    public DifferentVar(IntVar x, IntVar y,int c) { // x == y + c
+    public DifferentVar(IntVar x, IntVar y, int c) { // x != y + c
+        super(x.getSolver());
         this.x = x;
         this.y = y;
         this.c = c;
     }
-
     @Override
-    public void setup() throws Inconsistency {
-        x.propagateOnBind(this);
-        y.propagateOnBind(this);
-        if (x.isBound() || y.isBound()) {
-            propagate();
-        }
-    }
-
-    @Override
-    public void propagate() throws Inconsistency {
-        if (x.isBound()) {
-            y.remove(x.getMin() - c);
-        } else {
+    public void setup() throws InconsistencyException {
+        if (y.isBound())
             x.remove(y.getMin() + c);
+        else if (x.isBound())
+            y.remove(x.getMin() - c);
+        else {
+            x.whenBind(() -> y.remove(x.getMin() - c));
+            y.whenBind(() -> x.remove(y.getMin() + c));
         }
     }
 }

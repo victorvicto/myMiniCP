@@ -20,6 +20,6 @@
 package minicp.search;
 
 public class StopSearchException extends RuntimeException {
-
+    private static final long serialVersionUID = 2079205745523222197L;
 }
 

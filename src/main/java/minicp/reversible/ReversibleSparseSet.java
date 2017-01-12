@@ -19,10 +19,8 @@
 
 package minicp.reversible;
 
-
-
-
 import minicp.util.NotImplementedException;
+
 import java.util.NoSuchElementException;
 
 public class ReversibleSparseSet {

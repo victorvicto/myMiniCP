@@ -21,20 +21,21 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
-import minicp.cp.core.Store;
-import minicp.search.Inconsistency;
+import minicp.cp.core.Solver;
+import minicp.util.InconsistencyException;
 
 public class AllDifferentBinary extends Constraint {
 
     private IntVar [] x;
 
     public AllDifferentBinary(IntVar ... x) {
+        super(x[0].getSolver());
         this.x = x;
     }
 
     @Override
-    public void setup() throws Inconsistency {
-        Store cp = x[0].getStore();
+    public void setup() throws InconsistencyException {
+        Solver cp = x[0].getSolver();
         for (int i = 0; i < x.length; i++) {
             for (int j = i+1; j < x.length; j++) {
                 cp.add(new DifferentVar(x[i],x[j]),false);

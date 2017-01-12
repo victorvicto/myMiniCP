@@ -21,7 +21,7 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
-import minicp.search.Inconsistency;
+import minicp.util.InconsistencyException;
 
 public class DifferentVal extends Constraint {
 
@@ -29,12 +29,13 @@ public class DifferentVal extends Constraint {
     private int y;
 
     public DifferentVal(IntVar x, int y) {
+        super(x.getSolver());
         this.x = x;
         this.y = y;
     }
 
     @Override
-    public void setup() throws Inconsistency {
+    public void setup() throws InconsistencyException {
         x.remove(y);
     }
 

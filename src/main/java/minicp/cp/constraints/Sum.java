@@ -21,7 +21,7 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
-import minicp.search.Inconsistency;
+import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
 
 public class Sum extends Constraint {
@@ -36,17 +36,18 @@ public class Sum extends Constraint {
      * @param y
      */
     public Sum(IntVar [] x, IntVar y) {
+        super(y.getSolver());
         this.x = x;
         this.y = y;
     }
 
     @Override
-    public void setup() throws Inconsistency {
-        throw new minicp.util.NotImplementedException();
+    public void setup() throws InconsistencyException {
+        throw new NotImplementedException();
     }
 
     @Override
-    public void propagate() throws Inconsistency {
+    public void propagate() throws InconsistencyException {
         throw new NotImplementedException();
     }
 

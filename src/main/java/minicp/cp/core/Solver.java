@@ -19,48 +19,56 @@
 
 package minicp.cp.core;
 
-
-import minicp.search.DFSearch;
-import minicp.search.DFSearchNode;
-import minicp.search.Inconsistency;
+import minicp.reversible.ReversibleContext;
+import minicp.util.InconsistencyException;
 
 import java.util.Stack;
+import java.util.Vector;
 
-public class Store extends DFSearchNode {
+public class Solver {
 
-    Stack<Constraint> propagationQueue = new Stack<>();
+    private ReversibleContext context = new ReversibleContext();
+    private Stack<Constraint> propagationQueue = new Stack<>();
+    private Vector<IntVar>  vars = new Vector<>(2);
+    public void registerVar(IntVar x) {
+        vars.add(x);
+    }
 
-    public void enqueue(Constraint c) {
-        if (!c.inQueue) {
-            c.inQueue = true;
+    public void push() { context.push();}
+    public void pop()  { context.pop();}
+
+    public ReversibleContext getContext() { return context;}
+
+
+    public void schedule(Constraint c) {
+        if (!c.scheduled && c.isActive()) {
+            c.scheduled = true;
             propagationQueue.add(c);
         }
     }
 
-    public void fixPoint() throws Inconsistency {
+    public void fixPoint() throws InconsistencyException {
         boolean failed = false;
         while (!propagationQueue.isEmpty()) {
             Constraint c = propagationQueue.pop();
-            c.inQueue = false;
+            c.scheduled = false;
             if (!failed) {
                 try { c.propagate(); }
-                catch (Inconsistency e) {
+                catch (InconsistencyException e) {
                     failed = true;
                 }
             }
         }
-        if (failed) throw DFSearch.INCONSISTENCY;
+        if (failed) throw new InconsistencyException();
     }
 
-    public void add(Constraint c) throws Inconsistency {
+    public void add(Constraint c) throws InconsistencyException {
         add(c,true);
     }
 
-    public void add(Constraint c, boolean fixPoint) throws Inconsistency {
+    public void add(Constraint c, boolean enforceFixPoint) throws InconsistencyException {
         c.setup();
-        if (fixPoint) {
-            fixPoint();
-        }
+        if (enforceFixPoint) fixPoint();
     }
 
 }
