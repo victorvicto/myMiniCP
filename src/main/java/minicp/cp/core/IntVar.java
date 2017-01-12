@@ -28,10 +28,10 @@ import minicp.util.NotImplementedException;
 import java.security.InvalidParameterException;
 import java.util.Set;
 
-public class IntVar {
+public class IntVar implements Notifier {
 
     private Solver cp;
-    private ReversibleSparseSet domain;
+    private IntDomain domain;
     private ReversibleStack<Constraint> onDomainChange;
     private ReversibleStack<Constraint> onBind;
     private ReversibleStack<Constraint> onBounds;
@@ -46,7 +46,7 @@ public class IntVar {
         if (n <= 0) throw new InvalidParameterException("at least one value in the domain");
         this.cp = cp;
         cp.registerVar(this);
-        domain = new ReversibleSparseSet(cp.getContext(),n);
+        domain = new SparseSetDomain(cp.getContext(),n);
         onDomainChange = new ReversibleStack<>(cp.getContext());
         onBind = new ReversibleStack<>(cp.getContext());
         onBounds = new ReversibleStack<>(cp.getContext());
@@ -137,12 +137,9 @@ public class IntVar {
             cp.schedule(constraints.get(i));
     }
 
-    public int getMin() { return domain.getMin(); };
-
-    public int getMax() { return domain.getMax(); }
-
+    public int getMin()  { return domain.getMin(); };
+    public int getMax()  { return domain.getMax(); }
     public int getSize() { return domain.getSize(); }
-
     /**
      * @param v
      * @return true iff the value v is the domain
@@ -215,5 +212,18 @@ public class IntVar {
     @Override
     public String toString() {
         return domain.toString();
+    }
+
+    public void bindEvt() {
+
+    }
+    public void domainEvt(int dsz) {
+
+    }
+    public void updateMinEvt(int dsz) {
+
+    }
+    public void updateMaxEvt(int dsz) {
+
     }
 }
