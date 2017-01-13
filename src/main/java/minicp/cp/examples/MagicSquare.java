@@ -19,13 +19,82 @@
 
 package minicp.cp.examples;
 
+
+import minicp.cp.constraints.AllDifferentBinary;
+import minicp.cp.constraints.Sum;
+import minicp.cp.core.IntVar;
+import minicp.cp.core.Solver;
+import minicp.search.DFSearch;
+import minicp.search.SearchStatistics;
+import minicp.util.InconsistencyException;
+
+import java.util.Arrays;
+
+import static minicp.cp.core.Heuristics.*;
+
 public class MagicSquare {
 
-    public static void main(String[] args) {
+    // https://en.wikipedia.org/wiki/Magic_square
+    public static void main(String[] args) throws InconsistencyException {
 
-        
+        int n = 6;
+        int M = n * (n * n + 1) / 2;
+
+        Solver cp = new Solver();
+        IntVar[][] x = new IntVar[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                x[i][j] = new IntVar(cp, 1, n*n);
+            }
+        }
 
 
+        IntVar [] xFlat = new IntVar[x.length * x.length];
+        for (int i = 0; i < x.length; i++) {
+            System.arraycopy(x[i],0,xFlat,i * x.length,x.length);
+        }
+
+
+        // AllDifferent
+        cp.add(new AllDifferentBinary(xFlat));
+
+        // Sum on lines
+        for (int i = 0; i < n; i++) {
+            cp.add(new Sum(x[i],M));
+        }
+
+        // Sum on columns
+        for (int j = 0; j < x.length; j++) {
+            IntVar[] column = new IntVar[n];
+            for (int i = 0; i < x.length; i++)
+                column[i] = x[i][j];
+            cp.add(new Sum(column,M));
+        }
+
+        // Sum on diagonals
+        IntVar[] diagonalLeft = new IntVar[n];
+        IntVar[] diagonalRight = new IntVar[n];
+        for (int i = 0; i < x.length; i++) {
+            diagonalLeft[i] = x[i][i];
+            diagonalRight[i] = x[n-i-1][i];
+        }
+        cp.add(new Sum(diagonalLeft, M));
+        cp.add(new Sum(diagonalRight, M));
+
+
+
+        DFSearch dfs = new DFSearch(cp.getContext(),firstFail(xFlat));
+        dfs.onSolution(() -> {
+                    for (int i = 0; i < n; i++) {
+                        System.out.println(Arrays.toString(x[i]));
+                    }
+                }
+        );
+
+        SearchStatistics stats = dfs.start(stat -> stat.nSolutions >= 1); // stop on first solution
+
+        System.out.println(stats);
     }
 
 }

@@ -22,24 +22,38 @@ package minicp.cp.core;
 import minicp.util.InconsistencyException;
 
 
-public interface IntDomain {
-    int getMin();
+public abstract class IntDomain {
 
-    int getMax();
+    public abstract int getMin();
 
-    int getSize();
+    public abstract  int getMax();
 
-    boolean contains(int v);
+    public abstract  int getSize();
 
-    boolean isBound();
+    public abstract  boolean contains(int v);
 
-    String toString();
+    public abstract  boolean isBound();
 
-    void remove(int v, DomainListener x) throws InconsistencyException;
+    public abstract  void remove(int v, DomainListener x) throws InconsistencyException;
 
-    void removeAllBut(int v, DomainListener x) throws InconsistencyException;
+    public abstract  void removeAllBut(int v, DomainListener x) throws InconsistencyException;
 
-    void removeBelow(int value, DomainListener x) throws InconsistencyException;
+    public abstract  int removeBelow(int value, DomainListener x) throws InconsistencyException;
 
-    void removeAbove(int value, DomainListener x) throws InconsistencyException;
+    public abstract  int removeAbove(int value, DomainListener x) throws InconsistencyException;
+
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        b.append("{");
+        for (int i = getMin(); i <= getMax() - 1; i++) {
+            if (contains((i))) {
+                b.append(i);
+                b.append(',');
+            }
+        }
+        if (getSize() > 0) b.append(getMax());
+        b.append("}");
+        return b.toString();
+    }
 }

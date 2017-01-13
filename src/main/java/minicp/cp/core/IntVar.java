@@ -69,17 +69,7 @@ public class IntVar {
      * @param n > 0
      */
     public IntVar(Solver cp, int n) {
-        if (n <= 0) throw new InvalidParameterException("at least one value in the domain");
-        this.cp = cp;
-        cp.registerVar(this);
-        domain = new SparseSetDomain(cp.getContext(),n);
-        onDomain = new ReversibleStack<>(cp.getContext());
-        onBind  = new ReversibleStack<>(cp.getContext());
-        onBounds = new ReversibleStack<>(cp.getContext());
-    }
-
-    public Solver getSolver() {
-        return cp;
+        this(cp,0,n-1);
     }
 
     /**
@@ -91,7 +81,16 @@ public class IntVar {
      */
     public IntVar(Solver cp, int min, int max) {
         if (min > max) throw new InvalidParameterException("at least one value in the domain");
-        throw new NotImplementedException();
+        this.cp = cp;
+        cp.registerVar(this);
+        domain = new SparseSetDomain(cp.getContext(),min,max);
+        onDomain = new ReversibleStack<>(cp.getContext());
+        onBind  = new ReversibleStack<>(cp.getContext());
+        onBounds = new ReversibleStack<>(cp.getContext());
+    }
+
+    public Solver getSolver() {
+        return cp;
     }
 
     /**
@@ -213,23 +212,23 @@ public class IntVar {
     }
 
     /**
-     * Remove all the values < value
-     * @param value
+     * Remove all the values < va
+     * @param v
      * @return the new minimum
      * @throws InconsistencyException
      */
-    public int removeBelow(int value) throws InconsistencyException {
-        throw new NotImplementedException();
+    public int removeBelow(int v) throws InconsistencyException {
+        return domain.removeBelow(v, domListener);
     }
 
     /**
-     * Remove all the values > valu
-     * @param value
+     * Remove all the values > v
+     * @param v
      * @return the new maximum
      * @throws InconsistencyException
      */
-    public int removeAbove(int value) throws InconsistencyException {
-        throw new NotImplementedException();
+    public int removeAbove(int v) throws InconsistencyException {
+        return domain.removeAbove(v, domListener);
     }
 
 }

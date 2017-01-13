@@ -21,12 +21,17 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
+import minicp.search.DFSearch;
+import minicp.search.SearchStatistics;
 import minicp.util.NotImplementedException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static minicp.cp.core.Heuristics.*;
 import minicp.util.InconsistencyException;
+
+import java.util.Arrays;
 
 
 public class SumTest {
@@ -37,8 +42,8 @@ public class SumTest {
             try {
 
                 Solver cp = new Solver();
+                IntVar y = new IntVar(cp, -100, 100);
                 IntVar[] x = new IntVar[]{new IntVar(cp, 0, 5), new IntVar(cp, 1, 5), new IntVar(cp, 0, 5)};
-                IntVar y = new IntVar(cp, 0, 100);
                 cp.add(new Sum(x, y));
 
                 assertEquals(1, y.getMin());
@@ -99,6 +104,125 @@ public class SumTest {
             }
         } catch (NotImplementedException e) {
             e.print();
+        }
+    }
+
+
+    @Test
+    public void sum4() {
+
+        try {
+
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{new IntVar(cp, 0, 5), new IntVar(cp, 0, 2), new IntVar(cp, 0, 1)};
+            cp.add(new Sum(x, 0));
+
+            assertEquals(0, x[0].getMax());
+            assertEquals(0, x[1].getMax());
+            assertEquals(0, x[2].getMax());
+
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        }
+    }
+
+    @Test
+    public void sum5() {
+        try {
+
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{new IntVar(cp, -5, 0), new IntVar(cp, -5, 0), new IntVar(cp, -3, 0)};
+            cp.add(new Sum(x, 0));
+
+            assertEquals(0, x[0].getMin());
+            assertEquals(0, x[1].getMin());
+            assertEquals(0, x[2].getMin());
+
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        }
+    }
+
+    @Test
+    public void sum6() {
+        try {
+
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{new IntVar(cp, -5, 0), new IntVar(cp, -5, 0), new IntVar(cp, -3, 3)};
+            cp.add(new Sum(x, 0));
+            assertEquals(-3, x[0].getMin());
+            assertEquals(-3, x[1].getMin());
+
+            x[2].removeAbove(0);
+            cp.fixPoint();
+
+            assertEquals(0, x[0].getMin());
+            assertEquals(0, x[1].getMin());
+            assertEquals(0, x[2].getMin());
+
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        }
+    }
+
+    @Test
+    public void sum7() {
+        try {
+
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{new IntVar(cp, -5, 0), new IntVar(cp, -5, 0), new IntVar(cp, -3, 3)};
+            cp.add(new Sum(x, 0));
+            assertEquals(-3, x[0].getMin());
+            assertEquals(-3, x[1].getMin());
+
+            x[2].remove(1);
+            x[2].remove(2);
+            x[2].remove(3);
+            x[2].remove(4);
+            x[2].remove(5);
+            cp.fixPoint();
+
+            assertEquals(0, x[0].getMin());
+            assertEquals(0, x[1].getMin());
+            assertEquals(0, x[2].getMin());
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
+        }
+    }
+
+
+    @Test
+    public void sum8() {
+        try {
+
+            Solver cp = new Solver();
+
+            // {0,0,0},  1
+            // {-2,1,1}  3
+            // {2,-1,-1} 3
+            // {-1,1,0}  6
+            // {0,-3,3}  6
+            // {2,-2,0}  6
+            // {-1,1,0}  6
+            // {1,2,-3}  6
+
+
+            IntVar[] x = new IntVar[]{new IntVar(cp, -3, 3), new IntVar(cp, -3, 3), new IntVar(cp, -3, 3)};
+            cp.add(new Sum(x, 0));
+
+            DFSearch search = new DFSearch(cp.getContext(),firstFail(x));
+
+            SearchStatistics stats = search.start();
+
+            assertEquals(37,stats.nSolutions);
+
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         }
     }
 

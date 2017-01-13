@@ -12,8 +12,8 @@ public class Factory {
     // Factory
     static public IntVar[] makeIntVarArray(Solver cp, int n, int sz) {
         IntVar[] rv = new IntVar[n];
-        for(int i=0;i<n;i++)
-            rv[i] = new IntVar(cp,sz);
+        for (int i = 0; i < n; i++)
+            rv[i] = new IntVar(cp, sz);
         return rv;
     }
     static public Constraint makeDifferentVar(IntVar x,IntVar y,int c) { return new DifferentVar(x,y,c);}

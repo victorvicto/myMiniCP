@@ -65,4 +65,8 @@ public class ReversibleInt {
 
     public int getValue() { return this.v; }
 
+    @Override
+    public String toString() {
+        return ""+v;
+    }
 }

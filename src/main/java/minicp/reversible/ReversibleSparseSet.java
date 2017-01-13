@@ -216,7 +216,15 @@ public class ReversibleSparseSet {
      * @return the new minimum
      */
     public int removeBelow(int value) {
-        throw new NotImplementedException();
+        if (getMax() < value) {
+            removeAll();
+            return Integer.MAX_VALUE;
+        } else {
+            for (int v = getMin(); v < value; v++) {
+                remove(v);
+            }
+            return getMin();
+        }
     }
 
     /**
@@ -225,7 +233,17 @@ public class ReversibleSparseSet {
      * @return the new maximum
      */
     public int removeAbove(int value) {
-        throw new NotImplementedException();
+        int max = getMax();
+        if (getMin() > value) {
+            removeAll();
+            return Integer.MIN_VALUE;
+        }
+        else {
+            for (int v = value + 1; v <= max; v++) {
+                remove(v);
+            }
+            return getMax();
+        }
     }
 
 

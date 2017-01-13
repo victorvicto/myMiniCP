@@ -23,7 +23,7 @@ import minicp.util.InconsistencyException;
 
 public abstract class Constraint {
 
-    private final Solver cp;
+    protected final Solver cp;
     protected boolean scheduled = false;
     protected final ReversibleBool active;
 

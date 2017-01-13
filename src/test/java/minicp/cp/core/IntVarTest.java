@@ -149,7 +149,7 @@ public class IntVarTest {
 
             cp.pop();
 
-            assertEquals(20,x.getSize());
+            assertEquals(21,x.getSize());
 
             for (int i = -10; i < 10; i++) {
                 assertTrue(x.contains(i));
@@ -238,6 +238,7 @@ public class IntVarTest {
             cp.fixPoint();
             assertTrue(propagateCalled);
             propagateCalled = false;
+            assertFalse(y.contains(10));
             y.remove(10);
             cp.fixPoint();
             assertFalse(propagateCalled);
