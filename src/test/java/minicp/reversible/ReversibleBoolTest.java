@@ -30,7 +30,7 @@ public class ReversibleBoolTest {
 
     @Test
     public void testReversibleBool() {
-        State rc = new State();
+        ReversibleState rc = new ReversibleState();
 
         ReversibleBool b1 = new ReversibleBool(rc,true);
         ReversibleBool b2 = new ReversibleBool(rc,false);

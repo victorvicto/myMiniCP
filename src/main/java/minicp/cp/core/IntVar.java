@@ -26,15 +26,41 @@ import minicp.util.NotImplementedException;
 import java.security.InvalidParameterException;
 import java.util.Set;
 
-public class IntVar implements Notifier {
+public class IntVar {
 
     private Solver cp;
     private IntDomain domain;
     private ReversibleStack<Constraint> onDomain;
     private ReversibleStack<Constraint> onBind;
     private ReversibleStack<Constraint> onBounds;
-    private ReversibleStack<Constraint> onMin;
-    private ReversibleStack<Constraint> onMax;
+    private DomainListener domListener = new DomainListener() {
+        @Override
+        public void bind() {
+            scheduleAll(onDomain);
+            scheduleAll(onBind);
+        }
+
+        @Override
+        public void change(int domainSize) {
+            scheduleAll(onDomain);
+            if (domainSize == 1)
+                scheduleAll(onBind);
+        }
+
+        @Override
+        public void removeBelow(int domainSize) {
+            scheduleAll(onBounds);
+            if (domainSize == 1)
+                scheduleAll(onBind);
+        }
+
+        @Override
+        public void removeAbove(int domainSize) {
+            scheduleAll(onBounds);
+            if (domainSize == 1)
+                scheduleAll(onBind);
+        }
+    };
 
     /**
      * Create a variable with the elements {0,...,n-1}
@@ -50,8 +76,6 @@ public class IntVar implements Notifier {
         onDomain = new ReversibleStack<>(cp.getContext());
         onBind  = new ReversibleStack<>(cp.getContext());
         onBounds = new ReversibleStack<>(cp.getContext());
-        onMin = new ReversibleStack<>(cp.getContext());
-        onMax = new ReversibleStack<>(cp.getContext());
     }
 
     public Solver getSolver() {
@@ -145,14 +169,24 @@ public class IntVar implements Notifier {
     public void propagateOnBoundChange(Constraint c) { onBounds.push(c);}
 
 
-    private void enQueueAll(ReversibleStack<Constraint> constraints) {
+    private void scheduleAll(ReversibleStack<Constraint> constraints) {
         for (int i = 0; i < constraints.size(); i++)
             cp.schedule(constraints.get(i));
     }
 
-    public int getMin()  { return domain.getMin(); };
-    public int getMax()  { return domain.getMax(); }
-    public int getSize() { return domain.getSize(); }
+    public int getMin() {
+        return domain.getMin();
+    }
+
+
+    public int getMax() {
+        return domain.getMax();
+    }
+
+    public int getSize() {
+        return domain.getSize();
+    }
+
     /**
      * @param v
      * @return true iff the value v is the domain
@@ -165,9 +199,7 @@ public class IntVar implements Notifier {
      * @throws InconsistencyException
      */
     public void remove(int v) throws InconsistencyException {
-        if (domain.contains(v))
-            domain.remove(v,this);
-        if (domain.getSize()==0) throw new InconsistencyException();
+        domain.remove(v, domListener);
     }
 
     /**
@@ -177,11 +209,7 @@ public class IntVar implements Notifier {
      * @throws InconsistencyException
      */
     public void assign(int v) throws InconsistencyException {
-        if (domain.contains(v)) {
-            if (domain.getSize() != 1)
-                domain.removeAllBut(v,this);
-        }
-        else throw new InconsistencyException();
+        domain.removeAllBut(v, domListener);
     }
 
     /**
@@ -204,25 +232,4 @@ public class IntVar implements Notifier {
         throw new NotImplementedException();
     }
 
-    public void bindEvt() {
-        enQueueAll(onDomain);
-        enQueueAll(onBind);
-    }
-    public void domainEvt(int dsz) {
-        enQueueAll(onDomain);
-        if (dsz == 1)
-            enQueueAll(onBind);
-    }
-    public void updateMinEvt(int dsz) {
-        enQueueAll(onMin);
-        enQueueAll(onBounds);
-        if (dsz == 1)
-            enQueueAll(onBind);
-    }
-    public void updateMaxEvt(int dsz) {
-        enQueueAll(onMax);
-        enQueueAll(onBounds);
-        if (dsz == 1)
-            enQueueAll(onBind);
-    }
 }

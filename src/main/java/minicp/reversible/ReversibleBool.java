@@ -37,10 +37,10 @@ public class ReversibleBool implements TrailEntry {
     };
 
     private boolean v;
-    private State context;
+    private ReversibleState context;
     private long lastMagic;
 
-    public ReversibleBool(State context, boolean initial) {
+    public ReversibleBool(ReversibleState context, boolean initial) {
         this.context = context;
         v = initial;
         lastMagic = context.magic;

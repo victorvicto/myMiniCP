@@ -35,11 +35,11 @@ public class ReversibleInt {
         }
     }
 
-    private State context;
+    private ReversibleState context;
     private int v;
     private Long lastMagic = -1L;
 
-    public ReversibleInt(State context, int initial) {
+    public ReversibleInt(ReversibleState context, int initial) {
         this.context = context;
         v = initial;
         lastMagic = context.magic;

@@ -17,29 +17,16 @@
  * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
  */
 
+
 package minicp.cp.core;
 
-import minicp.util.InconsistencyException;
 
+public interface DomainListener {
+    void bind();
 
-public interface IntDomain {
-    int getMin();
+    void change(int domainSize);
 
-    int getMax();
+    void removeBelow(int domainSize);
 
-    int getSize();
-
-    boolean contains(int v);
-
-    boolean isBound();
-
-    String toString();
-
-    void remove(int v, DomainListener x) throws InconsistencyException;
-
-    void removeAllBut(int v, DomainListener x) throws InconsistencyException;
-
-    void removeBelow(int value, DomainListener x) throws InconsistencyException;
-
-    void removeAbove(int value, DomainListener x) throws InconsistencyException;
+    void removeAbove(int domainSize);
 }

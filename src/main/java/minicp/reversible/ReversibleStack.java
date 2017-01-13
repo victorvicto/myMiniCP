@@ -26,7 +26,7 @@ public class ReversibleStack<E> {
     ReversibleInt size;
     ArrayList<E> stack;
 
-    public ReversibleStack(State rc) {
+    public ReversibleStack(ReversibleState rc) {
         size = new ReversibleInt(rc,0);
         stack = new ArrayList<E>();
     }

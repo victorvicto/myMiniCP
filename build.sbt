@@ -1,6 +1,12 @@
+import de.johoop.jacoco4sbt._
+
+
 autoCompilerPlugins := true
 
 jacoco.settings
+
+jacoco.reportFormats in jacoco.Config := Seq(XMLReport("utf-8"), HTMLReport("utf-8"))
+
 
 lazy val root = (project in file(".")).settings(
     name := "minicp",
