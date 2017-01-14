@@ -26,180 +26,91 @@ import minicp.util.NotImplementedException;
 import java.security.InvalidParameterException;
 import java.util.Set;
 
-public class IntVar {
-
-    private Solver cp;
-    private IntDomain domain;
-    private ReversibleStack<Constraint> onDomain;
-    private ReversibleStack<Constraint> onBind;
-    private ReversibleStack<Constraint> onBounds;
-    private DomainListener domListener = new DomainListener() {
-        @Override
-        public void bind() {
-            scheduleAll(onDomain);
-            scheduleAll(onBind);
-        }
-
-        @Override
-        public void change(int domainSize) {
-            scheduleAll(onDomain);
-            if (domainSize == 1)
-                scheduleAll(onBind);
-        }
-
-        @Override
-        public void removeBelow(int domainSize) {
-            scheduleAll(onBounds);
-            if (domainSize == 1)
-                scheduleAll(onBind);
-        }
-
-        @Override
-        public void removeAbove(int domainSize) {
-            scheduleAll(onBounds);
-            if (domainSize == 1)
-                scheduleAll(onBind);
-        }
-    };
+public interface IntVar {
 
     /**
-     * Create a variable with the elements {0,...,n-1}
-     * as initial domain
-     * @param cp
-     * @param n > 0
+     * Return the solver in which this variable was created
+     * @return the solver in which this variable was created
      */
-    public IntVar(Solver cp, int n) {
-        this(cp,0,n-1);
-    }
+    Solver getSolver();
 
     /**
-     * Create a variable with the elements {min,...,max}
-     * as initial domain
-     * @param cp
-     * @param min
-     * @param max >= min
+     * Ask that the closure is called whenever the domain change
+     * of this variable changes
+     * @param c
      */
-    public IntVar(Solver cp, int min, int max) {
-        if (min > max) throw new InvalidParameterException("at least one value in the domain");
-        this.cp = cp;
-        cp.registerVar(this);
-        domain = new SparseSetDomain(cp.getContext(),min,max);
-        onDomain = new ReversibleStack<>(cp.getContext());
-        onBind  = new ReversibleStack<>(cp.getContext());
-        onBounds = new ReversibleStack<>(cp.getContext());
-    }
-
-    public Solver getSolver() {
-        return cp;
-    }
+    void whenDomainChange(ConstraintClosure.Closure c);
 
     /**
-     * Create a variable with values as initial domain
-     * @param cp
-     * @param values
+     * Ask that the closure is called whenever the domain
+     * of this variable is reduced to a single value
+     * @param c
      */
-    public IntVar(Solver cp, Set<Integer> values) {
-        throw new NotImplementedException();
-    }
-
+    void whenBind(ConstraintClosure.Closure c);
 
     /**
-     * @return true if and only if the domain has a single value
+     * Ask that the closure is called whenever
+     * the max or min value of the domain of this variable changes
+     * @param c
      */
-    public boolean isBound() {
-        return domain.getSize() == 1;
-    }
-
-    @Override
-    public String toString() {
-        return domain.toString();
-    }
+    void whenBoundsChange(ConstraintClosure.Closure c);
 
     /**
      * Ask that c.propagate() is called whenever the domain change
      * of this variable changes
      * @param c
      */
-    public void whenDomainChange(ConstraintClosure.Closure c) {
-        onDomain.push(new ConstraintClosure(cp,c));
-    }
+    void propagateOnDomainChange(Constraint c);
 
     /**
      * Ask that c.propagate() is called whenever the domain
      * of this variable is reduced to a single value
      * @param c
      */
-    public void whenBind(ConstraintClosure.Closure c) {
-        onBind.push(new ConstraintClosure(cp,c));
-    }
+    void propagateOnBind(Constraint c);
 
     /**
      * Ask that c.propagate() is called whenever
      * the max or min value of the domain of this variable changes
      * @param c
      */
-    public void whenBoundsChange(ConstraintClosure.Closure c) throws InconsistencyException {
-        onBounds.push(new ConstraintClosure(cp,c));
-    }
+    void propagateOnBoundChange(Constraint c);
 
     /**
-     * Ask that c.propagate() is called whenever the domain change
-     * of this variable changes
-     * @param c
+     * Return the minimum of the domain of the variable
+     * @return the minimum of the domain of the variable
      */
-    public void propagateOnDomainChange(Constraint c) {
-        onDomain.push(c);
-    }
+    int getMin();
 
     /**
-     * Ask that c.propagate() is called whenever the domain
-     * of this variable is reduced to a single value
-     * @param c
+     * Return the maximum of the domain of the variable
+     * @return the maximum of the domain of the variable
      */
-    public void propagateOnBind(Constraint c) {
-        onBind.push(c);
-    }
+    int getMax();
 
     /**
-     * Ask that c.propagate() is called whenever
-     * the max or min value of the domain of this variable changes
-     * @param c
+     * Return the size of the domain of the variable
+     * @return the size of the domain of the variable
      */
-    public void propagateOnBoundChange(Constraint c) { onBounds.push(c);}
+    int getSize();
 
-
-    private void scheduleAll(ReversibleStack<Constraint> constraints) {
-        for (int i = 0; i < constraints.size(); i++)
-            cp.schedule(constraints.get(i));
-    }
-
-    public int getMin() {
-        return domain.getMin();
-    }
-
-
-    public int getMax() {
-        return domain.getMax();
-    }
-
-    public int getSize() {
-        return domain.getSize();
-    }
+    /**
+     * Return true if the domain of the variable has a single value
+     * @return true if the domain of the variable has a single value
+     */
+    boolean isBound();
 
     /**
      * @param v
      * @return true iff the value v is the domain
      */
-    public boolean contains(int v) { return domain.contains(v); }
-
+    boolean contains(int v);
     /**
      * Remove the value v from the domain
      * @param v
      * @throws InconsistencyException
      */
-    public void remove(int v) throws InconsistencyException {
-        domain.remove(v, domListener);
-    }
+    void remove(int v) throws InconsistencyException;
 
     /**
      * Assign the value v i.e.
@@ -207,9 +118,7 @@ public class IntVar {
      * @param v
      * @throws InconsistencyException
      */
-    public void assign(int v) throws InconsistencyException {
-        domain.removeAllBut(v, domListener);
-    }
+    void assign(int v) throws InconsistencyException;
 
     /**
      * Remove all the values < va
@@ -217,9 +126,7 @@ public class IntVar {
      * @return the new minimum
      * @throws InconsistencyException
      */
-    public int removeBelow(int v) throws InconsistencyException {
-        return domain.removeBelow(v, domListener);
-    }
+    int removeBelow(int v) throws InconsistencyException;
 
     /**
      * Remove all the values > v
@@ -227,8 +134,6 @@ public class IntVar {
      * @return the new maximum
      * @throws InconsistencyException
      */
-    public int removeAbove(int v) throws InconsistencyException {
-        return domain.removeAbove(v, domListener);
-    }
+    int removeAbove(int v) throws InconsistencyException;
 
 }

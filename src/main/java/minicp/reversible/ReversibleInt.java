@@ -60,8 +60,14 @@ public class ReversibleInt {
         }
     }
 
-    public void increment() { setValue(getValue()+1); }
-    public void decrement() { setValue(getValue()-1); }
+    public int increment() {
+        setValue(getValue()+1);
+        return getValue();
+    }
+    public int decrement() {
+        setValue(getValue()-1);
+        return getValue();
+    }
 
     public int getValue() { return this.v; }
 

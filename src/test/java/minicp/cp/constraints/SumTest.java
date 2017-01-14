@@ -29,9 +29,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static minicp.cp.core.Heuristics.*;
+import static minicp.cp.Factory.*;
 import minicp.util.InconsistencyException;
 
-import java.util.Arrays;
 
 
 public class SumTest {
@@ -42,8 +42,8 @@ public class SumTest {
             try {
 
                 Solver cp = new Solver();
-                IntVar y = new IntVar(cp, -100, 100);
-                IntVar[] x = new IntVar[]{new IntVar(cp, 0, 5), new IntVar(cp, 1, 5), new IntVar(cp, 0, 5)};
+                IntVar y = makeIntVar(cp, -100, 100);
+                IntVar[] x = new IntVar[]{makeIntVar(cp, 0, 5), makeIntVar(cp, 1, 5), makeIntVar(cp, 0, 5)};
                 cp.add(new Sum(x, y));
 
                 assertEquals(1, y.getMin());
@@ -64,8 +64,8 @@ public class SumTest {
             try {
 
                 Solver cp = new Solver();
-                IntVar[] x = new IntVar[]{new IntVar(cp, -5, 5), new IntVar(cp, 1, 2), new IntVar(cp, 0, 1)};
-                IntVar y = new IntVar(cp, 0, 100);
+                IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
+                IntVar y = makeIntVar(cp, 0, 100);
                 cp.add(new Sum(x, y));
 
                 assertEquals(-3, x[0].getMin());
@@ -86,8 +86,8 @@ public class SumTest {
             try {
 
                 Solver cp = new Solver();
-                IntVar[] x = new IntVar[]{new IntVar(cp, -5, 5), new IntVar(cp, 1, 2), new IntVar(cp, 0, 1)};
-                IntVar y = new IntVar(cp, 5, 5);
+                IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
+                IntVar y = makeIntVar(cp, 5, 5);
                 cp.add(new Sum(x, y));
 
                 x[0].removeBelow(1);
@@ -114,7 +114,7 @@ public class SumTest {
         try {
 
             Solver cp = new Solver();
-            IntVar[] x = new IntVar[]{new IntVar(cp, 0, 5), new IntVar(cp, 0, 2), new IntVar(cp, 0, 1)};
+            IntVar[] x = new IntVar[]{makeIntVar(cp, 0, 5), makeIntVar(cp, 0, 2), makeIntVar(cp, 0, 1)};
             cp.add(new Sum(x, 0));
 
             assertEquals(0, x[0].getMax());
@@ -132,7 +132,7 @@ public class SumTest {
         try {
 
             Solver cp = new Solver();
-            IntVar[] x = new IntVar[]{new IntVar(cp, -5, 0), new IntVar(cp, -5, 0), new IntVar(cp, -3, 0)};
+            IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 0)};
             cp.add(new Sum(x, 0));
 
             assertEquals(0, x[0].getMin());
@@ -150,7 +150,7 @@ public class SumTest {
         try {
 
             Solver cp = new Solver();
-            IntVar[] x = new IntVar[]{new IntVar(cp, -5, 0), new IntVar(cp, -5, 0), new IntVar(cp, -3, 3)};
+            IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 3)};
             cp.add(new Sum(x, 0));
             assertEquals(-3, x[0].getMin());
             assertEquals(-3, x[1].getMin());
@@ -173,7 +173,7 @@ public class SumTest {
         try {
 
             Solver cp = new Solver();
-            IntVar[] x = new IntVar[]{new IntVar(cp, -5, 0), new IntVar(cp, -5, 0), new IntVar(cp, -3, 3)};
+            IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 3)};
             cp.add(new Sum(x, 0));
             assertEquals(-3, x[0].getMin());
             assertEquals(-3, x[1].getMin());
@@ -211,7 +211,7 @@ public class SumTest {
             // {1,2,-3}  6
 
 
-            IntVar[] x = new IntVar[]{new IntVar(cp, -3, 3), new IntVar(cp, -3, 3), new IntVar(cp, -3, 3)};
+            IntVar[] x = new IntVar[]{makeIntVar(cp, -3, 3), makeIntVar(cp, -3, 3), makeIntVar(cp, -3, 3)};
             cp.add(new Sum(x, 0));
 
             DFSearch search = new DFSearch(cp.getContext(),firstFail(x));

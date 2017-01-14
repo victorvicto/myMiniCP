@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static minicp.cp.Factory.*;
 
 
 public class IntVarTest {
@@ -37,8 +38,8 @@ public class IntVarTest {
     public void testIntVar() {
         Solver cp  = new Solver();
 
-        IntVar x = new IntVar(cp,10);
-        IntVar y = new IntVar(cp,10);
+        IntVar x = makeIntVar(cp,10);
+        IntVar y = makeIntVar(cp,10);
 
         cp.getContext().push();
 
@@ -81,8 +82,8 @@ public class IntVarTest {
         propagateCalled = false;
         Solver cp  = new Solver();
 
-        IntVar x = new IntVar(cp,10);
-        IntVar y = new IntVar(cp,10);
+        IntVar x = makeIntVar(cp,10);
+        IntVar y = makeIntVar(cp,10);
 
         Constraint cons = new Constraint(cp) {
 
@@ -121,7 +122,7 @@ public class IntVarTest {
 
             Solver cp  = new Solver();
 
-            IntVar x = new IntVar(cp,-10,10);
+            IntVar x = makeIntVar(cp,-10,10);
 
             cp.push();
 
@@ -174,7 +175,7 @@ public class IntVarTest {
 
             Set<Integer> dom = new HashSet<>(Arrays.asList(-7,-10,6,9,10,12));
 
-            IntVar x = new IntVar(cp,dom);
+            IntVar x = makeIntVar(cp,dom);
 
             cp.push();
 
@@ -214,8 +215,8 @@ public class IntVarTest {
 
         Solver cp = new Solver();
 
-        IntVar x = new IntVar(cp, 10);
-        IntVar y = new IntVar(cp, 10);
+        IntVar x = makeIntVar(cp, 10);
+        IntVar y = makeIntVar(cp, 10);
 
         Constraint cons = new Constraint(cp) {
 
@@ -261,7 +262,7 @@ public class IntVarTest {
 
             Solver cp = new Solver();
 
-            IntVar x = new IntVar(cp, 10);
+            IntVar x = makeIntVar(cp, 10);
 
             Constraint cons = new Constraint(cp) {
 
@@ -301,7 +302,7 @@ public class IntVarTest {
 
             Solver cp = new Solver();
 
-            IntVar x = new IntVar(cp, 10);
+            IntVar x = makeIntVar(cp, 10);
 
             Constraint cons = new Constraint(cp) {
 

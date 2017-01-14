@@ -20,11 +20,13 @@
 package minicp.cp.constraints;
 
 import minicp.cp.core.IntVar;
+import minicp.cp.core.IntVarImpl;
 import minicp.cp.core.Solver;
 import minicp.util.InconsistencyException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static minicp.cp.Factory.*;
 
 
 public class DiffVarTest {
@@ -33,8 +35,8 @@ public class DiffVarTest {
     public void diffVar() {
         Solver cp  = new Solver();
 
-        IntVar x = new IntVar(cp,10);
-        IntVar y = new IntVar(cp,10);
+        IntVar x = makeIntVar(cp,10);
+        IntVar y = makeIntVar(cp,10);
 
         try {
             cp.add(new DifferentVar(x,y));

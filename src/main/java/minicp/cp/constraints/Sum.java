@@ -21,6 +21,7 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
+import minicp.cp.core.IntVarImpl;
 import minicp.reversible.ReversibleInt;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
@@ -37,14 +38,14 @@ public class Sum extends Constraint {
 
     public Sum(IntVar [] x, IntVar y) {
         this(Arrays.copyOf(x, x.length + 1));
-        this.x[x.length] = y ; // TODO: should be a view on Y
+        // this.x[x.length] = - y ; // TODO: should be a view on Y
         throw new NotImplementedException();
     }
 
 
     public Sum(IntVar [] x, int y) {
         this(Arrays.copyOf(x, x.length + 1));
-        this.x[x.length] = new IntVar(cp,-y,-y);
+        this.x[x.length] = new IntVarImpl(cp,-y,-y);
     }
 
     /**

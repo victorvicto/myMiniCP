@@ -29,7 +29,7 @@ import static minicp.search.Selector.selectMin;
 
 public class Heuristics {
 
-    public static Choice firstFail(IntVar[] x) {
+    public static Choice firstFail(IntVar... x) {
         Solver cp = x[0].getSolver();
         return selectMin(x,
                 xi -> xi.getSize() > 1,

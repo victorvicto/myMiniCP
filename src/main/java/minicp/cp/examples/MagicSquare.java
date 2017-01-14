@@ -27,6 +27,7 @@ import minicp.cp.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
+import static minicp.cp.Factory.*;
 
 import java.util.Arrays;
 
@@ -45,7 +46,7 @@ public class MagicSquare {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                x[i][j] = new IntVar(cp, 1, n*n);
+                x[i][j] = makeIntVar(cp, 1, n*n);
             }
         }
 
