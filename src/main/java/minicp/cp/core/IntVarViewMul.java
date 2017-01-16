@@ -96,14 +96,14 @@ public class IntVarViewMul implements IntVar {
 
     @Override
     public void remove(int v) throws InconsistencyException {
-        if (v % a != 0) {
+        if (v % a == 0) {
             x.remove(v / a);
         }
     }
 
     @Override
     public void assign(int v) throws InconsistencyException {
-        if (v % a != 0) {
+        if (v % a == 0) {
             x.assign(v / a);
         } else {
             throw new InconsistencyException();

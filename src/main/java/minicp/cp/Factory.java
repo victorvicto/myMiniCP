@@ -20,15 +20,16 @@
 package minicp.cp;
 
 import minicp.cp.constraints.DifferentVar;
-import minicp.cp.core.Constraint;
-import minicp.cp.core.IntVar;
-import minicp.cp.core.IntVarImpl;
-import minicp.cp.core.Solver;
+import minicp.cp.core.*;
 import minicp.util.NotImplementedException;
 
 import java.util.Set;
 
 public class Factory {
+
+    static public IntVar mul(IntVar x, int a) {
+        return new IntVarViewMul(x,a);
+    }
 
     static public IntVar makeIntVar(Solver cp, int n) {
         return new IntVarImpl(cp,n);
