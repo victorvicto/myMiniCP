@@ -35,7 +35,7 @@ public abstract class DiscrepancyChoice {
 
     ReversibleInt currentDiscrepancy;
 
-    public DiscrepancyChoice(ReversibleState context, Choice choice, int maxD) throws InconsistencyException {
+    public DiscrepancyChoice(ReversibleState state, Choice choice, int maxD) throws InconsistencyException {
         throw new NotImplementedException();
     }
 

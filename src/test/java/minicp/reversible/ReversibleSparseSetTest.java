@@ -8,7 +8,7 @@
  *
  * Foobar is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MErsHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -36,10 +36,10 @@ public class ReversibleSparseSetTest {
     @Test
     public void testExample() {
 
-        ReversibleState rc = new ReversibleState();
-        ReversibleSparseSet set = new ReversibleSparseSet(rc,9);
+        ReversibleState rs = new ReversibleState();
+        ReversibleSparseSet set = new ReversibleSparseSet(rs,9);
 
-        rc.push();
+        rs.push();
 
         set.remove(4);
         set.remove(6);
@@ -47,7 +47,7 @@ public class ReversibleSparseSetTest {
         assertFalse(set.contains(4));
         assertFalse(set.contains(6));
 
-        rc.pop();
+        rs.pop();
 
         assertTrue(set.contains(4));
         assertTrue(set.contains(6));
@@ -57,12 +57,12 @@ public class ReversibleSparseSetTest {
     @Test
     public void testReversibleSparseSet() {
 
-        ReversibleState rc = new ReversibleState();
-        ReversibleSparseSet set = new ReversibleSparseSet(rc,10);
+        ReversibleState rs = new ReversibleState();
+        ReversibleSparseSet set = new ReversibleSparseSet(rs,10);
 
         assertTrue(toSet(set.toArray()).equals(toSet(new int[]{0,1,2,3,4,5,6,7,8,9})));
 
-        rc.push();
+        rs.push();
 
         set.remove(1);
         set.remove(0);
@@ -75,8 +75,8 @@ public class ReversibleSparseSetTest {
         assertTrue(toSet(set.toArray()).equals(toSet(new int[]{2,3,4,5,6,7})));
         assertTrue(set.getMax() == 7);
 
-        rc.pop();
-        rc.push();
+        rs.pop();
+        rs.push();
 
         assertEquals(10, set.getSize());
 
@@ -97,8 +97,8 @@ public class ReversibleSparseSetTest {
         assertTrue(toSet(set.toArray()).equals(toSet(new int[]{2})));
 
 
-        rc.pop();
-        rc.push();
+        rs.pop();
+        rs.push();
 
         assertEquals(10, set.getSize());
 
@@ -116,14 +116,14 @@ public class ReversibleSparseSetTest {
 
         try {
 
-            ReversibleState rc = new ReversibleState();
-            ReversibleSparseSet set = new ReversibleSparseSet(rc,-5,5);
+            ReversibleState rs = new ReversibleState();
+            ReversibleSparseSet set = new ReversibleSparseSet(rs,-5,5);
 
             for (int i = -5; i <= 5; i++) {
                 assertTrue(set.contains(i));
             }
 
-            rc.push();
+            rs.push();
 
             set.remove(-4);
             set.remove(-5);
@@ -133,15 +133,15 @@ public class ReversibleSparseSetTest {
             assertEquals(-3,set.getMin());
             assertEquals(3,set.getMax());
 
-            rc.push();
+            rs.push();
 
             set.removeAllBut(-1);
             assertEquals(-1,set.getMin());
             assertEquals(-1,set.getMax());
 
 
-            rc.pop();
-            rc.pop();
+            rs.pop();
+            rs.pop();
 
             for (int i = -5; i <= 5; i++) {
                 assertTrue(set.contains(i));
@@ -157,14 +157,14 @@ public class ReversibleSparseSetTest {
 
         try {
 
-            ReversibleState rc = new ReversibleState();
-            ReversibleSparseSet set = new ReversibleSparseSet(rc,-5,5);
+            ReversibleState rs = new ReversibleState();
+            ReversibleSparseSet set = new ReversibleSparseSet(rs,-5,5);
 
             for (int i = -5; i <= 5; i++) {
                 assertTrue(set.contains(i));
             }
 
-            rc.push();
+            rs.push();
 
 
             set.remove(-2);
@@ -176,14 +176,14 @@ public class ReversibleSparseSetTest {
             assertEquals(0,set.getMin());
             assertEquals(5,set.getMax());
 
-            rc.push();
+            rs.push();
 
             set.removeBelow(2);
 
             assertEquals(1,set.getMin());
 
-            rc.pop();
-            rc.pop();
+            rs.pop();
+            rs.pop();
 
             for (int i = -5; i <= 5; i++) {
                 assertTrue(set.contains(i));
@@ -199,14 +199,14 @@ public class ReversibleSparseSetTest {
 
         try {
 
-            ReversibleState rc = new ReversibleState();
-            ReversibleSparseSet set = new ReversibleSparseSet(rc,-5,5);
+            ReversibleState rs = new ReversibleState();
+            ReversibleSparseSet set = new ReversibleSparseSet(rs,-5,5);
 
             for (int i = -5; i <= 5; i++) {
                 assertTrue(set.contains(i));
             }
 
-            rc.push();
+            rs.push();
 
 
             set.remove(1);
@@ -216,14 +216,14 @@ public class ReversibleSparseSetTest {
             assertEquals(-5,set.getMin());
             assertEquals(0,set.getMax());
 
-            rc.push();
+            rs.push();
 
             set.removeAbove(-2);
 
             assertEquals(-3,set.getMax());
 
-            rc.pop();
-            rc.pop();
+            rs.pop();
+            rs.pop();
 
             for (int i = -5; i <= 5; i++) {
                 assertTrue(set.contains(i));

@@ -81,16 +81,16 @@ public class Element2D extends Constraint {
             }
         }
         Collections.sort(xyz);
-        low = new ReversibleInt(cp.getContext(),0);
-        up = new ReversibleInt(cp.getContext(),xyz.size()-1);
+        low = new ReversibleInt(cp.getState(),0);
+        up = new ReversibleInt(cp.getState(),xyz.size()-1);
 
         nColsSup = new ReversibleInt[n];
         nRowsSup = new ReversibleInt[m];
         for (int i = 0; i < n; i++) {
-            nColsSup[i] = new ReversibleInt(cp.getContext(),m);
+            nColsSup[i] = new ReversibleInt(cp.getState(),m);
         }
         for (int j = 0; j < m; j++) {
-            nRowsSup[j] = new ReversibleInt(cp.getContext(),n);
+            nRowsSup[j] = new ReversibleInt(cp.getState(),n);
         }
     }
 

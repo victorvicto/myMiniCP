@@ -26,7 +26,6 @@ import static minicp.search.Selector.*;
 import minicp.util.Counter;
 import minicp.util.InconsistencyException;
 import org.junit.Test;
-import scala.Int;
 
 
 public class DFSearchTest {
@@ -34,7 +33,7 @@ public class DFSearchTest {
     @Test
     public void testExample1() {
         Solver cp = new Solver();
-        ReversibleInt i = new ReversibleInt(cp.getContext(),0);
+        ReversibleInt i = new ReversibleInt(cp.getState(),0);
         int [] values = new int[3];
 
         Choice myBranching = () -> {
@@ -54,7 +53,7 @@ public class DFSearchTest {
 
 
 
-        DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
+        DFSearch dfs = new DFSearch(cp.getState(),myBranching);
 
         dfs.onSolution(() -> {
             // System.out.println(Arrays.toString(values));
@@ -73,7 +72,7 @@ public class DFSearchTest {
     @Test
     public void testDFS() {
         Solver cp = new Solver();
-        ReversibleInt i = new ReversibleInt(cp.getContext(),0);
+        ReversibleInt i = new ReversibleInt(cp.getState(),0);
         boolean [] values = new boolean[4];
 
         Choice myBranching = () -> {
@@ -97,7 +96,7 @@ public class DFSearchTest {
         Counter nSols = new Counter();
 
 
-        DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
+        DFSearch dfs = new DFSearch(cp.getState(),myBranching);
 
         dfs.onSolution(() -> {
            nSols.incr();
@@ -117,7 +116,7 @@ public class DFSearchTest {
     @Test
     public void testDFSSearchLimit() {
         Solver cp = new Solver();
-        ReversibleInt i = new ReversibleInt(cp.getContext(),0);
+        ReversibleInt i = new ReversibleInt(cp.getState(),0);
         boolean [] values = new boolean[4];
 
         Choice myBranching = () -> {
@@ -140,7 +139,7 @@ public class DFSearchTest {
 
 
 
-        DFSearch dfs = new DFSearch(cp.getContext(),myBranching);
+        DFSearch dfs = new DFSearch(cp.getState(),myBranching);
 
         Counter nFails = new Counter();
         dfs.onFail(() -> {

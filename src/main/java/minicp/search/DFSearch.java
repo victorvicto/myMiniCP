@@ -28,7 +28,7 @@ import java.util.List;
 public class DFSearch {
 
     private Choice branching;
-    private ReversibleState context;
+    private ReversibleState state;
 
     private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
     private List<FailListener> failListeners = new LinkedList<FailListener>();
@@ -61,16 +61,18 @@ public class DFSearch {
         failListeners.forEach(s -> s.failure());
     }
 
-    public DFSearch(ReversibleState context, Choice branching) {
-        this.context = context;
+    public DFSearch(ReversibleState state, Choice branching) {
+        this.state = state;
         this.branching = branching;
     }
 
     public SearchStatistics start(SearchLimit limit) {
         SearchStatistics statistics = new SearchStatistics();
+        int level = state.getLevel();
         try {
             dfs(statistics,limit);
         } catch (StopSearchException e) {}
+        state.popUntil(level);
         return statistics;
     }
 
@@ -88,7 +90,7 @@ public class DFSearch {
         }
         else {
             for (Alternative alt : alternatives) {
-                context.push();
+                state.push();
                 try {
                     statistics.nNodes++;
                     alt.execute();
@@ -97,7 +99,7 @@ public class DFSearch {
                     notifyFailure();
                     statistics.nFailures++;
                 }
-                context.pop();
+                state.pop();
             }
         }
     }

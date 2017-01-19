@@ -84,7 +84,7 @@ public class ReversibleState {
      *  Notice that you'll probably want to push after this operation.
      */
     public void popAll() {
-        popUntil(0);
+        popUntil(-1);
         trail.clear();
     }
 
@@ -93,7 +93,7 @@ public class ReversibleState {
      *  @param level
      */
     public void popUntil(int level) {
-        while (trailLimit.size() > level) {
+        while (getLevel() > level) {
             pop();
         }
     }

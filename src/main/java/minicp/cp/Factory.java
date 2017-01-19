@@ -20,15 +20,23 @@
 package minicp.cp;
 
 import minicp.cp.constraints.DifferentVar;
+import minicp.cp.constraints.Element2D;
+import minicp.cp.constraints.Sum;
 import minicp.cp.core.*;
-import minicp.util.NotImplementedException;
+import minicp.util.InconsistencyException;
+
 
 import java.util.Set;
 
 public class Factory {
 
     static public IntVar mul(IntVar x, int a) {
-        return new IntVarViewMul(x,a);
+        if (a == 0) return makeIntVar(x.getSolver(),0,0);
+        else return new IntVarViewMul(x,a);
+    }
+
+    static public IntVar minus(IntVar x) {
+        return new IntVarViewOpposite(x);
     }
 
     static public IntVar makeIntVar(Solver cp, int n) {
@@ -50,6 +58,36 @@ public class Factory {
             rv[i] = makeIntVar(cp, sz);
         return rv;
     }
-    static public Constraint makeDifferentVar(IntVar x,IntVar y,int c) { return new DifferentVar(x,y,c);}
-    static public Constraint makeDifferentVar(IntVar x,IntVar y)       { return new DifferentVar(x,y,0);}
+    static public Constraint makeDifferentVar(IntVar x, IntVar y,int c) { return new DifferentVar(x,y,c);}
+    static public Constraint makeDifferentVar(IntVar x, IntVar y)       { return new DifferentVar(x,y,0);}
+
+
+    static public IntVar element(int[][] T, IntVar x, IntVar y) throws InconsistencyException {
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < T.length; i++) {
+            for (int j = 0; j < T[i].length; j++) {
+                min = Math.min(min,T[i][j]);
+                max = Math.max(max,T[i][j]);
+            }
+        }
+        IntVar z = makeIntVar(x.getSolver(),min,max);
+        x.getSolver().add(new Element2D(T,x,y,z));
+        return z;
+    }
+
+    static public IntVar sum(IntVar[] x) throws InconsistencyException {
+        int sumMin = 0;
+        int sumMax = 0;
+        for (int i = 0; i < x.length; i++) {
+            sumMin += x[i].getMin();
+            sumMax += x[i].getMax();
+        }
+        Solver cp = x[0].getSolver();
+        IntVar s = makeIntVar(cp,sumMin,sumMax);
+        cp.add(new Sum(x,s));
+        return s;
+    }
+
+
 }

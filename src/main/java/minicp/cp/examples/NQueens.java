@@ -48,7 +48,7 @@ public class NQueens {
         Box<Integer> nbSols = new Box<>(0);
 
 
-        SearchStatistics stats = new DFSearch(cp.getContext(),
+        SearchStatistics stats = new DFSearch(cp.getState(),
                 selectMin(q,
                         qi -> qi.getSize() > 1,
                         qi -> qi.getSize(),

@@ -24,7 +24,6 @@ import minicp.cp.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
-import minicp.util.NotImplementedException;
 import org.junit.Test;
 
 import static minicp.cp.Factory.makeIntVar;
@@ -109,7 +108,7 @@ public class Element2DTest {
 
             cp.add(new Element2D(T, x, y, z));
 
-            DFSearch dfs = new DFSearch(cp.getContext(), firstFail(x, y, z));
+            DFSearch dfs = new DFSearch(cp.getState(), firstFail(x, y, z));
             dfs.onSolution(() ->
                     assertEquals(T[x.getMin()][y.getMin()], z.getMin())
             );
@@ -122,6 +121,5 @@ public class Element2DTest {
             fail("should not fail");
         }
     }
-
 
 }

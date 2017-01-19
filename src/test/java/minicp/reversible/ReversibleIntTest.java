@@ -8,7 +8,7 @@
  *
  * Foobar is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MErsHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -30,60 +30,60 @@ public class ReversibleIntTest {
     @Test
     public void testExample() {
 
-        ReversibleState rc = new ReversibleState();
+        ReversibleState rs = new ReversibleState();
 
-        // Two reversible int's inside the reversible context rc
-        ReversibleInt a = new ReversibleInt(rc,5);
-        ReversibleInt b = new ReversibleInt(rc,9);
+        // Two reversible int's inside the reversible context rs
+        ReversibleInt a = new ReversibleInt(rs,5);
+        ReversibleInt b = new ReversibleInt(rs,9);
 
         a.setValue(7);
         b.setValue(13);
 
         // Record current state a=7, b=1 and increase the level to 0
-        rc.push();
-        assertEquals(0,rc.getLevel());
+        rs.push();
+        assertEquals(0,rs.getLevel());
 
         a.setValue(10);
         b.setValue(13);
         a.setValue(11);
 
         // Record current state a=11, b=13 and increase the level to 1
-        rc.push();
-        assertEquals(1,rc.getLevel());
+        rs.push();
+        assertEquals(1,rs.getLevel());
 
         a.setValue(4);
         b.setValue(9);
 
         // Restore the state recorded at the top level 1: a=11, b=13
         // and remove the state of that level
-        rc.pop();
+        rs.pop();
 
         assertEquals(11,a.getValue());
         assertEquals(13,b.getValue());
-        assertEquals(0,rc.getLevel());
+        assertEquals(0,rs.getLevel());
 
         // Restore the state recorded at the top level 0: a=7, b=13
         // and remove the state of that level
-        rc.pop();
+        rs.pop();
 
         assertEquals(7,a.getValue());
         assertEquals(13,b.getValue());
-        assertEquals(-1,rc.getLevel());
+        assertEquals(-1,rs.getLevel());
 
     }
 
 
     @Test
     public void testReversibleInt() {
-        ReversibleState rc = new ReversibleState();
-        ReversibleInt a = new ReversibleInt(rc,5);
-        ReversibleInt b = new ReversibleInt(rc,5);
+        ReversibleState rs = new ReversibleState();
+        ReversibleInt a = new ReversibleInt(rs,5);
+        ReversibleInt b = new ReversibleInt(rs,5);
         assertTrue(a.getValue() == 5);
         a.setValue(7);
         b.setValue(13);
         assertTrue(a.getValue() == 7);
 
-        rc.push();
+        rs.push();
 
         a.setValue(10);
         assertTrue(a.getValue() == 10);
@@ -92,7 +92,7 @@ public class ReversibleIntTest {
         b.setValue(16);
         b.setValue(15);
 
-        rc.pop();
+        rs.pop();
         assertTrue(a.getValue() == 7);
         assertTrue(b.getValue() == 13);
 
@@ -101,31 +101,31 @@ public class ReversibleIntTest {
     @Test
     public void testPopAll() {
 
-        ReversibleState rc = new ReversibleState();
-        ReversibleInt a = new ReversibleInt(rc,5);
-        ReversibleInt b = new ReversibleInt(rc,5);
+        ReversibleState rs = new ReversibleState();
+        ReversibleInt a = new ReversibleInt(rs,5);
+        ReversibleInt b = new ReversibleInt(rs,5);
 
-        rc.push();
+        rs.push();
 
         a.setValue(7);
         b.setValue(13);
         a.setValue(13);
 
-        rc.push();
+        rs.push();
 
         a.setValue(5);
         b.setValue(10);
 
-        ReversibleInt c = new ReversibleInt(rc,5);
+        ReversibleInt c = new ReversibleInt(rs,5);
 
-        rc.push();
+        rs.push();
 
         a.setValue(8);
         b.setValue(1);
         c.setValue(10);
 
-        rc.popAll();
-        rc.push();
+        rs.popAll();
+        rs.push();
 
         assertEquals(5,a.getValue());
         assertEquals(5,b.getValue());
@@ -136,19 +136,19 @@ public class ReversibleIntTest {
         b.setValue(13);
         b.setValue(16);
 
-        rc.push();
+        rs.push();
 
         a.setValue(8);
         b.setValue(10);
 
-        rc.pop();
+        rs.pop();
 
 
         assertEquals(10,a.getValue());
         assertEquals(16,b.getValue());
         assertEquals(5,c.getValue());
 
-        rc.popAll();
+        rs.popAll();
 
         assertEquals(5,a.getValue());
         assertEquals(5,b.getValue());
@@ -160,41 +160,45 @@ public class ReversibleIntTest {
     @Test
     public void testPopUntill() {
 
-        ReversibleState rc = new ReversibleState();
-        ReversibleInt a = new ReversibleInt(rc,5);
-        ReversibleInt b = new ReversibleInt(rc,5);
+        ReversibleState rs = new ReversibleState();
+        ReversibleInt a = new ReversibleInt(rs,5);
+        ReversibleInt b = new ReversibleInt(rs,5);
 
         a.setValue(7);
         b.setValue(13);
         a.setValue(13);
 
-        rc.push(); // level 0
+        rs.push(); // level 0
 
         a.setValue(5);
         b.setValue(10);
 
-        ReversibleInt c = new ReversibleInt(rc,5);
+        ReversibleInt c = new ReversibleInt(rs,5);
 
-        rc.push(); // level 1
+        rs.push(); // level 1
 
         a.setValue(8);
         b.setValue(1);
         c.setValue(10);
 
-        rc.push();
+        rs.push(); // level 2
 
         a.setValue(10);
         b.setValue(13);
         b.setValue(16);
 
-        rc.push();
+        rs.push(); // level 3
 
         a.setValue(8);
         b.setValue(10);
 
-        rc.popUntil(1);
-        rc.push();
+        rs.popUntil(0);
 
+        assertEquals(0,rs.getLevel());
+
+        rs.push(); // level 1
+
+        assertEquals(1,rs.getLevel());
         assertEquals(5,a.getValue());
         assertEquals(10,b.getValue());
         assertEquals(5,c.getValue());
@@ -204,10 +208,11 @@ public class ReversibleIntTest {
         b.setValue(8);
         b.setValue(10);
 
-        rc.popUntil(0);
+        rs.popUntil(0);
 
-        assertEquals(13,a.getValue());
-        assertEquals(13,b.getValue());
+        assertEquals(0,rs.getLevel());
+        assertEquals(5,a.getValue());
+        assertEquals(10,b.getValue());
         assertEquals(5,c.getValue());
 
 

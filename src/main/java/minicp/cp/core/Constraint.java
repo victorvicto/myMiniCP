@@ -29,7 +29,7 @@ public abstract class Constraint {
 
     public Constraint(Solver cp) {
         this.cp = cp;
-        active = new ReversibleBool(cp.getContext(),true);
+        active = new ReversibleBool(cp.getState(),true);
     }
 
     public boolean isActive() {

@@ -41,7 +41,7 @@ public class IntVarTest {
         IntVar x = makeIntVar(cp,10);
         IntVar y = makeIntVar(cp,10);
 
-        cp.getContext().push();
+        cp.getState().push();
 
 
         try {
@@ -64,8 +64,8 @@ public class IntVarTest {
 
 
 
-        cp.getContext().pop();
-        cp.getContext().push();
+        cp.getState().pop();
+        cp.getState().push();
 
         assertFalse(x.isBound());
         assertEquals(10,x.getSize());

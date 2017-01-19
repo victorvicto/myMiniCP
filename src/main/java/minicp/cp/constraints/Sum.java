@@ -19,12 +19,12 @@
 
 package minicp.cp.constraints;
 
+import minicp.cp.Factory;
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
 import minicp.cp.core.IntVarImpl;
 import minicp.reversible.ReversibleInt;
 import minicp.util.InconsistencyException;
-import minicp.util.NotImplementedException;
 
 import java.util.Arrays;
 
@@ -38,8 +38,7 @@ public class Sum extends Constraint {
 
     public Sum(IntVar [] x, IntVar y) {
         this(Arrays.copyOf(x, x.length + 1));
-        // this.x[x.length] = - y ; // TODO: should be a view on Y
-        throw new NotImplementedException();
+        this.x[x.length] = Factory.minus(y);
     }
 
 
@@ -57,8 +56,8 @@ public class Sum extends Constraint {
         super(x[0].getSolver());
         this.x = x;
         this.n = x.length;
-        nUnBounds = new ReversibleInt(cp.getContext(),n);
-        sumBounds = new ReversibleInt(cp.getContext(),0);
+        nUnBounds = new ReversibleInt(cp.getState(),n);
+        sumBounds = new ReversibleInt(cp.getState(),0);
         unBounds = new int[n];
         for (int i = 0; i < n; i++) {
             unBounds[i] = i;

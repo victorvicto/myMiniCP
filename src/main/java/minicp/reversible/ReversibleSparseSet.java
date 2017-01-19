@@ -34,14 +34,14 @@ public class ReversibleSparseSet {
 
     /**
      * Creates a ReversibleSparseSet containing the elements {0,...,n-1}.
-     * @param rc
+     * @param rs
      * @param n > 0
      */
-    public ReversibleSparseSet(ReversibleState rc, int n) {
+    public ReversibleSparseSet(ReversibleState rs, int n) {
         this.n = n;
-        size = new ReversibleInt(rc,n);
-        min = new ReversibleInt(rc,0);
-        max = new ReversibleInt(rc,n-1);
+        size = new ReversibleInt(rs,n);
+        min = new ReversibleInt(rs,0);
+        max = new ReversibleInt(rs,n-1);
         values = new int [n];
         indexes = new int [n];
         for (int i = 0; i < n; i++) {
@@ -52,11 +52,11 @@ public class ReversibleSparseSet {
 
     /**
      * Creates a ReversibleSparseSet containing the elements {min,...,max}.
-     * @param rc
+     * @param rs
      * @param min
      * @param max >= min
      */
-    public ReversibleSparseSet(ReversibleState rc, int min, int max) {
+    public ReversibleSparseSet(ReversibleState rs, int min, int max) {
         throw new NotImplementedException();
     }
 

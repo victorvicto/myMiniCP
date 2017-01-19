@@ -41,7 +41,7 @@ public class IntVarViewMulTest {
         assertEquals(12,x.getMax());
         assertEquals(8,x.getSize());
 
-        cp.getContext().push();
+        cp.getState().push();
 
 
         try {
@@ -74,7 +74,7 @@ public class IntVarViewMulTest {
             fail( "should have failed" );
         } catch (InconsistencyException expectedException) {}
 
-        cp.getContext().pop();
+        cp.getState().pop();
 
         assertEquals(8,x.getSize());
         assertFalse(x.contains(-1));

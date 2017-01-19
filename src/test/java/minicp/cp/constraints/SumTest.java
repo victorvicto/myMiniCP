@@ -91,12 +91,15 @@ public class SumTest {
                 cp.add(new Sum(x, y));
 
                 x[0].removeBelow(1);
-                x[1].assign(0);
+                // 1-5 + 1-2 + 0-1 = 5
+                x[1].assign(1);
+                // 1-5 + 1 + 0-1 = 5
                 cp.fixPoint();
 
-                assertEquals(5,x[0].getMax());
+                assertEquals(4,x[0].getMax());
+                assertEquals(3,x[0].getMin());
+                assertEquals(1,x[2].getMax());
                 assertEquals(0,x[2].getMin());
-                assertEquals(4,x[2].getMax());
 
 
             } catch (InconsistencyException e) {
@@ -214,7 +217,7 @@ public class SumTest {
             IntVar[] x = new IntVar[]{makeIntVar(cp, -3, 3), makeIntVar(cp, -3, 3), makeIntVar(cp, -3, 3)};
             cp.add(new Sum(x, 0));
 
-            DFSearch search = new DFSearch(cp.getContext(),firstFail(x));
+            DFSearch search = new DFSearch(cp.getState(),firstFail(x));
 
             SearchStatistics stats = search.start();
 

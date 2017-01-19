@@ -27,17 +27,17 @@ import java.util.Vector;
 
 public class Solver {
 
-    private ReversibleState context = new ReversibleState();
+    private ReversibleState state = new ReversibleState();
     private Stack<Constraint> propagationQueue = new Stack<>();
     private Vector<IntVar>  vars = new Vector<>(2);
     public void registerVar(IntVar x) {
         vars.add(x);
     }
 
-    public void push() { context.push();}
-    public void pop()  { context.pop();}
+    public void push() { state.push();}
+    public void pop()  { state.pop();}
 
-    public ReversibleState getContext() { return context;}
+    public ReversibleState getState() { return state;}
 
 
     public void schedule(Constraint c) {

@@ -31,7 +31,7 @@ into the class :javaref:`minicp.reversible.ReversibleState`.
 
 
 Mini-cp provides two types of reversible objects that can be created
-within a reversible context:
+within a reversible state:
 
 * :javaref:`minicp.reversible.ReversibleInt`
 * :javaref:`minicp.reversible.ReversibleBool`
@@ -44,9 +44,9 @@ The next example manipulates ``ReversibleInt`` objects within a ``ReversibleCont
         :lines: 33-72
 
 
-A reversible context has two operations ``push`` and ``pop``:
+A reversible state has two operations ``push`` and ``pop``:
 
-* The ``push`` operation records the reversibleState of all the objects created in this context. The reversible context is a stack of states recorded at the time of the ``push`` operations.
+* The ``push`` operation records the reversibleState of all the objects created in this state. The reversible state is a stack of states recorded at the time of the ``push`` operations.
 * The ``pop`` operation restores and removes top-most reversibleState of the stack of states. The ``pop`` as like an undo operation.
 
 In the above example, one can see that the first ``pop`` operation
@@ -66,7 +66,7 @@ The objects that are stacked and able to restore the reversibleState implements 
                 :lines: 27-29
 
 
-The ``restore`` method is the one that is called when ``pop`` is executed on the context to restore the reversibleState.
+The ``restore`` method is the one that is called when ``pop`` is executed on the state to restore the reversibleState.
 A :javaref:`minicp.reversible.ReversibleState` internally contains two stacks:
 
 * ``trail`` that stacks  ``TrailEntry`` objects making it possible to restore the reversibleState.
@@ -131,7 +131,7 @@ The ``restore`` method of this class simply restores the content of the instance
 Observe that ``setValue`` has no effect if the value set is the same as the current
 value for ``this.v``.
 On the contrary, if it is not the same, a ``TrailEntryInt`` must
-be pushed on the trail (with ``context.pushOnTrail``) otherwise the content of ``this.v`` would be definitively lost
+be pushed on the trail (with ``state.pushOnTrail``) otherwise the content of ``this.v`` would be definitively lost
 and it would be impossible to restore it in the future.
 
 The test ``if (lastMagic != contextMagic)`` is an implementation optimisation, not strictly necessary.
@@ -139,7 +139,7 @@ It prevents to create more than one trail entry for a same instance
 of a ``ReversibleInt`` between two subsequent ``push`` operations.
 The rationale being that it is unnecessary to remember the intermediate values,
 only the last one matters, that is the internal value at the time of the ``push``.
-As the ``push`` operation increments the ``magic`` number of the reversible context,
+As the ``push`` operation increments the ``magic`` number of the reversible state,
 the next call to ``setValue`` will correctly add a trail entry on the trail stack.
 
 

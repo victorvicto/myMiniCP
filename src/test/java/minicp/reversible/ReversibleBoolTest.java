@@ -8,7 +8,7 @@
  *
  * Foobar is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MErsHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -21,21 +21,20 @@ package minicp.reversible;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
-public class ReversibleBoolTest {
+public class  ReversibleBoolTest {
 
     @Test
     public void testReversibleBool() {
-        ReversibleState rc = new ReversibleState();
+        ReversibleState rs = new ReversibleState();
 
-        ReversibleBool b1 = new ReversibleBool(rc,true);
-        ReversibleBool b2 = new ReversibleBool(rc,false);
+        ReversibleBool b1 = new ReversibleBool(rs,true);
+        ReversibleBool b2 = new ReversibleBool(rs,false);
 
-        rc.push();
+        rs.push();
 
         b1.setValue(true);
         b1.setValue(false);
@@ -44,7 +43,7 @@ public class ReversibleBoolTest {
         b2.setValue(false);
         b2.setValue(true);
 
-        rc.pop();
+        rs.pop();
 
         assertTrue(b1.getValue());
         assertFalse(b2.getValue());
