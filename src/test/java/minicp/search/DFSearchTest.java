@@ -38,7 +38,7 @@ public class DFSearchTest {
 
         Choice myBranching = () -> {
                 if (i.getValue() >= values.length)
-                    return EMPTY;
+                    return TRUE;
                 else return branch(
                         ()-> { // left branch
                             values[i.getValue()] = 0;
@@ -77,7 +77,7 @@ public class DFSearchTest {
 
         Choice myBranching = () -> {
                 if (i.getValue() >= values.length)
-                    return EMPTY;
+                    return TRUE;
                 else return branch (
                         ()-> {
                             // left branch

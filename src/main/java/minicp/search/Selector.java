@@ -2,7 +2,7 @@ package minicp.search;
 
 public class Selector {
 
-    public static final Alternative[] EMPTY = new Alternative[0];
+    public static final Alternative[] TRUE = new Alternative[0];
 
     public static Alternative[] branch(Alternative... alternatives) {
         return alternatives;
@@ -32,7 +32,7 @@ public class Selector {
                 }
             }
             if (sel == null) {
-                return EMPTY;
+                return TRUE;
             } else {
                 return body.call(sel);
             }
