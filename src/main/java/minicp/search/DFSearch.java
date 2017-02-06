@@ -19,7 +19,7 @@
 
 package minicp.search;
 
-import minicp.reversible.ReversibleState;
+import minicp.reversible.Trail;
 import minicp.util.InconsistencyException;
 
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ import java.util.List;
 public class DFSearch {
 
     private Choice branching;
-    private ReversibleState state;
+    private Trail state;
 
     private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
     private List<FailListener> failListeners = new LinkedList<FailListener>();
@@ -61,7 +61,7 @@ public class DFSearch {
         failListeners.forEach(s -> s.failure());
     }
 
-    public DFSearch(ReversibleState state, Choice branching) {
+    public DFSearch(Trail state, Choice branching) {
         this.state = state;
         this.branching = branching;
     }

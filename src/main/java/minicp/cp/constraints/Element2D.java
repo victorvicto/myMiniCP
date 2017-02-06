@@ -81,21 +81,21 @@ public class Element2D extends Constraint {
             }
         }
         Collections.sort(xyz);
-        low = new ReversibleInt(cp.getState(),0);
-        up = new ReversibleInt(cp.getState(),xyz.size()-1);
+        low = new ReversibleInt(cp.getTrail(),0);
+        up = new ReversibleInt(cp.getTrail(),xyz.size()-1);
 
         nColsSup = new ReversibleInt[n];
         nRowsSup = new ReversibleInt[m];
         for (int i = 0; i < n; i++) {
-            nColsSup[i] = new ReversibleInt(cp.getState(),m);
+            nColsSup[i] = new ReversibleInt(cp.getTrail(),m);
         }
         for (int j = 0; j < m; j++) {
-            nRowsSup[j] = new ReversibleInt(cp.getState(),n);
+            nRowsSup[j] = new ReversibleInt(cp.getTrail(),n);
         }
     }
 
     @Override
-    public void setup() throws InconsistencyException {
+    public void post() throws InconsistencyException {
         x.removeBelow(0);
         x.removeAbove(n-1);
         y.removeBelow(0);

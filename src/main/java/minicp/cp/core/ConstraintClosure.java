@@ -37,7 +37,7 @@ public class ConstraintClosure extends Constraint {
     }
 
     @Override
-    public void setup() throws InconsistencyException {
+    public void post() throws InconsistencyException {
 
     }
 

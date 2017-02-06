@@ -35,7 +35,7 @@ public class DifferentVal extends Constraint {
     }
 
     @Override
-    public void setup() throws InconsistencyException {
+    public void post() throws InconsistencyException {
         x.remove(y);
     }
 

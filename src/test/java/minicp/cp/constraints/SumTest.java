@@ -44,7 +44,7 @@ public class SumTest {
                 Solver cp = new Solver();
                 IntVar y = makeIntVar(cp, -100, 100);
                 IntVar[] x = new IntVar[]{makeIntVar(cp, 0, 5), makeIntVar(cp, 1, 5), makeIntVar(cp, 0, 5)};
-                cp.add(new Sum(x, y));
+                cp.post(new Sum(x, y));
 
                 assertEquals(1, y.getMin());
                 assertEquals(15, y.getMax());
@@ -66,7 +66,7 @@ public class SumTest {
                 Solver cp = new Solver();
                 IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
                 IntVar y = makeIntVar(cp, 0, 100);
-                cp.add(new Sum(x, y));
+                cp.post(new Sum(x, y));
 
                 assertEquals(-3, x[0].getMin());
                 assertEquals(0, y.getMin());
@@ -88,7 +88,7 @@ public class SumTest {
                 Solver cp = new Solver();
                 IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
                 IntVar y = makeIntVar(cp, 5, 5);
-                cp.add(new Sum(x, y));
+                cp.post(new Sum(x, y));
 
                 x[0].removeBelow(1);
                 // 1-5 + 1-2 + 0-1 = 5
@@ -118,7 +118,7 @@ public class SumTest {
 
             Solver cp = new Solver();
             IntVar[] x = new IntVar[]{makeIntVar(cp, 0, 5), makeIntVar(cp, 0, 2), makeIntVar(cp, 0, 1)};
-            cp.add(new Sum(x, 0));
+            cp.post(new Sum(x, 0));
 
             assertEquals(0, x[0].getMax());
             assertEquals(0, x[1].getMax());
@@ -136,7 +136,7 @@ public class SumTest {
 
             Solver cp = new Solver();
             IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 0)};
-            cp.add(new Sum(x, 0));
+            cp.post(new Sum(x, 0));
 
             assertEquals(0, x[0].getMin());
             assertEquals(0, x[1].getMin());
@@ -154,7 +154,7 @@ public class SumTest {
 
             Solver cp = new Solver();
             IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 3)};
-            cp.add(new Sum(x, 0));
+            cp.post(new Sum(x, 0));
             assertEquals(-3, x[0].getMin());
             assertEquals(-3, x[1].getMin());
 
@@ -177,7 +177,7 @@ public class SumTest {
 
             Solver cp = new Solver();
             IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 0), makeIntVar(cp, -5, 0), makeIntVar(cp, -3, 3)};
-            cp.add(new Sum(x, 0));
+            cp.post(new Sum(x, 0));
             assertEquals(-3, x[0].getMin());
             assertEquals(-3, x[1].getMin());
 
@@ -215,9 +215,9 @@ public class SumTest {
 
 
             IntVar[] x = new IntVar[]{makeIntVar(cp, -3, 3), makeIntVar(cp, -3, 3), makeIntVar(cp, -3, 3)};
-            cp.add(new Sum(x, 0));
+            cp.post(new Sum(x, 0));
 
-            DFSearch search = new DFSearch(cp.getState(),firstFail(x));
+            DFSearch search = new DFSearch(cp.getTrail(),firstFail(x));
 
             SearchStatistics stats = search.start();
 

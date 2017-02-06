@@ -39,16 +39,16 @@ public class NQueens {
 
         for (int i = 0; i < n; i++)
             for (int j = i + 1; j < n; j++) {
-                cp.add(makeDifferentVar(q[i], q[j]));
-                cp.add(makeDifferentVar(q[i], q[j], i - j));
-                cp.add(makeDifferentVar(q[i], q[j], j - i));
+                cp.post(makeDifferentVar(q[i], q[j]));
+                cp.post(makeDifferentVar(q[i], q[j], i - j));
+                cp.post(makeDifferentVar(q[i], q[j], j - i));
             }
 
         // count the number of solution (manually)
         Box<Integer> nbSols = new Box<>(0);
 
 
-        SearchStatistics stats = new DFSearch(cp.getState(),
+        SearchStatistics stats = new DFSearch(cp.getTrail(),
                 selectMin(q,
                         qi -> qi.getSize() > 1,
                         qi -> qi.getSize(),
@@ -56,10 +56,10 @@ public class NQueens {
                             int v = qi.getMin();
                             return branch(
                                     () -> {
-                                        cp.add(new EqualVal(qi, v));
+                                        cp.post(new EqualVal(qi, v));
                                     },
                                     () -> {
-                                        cp.add(new DifferentVal(qi, v));
+                                        cp.post(new DifferentVal(qi, v));
                                     }
                             );
                         }

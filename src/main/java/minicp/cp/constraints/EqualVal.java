@@ -34,7 +34,7 @@ public class EqualVal extends Constraint {
         _v = v;
     }
     @Override
-    public void setup() throws InconsistencyException {
+    public void post() throws InconsistencyException {
         _x.assign(_v);
     }
 }

@@ -58,11 +58,11 @@ public class MagicSquare {
 
 
         // AllDifferent
-        cp.add(new AllDifferentBinary(xFlat));
+        cp.post(new AllDifferentBinary(xFlat));
 
         // Sum on lines
         for (int i = 0; i < n; i++) {
-            cp.add(new Sum(x[i],M));
+            cp.post(new Sum(x[i],M));
         }
 
         // Sum on columns
@@ -70,7 +70,7 @@ public class MagicSquare {
             IntVar[] column = new IntVar[n];
             for (int i = 0; i < x.length; i++)
                 column[i] = x[i][j];
-            cp.add(new Sum(column,M));
+            cp.post(new Sum(column,M));
         }
 
         // Sum on diagonals
@@ -80,12 +80,12 @@ public class MagicSquare {
             diagonalLeft[i] = x[i][i];
             diagonalRight[i] = x[n-i-1][i];
         }
-        cp.add(new Sum(diagonalLeft, M));
-        cp.add(new Sum(diagonalRight, M));
+        cp.post(new Sum(diagonalLeft, M));
+        cp.post(new Sum(diagonalRight, M));
 
 
 
-        DFSearch dfs = new DFSearch(cp.getState(),firstFail(xFlat));
+        DFSearch dfs = new DFSearch(cp.getTrail(),firstFail(xFlat));
         dfs.onSolution(() -> {
                     for (int i = 0; i < n; i++) {
                         System.out.println(Arrays.toString(x[i]));

@@ -48,7 +48,7 @@ public class Minimize extends Constraint {
 
 
     @Override
-    public void setup() throws InconsistencyException {
+    public void post() throws InconsistencyException {
         x.whenBoundsChange(() -> {
             x.removeAbove(bound);
         });

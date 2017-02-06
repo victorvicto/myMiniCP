@@ -72,7 +72,7 @@ public class Factory {
             }
         }
         IntVar z = makeIntVar(x.getSolver(),min,max);
-        x.getSolver().add(new Element2D(T,x,y,z));
+        x.getSolver().post(new Element2D(T,x,y,z));
         return z;
     }
 
@@ -85,7 +85,7 @@ public class Factory {
         }
         Solver cp = x[0].getSolver();
         IntVar s = makeIntVar(cp,sumMin,sumMax);
-        cp.add(new Sum(x,s));
+        cp.post(new Sum(x,s));
         return s;
     }
 

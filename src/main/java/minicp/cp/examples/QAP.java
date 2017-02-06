@@ -60,9 +60,9 @@ public class QAP {
         Solver cp = new Solver();
         IntVar[] x = makeIntVarArray(cp, n, n);
 
-        cp.add(new AllDifferentBinary(x));
+        cp.post(new AllDifferentBinary(x));
 
-        DFSearch dfs = new DFSearch(cp.getState(),firstFail(x));
+        DFSearch dfs = new DFSearch(cp.getTrail(),firstFail(x));
 
 
         // build the objective function
@@ -75,7 +75,7 @@ public class QAP {
             }
         }
         IntVar objective = sum(weightedDist);
-        cp.add(new Minimize(objective,dfs));
+        cp.post(new Minimize(objective,dfs));
 
 
 

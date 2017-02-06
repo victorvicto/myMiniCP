@@ -15,7 +15,7 @@ Trailing
 
 
 The core of a CP solver is a mechanism called  *trail* that is
-able to store and restore the reversibleState of objects.
+able to store and restore the trail of objects.
 To keep things simple, you can view a trail as an implementation
 for `undo` operations.
 
@@ -24,7 +24,7 @@ ReversibleContext
 ------------------
 
 The trailing mechanism is implemented
-into the class :javaref:`minicp.reversible.ReversibleState`.
+into the class :javaref:`minicp.reversible.Trail`.
 
 
 
@@ -46,17 +46,17 @@ The next example manipulates ``ReversibleInt`` objects within a ``ReversibleCont
 
 A reversible state has two operations ``push`` and ``pop``:
 
-* The ``push`` operation records the reversibleState of all the objects created in this state. The reversible state is a stack of states recorded at the time of the ``push`` operations.
-* The ``pop`` operation restores and removes top-most reversibleState of the stack of states. The ``pop`` as like an undo operation.
+* The ``push`` operation records the trail of all the objects created in this state. The reversible state is a stack of states recorded at the time of the ``push`` operations.
+* The ``pop`` operation restores and removes top-most trail of the stack of states. The ``pop`` as like an undo operation.
 
 In the above example, one can see that the first ``pop`` operation
 restores the objects at the value they had at the time of the previous push operation: `a=11,b=13`.
-As a side effect the ``pop`` unstacks the top most reversibleState from the trail.
-The second ``pop`` operation, unstacks and restores the reversibleState one more time
+As a side effect the ``pop`` unstacks the top most trail from the trail.
+The second ``pop`` operation, unstacks and restores the trail one more time
 as it was at previous ``push`` operation: `a=7,b=13`.
 
 Let us now see how this is implemented inside mini-cp.
-The objects that are stacked and able to restore the reversibleState implements the
+The objects that are stacked and able to restore the trail implements the
 :javaref:`minicp.reversible.TrailEntry` interface:
 
 
@@ -66,10 +66,10 @@ The objects that are stacked and able to restore the reversibleState implements 
                 :lines: 27-29
 
 
-The ``restore`` method is the one that is called when ``pop`` is executed on the state to restore the reversibleState.
-A :javaref:`minicp.reversible.ReversibleState` internally contains two stacks:
+The ``restore`` method is the one that is called when ``pop`` is executed on the state to restore the trail.
+A :javaref:`minicp.reversible.Trail` internally contains two stacks:
 
-* ``trail`` that stacks  ``TrailEntry`` objects making it possible to restore the reversibleState.
+* ``trail`` that stacks  ``TrailEntry`` objects making it possible to restore the trail.
 * ``trailLimit`` that stacks the current size of ``trail`` when a ``push`` operation occurs. This allows to delimit the number ``TrailEntry`` that need to be restored whenever a pop operation is executed.
 
 
@@ -105,7 +105,7 @@ would be restored.
 
 
 Although you can already probably guess how it is implemented,
-we invite you to read the code of :javaref:`minicp.reversible.ReversibleState` to learn
+we invite you to read the code of :javaref:`minicp.reversible.Trail` to learn
 more about the implementation of the ``pop`` operation.
 
 
@@ -183,7 +183,7 @@ Our class invariant for those instance variables is:
 * ``values`` is an array of size `n`. It contains a permutation of the numbers `[0,...,n-1]` such that the `size` *th* first values (prefix) are in the set, and the `n-size` last ones are removed from the set.
 * ``indexes`` is an array of size `n` giving the position for each value in the `value` array. We thus have `values[indexes[v]]=v` for all the values `[0,...,n-1]`.
 
-In our example the initial reversibleState after the creation of a ``ReversibleSparseSet`` of size 9 is depicted next:
+In our example the initial trail after the creation of a ``ReversibleSparseSet`` of size 9 is depicted next:
 
 .. image:: _static/sparseset1.svg
     :scale: 50
@@ -195,7 +195,7 @@ Maintaining the class invariant for the value removal operation is fairly simple
 We just need to exchange the value that needs to be removed with the one of the last position.
 The two corresponding entries in ``indexes`` are updated to reflect this exchange.
 Then the ``size`` if decremented to effectively remove this last value.
-The next figure illustrates the internal reversibleState after the removal of value ``4``:
+The next figure illustrates the internal trail after the removal of value ``4``:
 
 
 .. image:: _static/sparseset2.svg
@@ -203,7 +203,7 @@ The next figure illustrates the internal reversibleState after the removal of va
     :width: 1200
     :alt: SparseSet
 
-Similarly, the next figure illustrates the internal reversibleState after the removal of value ``6``:
+Similarly, the next figure illustrates the internal trail after the removal of value ``6``:
 
 .. image:: _static/sparseset3.svg
     :scale: 50
@@ -263,10 +263,10 @@ Each alternative can be executed. Executing an alternative means to commit the c
 The steps executed during the search at the creation of child nodes are described and illustrated next:
 
 1. The branching is asked to create its alternatives. Those are not yet executed at this point.
-2. The ``DFSSearchNode`` pushes its reversibleState such that it can be recovered on backtrack.
+2. The ``DFSSearchNode`` pushes its trail such that it can be recovered on backtrack.
 3. An alternative is executed. This can possibly have side effect, such as modifying some reversible objects.
 4. Eventually the search will backtrack, it means that a ``pop`` operation is executed such that all reversible objects
-   recover their reversibleState. The process then continues in 2. with the next alternative.
+   recover their trail. The process then continues in 2. with the next alternative.
 
 .. image:: _static/searchalternative.svg
     :scale: 30
@@ -324,7 +324,7 @@ A constraint has two responsibilities:
 1. checking that it is consistent according to it’s definition
 2. removing inconsistent values from the domain of it’s scope
 
-These requirements are achieved by implementing the ``setup`` and ``propagate`` methods:
+These requirements are achieved by implementing the ``post`` and ``propagate`` methods:
 
 
 .. literalinclude:: ../../src/main/java/minicp/cp/core/Constraint.java
@@ -332,7 +332,7 @@ These requirements are achieved by implementing the ``setup`` and ``propagate`` 
     :linenos:
     :lines: 27-33
 
-- ``setup``:  is in charge of checking if the constraint is consistent according
+- ``post``:  is in charge of checking if the constraint is consistent according
   to it’s semantic and the current domains. It can also do a first propagation to remove inconsistent values.
   It is also in this method that you register the constraint for potential domain modifications.
 - ``propagate`` is called when a domain of a variable has been modified and so the constraint
@@ -346,7 +346,7 @@ The x != y constraint
 
 We exemplify the constraint implementation on a basic but very frequent x != y constraint
  (x must take a value different from y).
-In the ``setup``, the constraint registers itself to bind events
+In the ``post``, the constraint registers itself to bind events
 of the variables ``x`` and ``y``. That is every time
 one of these variables is bind (there is a single value in the domain)
 the ``propagate`` method will be called.

@@ -34,11 +34,11 @@ public class AllDifferentBinary extends Constraint {
     }
 
     @Override
-    public void setup() throws InconsistencyException {
+    public void post() throws InconsistencyException {
         Solver cp = x[0].getSolver();
         for (int i = 0; i < x.length; i++) {
             for (int j = i+1; j < x.length; j++) {
-                cp.add(new DifferentVar(x[i],x[j]),false);
+                cp.post(new DifferentVar(x[i],x[j]),false);
             }
         }
     }

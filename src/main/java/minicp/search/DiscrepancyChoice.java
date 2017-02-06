@@ -20,7 +20,7 @@
 package minicp.search;
 
 
-import minicp.reversible.ReversibleState;
+import minicp.reversible.Trail;
 import minicp.reversible.ReversibleInt;
 import minicp.util.NotImplementedException;
 import minicp.util.InconsistencyException;
@@ -35,7 +35,7 @@ public abstract class DiscrepancyChoice {
 
     ReversibleInt currentDiscrepancy;
 
-    public DiscrepancyChoice(ReversibleState state, Choice choice, int maxD) throws InconsistencyException {
+    public DiscrepancyChoice(Trail state, Choice choice, int maxD) throws InconsistencyException {
         throw new NotImplementedException();
     }
 

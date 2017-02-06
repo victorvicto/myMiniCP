@@ -56,8 +56,8 @@ public class Sum extends Constraint {
         super(x[0].getSolver());
         this.x = x;
         this.n = x.length;
-        nUnBounds = new ReversibleInt(cp.getState(),n);
-        sumBounds = new ReversibleInt(cp.getState(),0);
+        nUnBounds = new ReversibleInt(cp.getTrail(),n);
+        sumBounds = new ReversibleInt(cp.getTrail(),0);
         unBounds = new int[n];
         for (int i = 0; i < n; i++) {
             unBounds[i] = i;
@@ -65,7 +65,7 @@ public class Sum extends Constraint {
     }
 
     @Override
-    public void setup() throws InconsistencyException {
+    public void post() throws InconsistencyException {
         for (IntVar var: x) {
             var.propagateOnBoundChange(this);
             //var.propagateOnDomainChange(this);

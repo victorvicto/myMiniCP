@@ -19,7 +19,7 @@
 
 package minicp.cp.core;
 
-import minicp.reversible.ReversibleState;
+import minicp.reversible.Trail;
 import minicp.util.InconsistencyException;
 
 import java.util.Stack;
@@ -27,17 +27,17 @@ import java.util.Vector;
 
 public class Solver {
 
-    private ReversibleState state = new ReversibleState();
+    private Trail trail = new Trail();
     private Stack<Constraint> propagationQueue = new Stack<>();
     private Vector<IntVar>  vars = new Vector<>(2);
     public void registerVar(IntVar x) {
         vars.add(x);
     }
 
-    public void push() { state.push();}
-    public void pop()  { state.pop();}
+    public void push() { trail.push();}
+    public void pop()  { trail.pop();}
 
-    public ReversibleState getState() { return state;}
+    public Trail getTrail() { return trail;}
 
 
     public void schedule(Constraint c) {
@@ -62,12 +62,12 @@ public class Solver {
         if (failed) throw new InconsistencyException();
     }
 
-    public void add(Constraint c) throws InconsistencyException {
-        add(c,true);
+    public void post(Constraint c) throws InconsistencyException {
+        post(c,true);
     }
 
-    public void add(Constraint c, boolean enforceFixPoint) throws InconsistencyException {
-        c.setup();
+    public void post(Constraint c, boolean enforceFixPoint) throws InconsistencyException {
+        c.post();
         if (enforceFixPoint) fixPoint();
     }
 

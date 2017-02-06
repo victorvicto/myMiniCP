@@ -41,7 +41,7 @@ public class IntVarViewMulTest {
         assertEquals(12,x.getMax());
         assertEquals(8,x.getSize());
 
-        cp.getState().push();
+        cp.getTrail().push();
 
 
         try {
@@ -74,7 +74,7 @@ public class IntVarViewMulTest {
             fail( "should have failed" );
         } catch (InconsistencyException expectedException) {}
 
-        cp.getState().pop();
+        cp.getTrail().pop();
 
         assertEquals(8,x.getSize());
         assertFalse(x.contains(-1));
@@ -93,14 +93,14 @@ public class IntVarViewMulTest {
         Constraint cons = new Constraint(cp) {
 
             @Override
-            public void setup() throws InconsistencyException {
+            public void post() throws InconsistencyException {
                 x.whenBind(() -> propagateCalled = true);
                 y.whenDomainChange(() -> propagateCalled = true);
             }
         };
 
         try {
-            cp.add(cons);
+            cp.post(cons);
             x.remove(8);
             cp.fixPoint();
             assertFalse(propagateCalled);
@@ -132,14 +132,14 @@ public class IntVarViewMulTest {
         Constraint cons = new Constraint(cp) {
 
             @Override
-            public void setup() throws InconsistencyException {
+            public void post() throws InconsistencyException {
                 x.whenBind(() -> propagateCalled  = true);
                 y.whenDomainChange(() -> propagateCalled = true);
             }
         };
 
         try {
-            cp.add(cons);
+            cp.post(cons);
             x.remove(8);
             cp.fixPoint();
             assertFalse(propagateCalled);

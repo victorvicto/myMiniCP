@@ -29,7 +29,7 @@ public abstract class Constraint {
 
     public Constraint(Solver cp) {
         this.cp = cp;
-        active = new ReversibleBool(cp.getState(),true);
+        active = new ReversibleBool(cp.getTrail(),true);
     }
 
     public boolean isActive() {
@@ -40,6 +40,6 @@ public abstract class Constraint {
         active.setValue(false);
     }
 
-    public abstract void setup() throws InconsistencyException;
+    public abstract void post() throws InconsistencyException;
     public void propagate() throws InconsistencyException {}
 }

@@ -35,21 +35,21 @@ public class ReversibleInt {
         }
     }
 
-    private ReversibleState context;
+    private Trail trail;
     private int v;
     private Long lastMagic = -1L;
 
-    public ReversibleInt(ReversibleState context, int initial) {
-        this.context = context;
+    public ReversibleInt(Trail trail, int initial) {
+        this.trail = trail;
         v = initial;
-        lastMagic = context.magic;
+        lastMagic = trail.magic;
     }
 
     private void trail() {
-        long contextMagic = context.magic;
-        if (lastMagic != contextMagic) {
-            lastMagic = contextMagic;
-            context.pushOnTrail(new TrailEntryInt(v));
+        long trailMagic = trail.magic;
+        if (lastMagic != trailMagic) {
+            lastMagic = trailMagic;
+            trail.pushOnTrail(new TrailEntryInt(v));
         }
     }
 

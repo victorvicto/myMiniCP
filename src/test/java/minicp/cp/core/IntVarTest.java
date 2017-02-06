@@ -41,7 +41,7 @@ public class IntVarTest {
         IntVar x = makeIntVar(cp,10);
         IntVar y = makeIntVar(cp,10);
 
-        cp.getState().push();
+        cp.getTrail().push();
 
 
         try {
@@ -64,8 +64,8 @@ public class IntVarTest {
 
 
 
-        cp.getState().pop();
-        cp.getState().push();
+        cp.getTrail().pop();
+        cp.getTrail().push();
 
         assertFalse(x.isBound());
         assertEquals(10,x.getSize());
@@ -88,14 +88,14 @@ public class IntVarTest {
         Constraint cons = new Constraint(cp) {
 
             @Override
-            public void setup() throws InconsistencyException {
+            public void post() throws InconsistencyException {
                 x.whenBind(() -> propagateCalled = true);
                 y.whenDomainChange(() -> propagateCalled = true);
             }
         };
 
         try {
-            cp.add(cons);
+            cp.post(cons);
             x.remove(8);
             cp.fixPoint();
             assertFalse(propagateCalled);
@@ -221,14 +221,14 @@ public class IntVarTest {
         Constraint cons = new Constraint(cp) {
 
             @Override
-            public void setup() throws InconsistencyException {
+            public void post() throws InconsistencyException {
                 x.whenBind(() -> propagateCalled  = true);
                 y.whenDomainChange(() -> propagateCalled = true);
             }
         };
 
         try {
-            cp.add(cons);
+            cp.post(cons);
             x.remove(8);
             cp.fixPoint();
             assertFalse(propagateCalled);
@@ -267,7 +267,7 @@ public class IntVarTest {
             Constraint cons = new Constraint(cp) {
 
                 @Override
-                public void setup() throws InconsistencyException {
+                public void post() throws InconsistencyException {
                     x.propagateOnBoundChange(this);
                 }
 
@@ -278,7 +278,7 @@ public class IntVarTest {
             };
 
             try {
-                cp.add(cons);
+                cp.post(cons);
                 x.remove(8);
                 cp.fixPoint();
                 assertFalse(propagateCalled);
@@ -307,7 +307,7 @@ public class IntVarTest {
             Constraint cons = new Constraint(cp) {
 
                 @Override
-                public void setup() throws InconsistencyException {
+                public void post() throws InconsistencyException {
                     x.propagateOnBoundChange(this);
                 }
 
@@ -318,7 +318,7 @@ public class IntVarTest {
             };
 
             try {
-                cp.add(cons);
+                cp.post(cons);
                 x.remove(3);
                 cp.fixPoint();
                 assertFalse(propagateCalled);

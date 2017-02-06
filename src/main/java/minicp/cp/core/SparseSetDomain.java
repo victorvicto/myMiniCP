@@ -19,7 +19,7 @@
 
 package minicp.cp.core;
 
-import minicp.reversible.ReversibleState;
+import minicp.reversible.Trail;
 import minicp.reversible.ReversibleSparseSet;
 import minicp.util.InconsistencyException;
 
@@ -29,9 +29,9 @@ public class SparseSetDomain extends IntDomain {
     private int offset;
 
 
-    public SparseSetDomain(ReversibleState reversibleState, int min, int max) {
+    public SparseSetDomain(Trail trail, int min, int max) {
         offset = min;
-        domain = new ReversibleSparseSet(reversibleState, max-min+1);
+        domain = new ReversibleSparseSet(trail, max-min+1);
     }
 
     public int getMin() {

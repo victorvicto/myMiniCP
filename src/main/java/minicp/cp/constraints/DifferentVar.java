@@ -41,7 +41,7 @@ public class DifferentVar extends Constraint {
         this.c = c;
     }
     @Override
-    public void setup() throws InconsistencyException {
+    public void post() throws InconsistencyException {
         if (y.isBound())
             x.remove(y.getMin() + c);
         else if (x.isBound())

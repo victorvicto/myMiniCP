@@ -61,9 +61,9 @@ public class QAPLNS {
         Solver cp = new Solver();
         IntVar[] x = makeIntVarArray(cp, n, n);
 
-        cp.add(new AllDifferentBinary(x));
+        cp.post(new AllDifferentBinary(x));
 
-        DFSearch dfs = new DFSearch(cp.getState(),firstFail(x));
+        DFSearch dfs = new DFSearch(cp.getTrail(),firstFail(x));
 
 
         // build the objective function
@@ -76,7 +76,7 @@ public class QAPLNS {
             }
         }
         IntVar objective = sum(weightedDist);
-        cp.add(new Minimize(objective,dfs));
+        cp.post(new Minimize(objective,dfs));
 
 
         // --- Large Neighborhood Search ---
@@ -104,7 +104,7 @@ public class QAPLNS {
             System.out.println("restart number #"+i);
 
             // Record the state such that the fragment constraints can be cancelled
-            cp.getState().push();
+            cp.getTrail().push();
 
             // Assign the fragment 5% of the variables randomly chosen
             for (int j = 0; j < n; j++) {
@@ -115,7 +115,7 @@ public class QAPLNS {
             dfs.start(statistics -> statistics.nFailures >= failureLimit);
 
             // cancel all the fragment constraints
-            cp.getState().pop();
+            cp.getTrail().pop();
         }
 
     }

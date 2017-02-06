@@ -38,10 +38,10 @@ public class Heuristics {
                     int v = xi.getMin();
                     return branch(
                             () -> {
-                                cp.add(new EqualVal(xi, v));
+                                cp.post(new EqualVal(xi, v));
                             },
                             () -> {
-                                cp.add(new DifferentVal(xi, v));
+                                cp.post(new DifferentVal(xi, v));
                             }
                     );
                 }

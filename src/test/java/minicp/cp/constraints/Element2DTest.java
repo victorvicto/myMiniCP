@@ -51,7 +51,7 @@ public class Element2DTest {
                     {9, 1, 2, 8, 6},
             };
 
-            cp.add(new Element2D(T, x, y, z));
+            cp.post(new Element2D(T, x, y, z));
 
             assertEquals(0, x.getMin());
             assertEquals(0, y.getMin());
@@ -106,9 +106,9 @@ public class Element2DTest {
                     {9, 1, 2, 8, 6},
             };
 
-            cp.add(new Element2D(T, x, y, z));
+            cp.post(new Element2D(T, x, y, z));
 
-            DFSearch dfs = new DFSearch(cp.getState(), firstFail(x, y, z));
+            DFSearch dfs = new DFSearch(cp.getTrail(), firstFail(x, y, z));
             dfs.onSolution(() ->
                     assertEquals(T[x.getMin()][y.getMin()], z.getMin())
             );

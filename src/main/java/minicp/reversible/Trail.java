@@ -22,7 +22,7 @@ package minicp.reversible;
 import java.util.Stack;
 
 
-public class ReversibleState {
+public class Trail {
 
     public long magic = 0;
     private Stack<TrailEntry> trail = new Stack<TrailEntry>();
@@ -32,7 +32,7 @@ public class ReversibleState {
      * Initialize a reversible context
      * The current level is -1
      */
-    public ReversibleState() {}
+    public Trail() {}
 
     public void pushOnTrail(TrailEntry entry) {
         trail.push(entry);
