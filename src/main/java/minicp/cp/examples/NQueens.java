@@ -39,9 +39,9 @@ public class NQueens {
 
         for (int i = 0; i < n; i++)
             for (int j = i + 1; j < n; j++) {
-                cp.post(makeDifferentVar(q[i], q[j]));
-                cp.post(makeDifferentVar(q[i], q[j], i - j));
-                cp.post(makeDifferentVar(q[i], q[j], j - i));
+                cp.post(notEqual(q[i], q[j]));
+                cp.post(notEqual(q[i], q[j], i - j));
+                cp.post(notEqual(q[i], q[j], j - i));
             }
 
         // count the number of solution (manually)
@@ -56,10 +56,10 @@ public class NQueens {
                             int v = qi.getMin();
                             return branch(
                                     () -> {
-                                        cp.post(new Equal(qi, v));
+                                        equal(qi,v);
                                     },
                                     () -> {
-                                        cp.post(new NotEqual(qi, v));
+                                        notEqual(qi,v);
                                     }
                             );
                         }

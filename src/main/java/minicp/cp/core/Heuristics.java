@@ -20,12 +20,11 @@
 package minicp.cp.core;
 
 
-import minicp.cp.constraints.NotEqual;
-import minicp.cp.constraints.Equal;
 import minicp.search.Choice;
 
 import static minicp.search.Selector.branch;
 import static minicp.search.Selector.selectMin;
+import static minicp.cp.Factory.*;
 
 public class Heuristics {
 
@@ -38,10 +37,10 @@ public class Heuristics {
                     int v = xi.getMin();
                     return branch(
                             () -> {
-                                cp.post(new Equal(xi, v));
+                                equal(xi,v);
                             },
                             () -> {
-                                cp.post(new NotEqual(xi, v));
+                                notEqual(xi,v);
                             }
                     );
                 }

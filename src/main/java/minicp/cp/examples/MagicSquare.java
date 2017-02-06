@@ -58,11 +58,11 @@ public class MagicSquare {
 
 
         // AllDifferent
-        cp.post(new AllDifferentBinary(xFlat));
+        cp.post(allDifferent(xFlat));
 
         // Sum on lines
         for (int i = 0; i < n; i++) {
-            cp.post(new Sum(x[i],M));
+            cp.post(sum(x[i],M));
         }
 
         // Sum on columns
@@ -70,7 +70,7 @@ public class MagicSquare {
             IntVar[] column = new IntVar[n];
             for (int i = 0; i < x.length; i++)
                 column[i] = x[i][j];
-            cp.post(new Sum(column,M));
+            cp.post(sum(column,M));
         }
 
         // Sum on diagonals
@@ -80,8 +80,8 @@ public class MagicSquare {
             diagonalLeft[i] = x[i][i];
             diagonalRight[i] = x[n-i-1][i];
         }
-        cp.post(new Sum(diagonalLeft, M));
-        cp.post(new Sum(diagonalRight, M));
+        cp.post(sum(diagonalLeft, M));
+        cp.post(sum(diagonalRight, M));
 
 
 

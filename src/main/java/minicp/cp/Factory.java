@@ -19,10 +19,9 @@
 
 package minicp.cp;
 
-import minicp.cp.constraints.NotEqual;
-import minicp.cp.constraints.Element2D;
-import minicp.cp.constraints.Sum;
+import minicp.cp.constraints.*;
 import minicp.cp.core.*;
+import minicp.search.DFSearch;
 import minicp.util.InconsistencyException;
 
 
@@ -32,7 +31,11 @@ public class Factory {
 
     static public IntVar mul(IntVar x, int a) {
         if (a == 0) return makeIntVar(x.getSolver(),0,0);
-        else return new IntVarViewMul(x,a);
+        else if (a < 0) {
+            return minus(new IntVarViewMul(x,-a));
+        } else {
+            return new IntVarViewMul(x,a);
+        }
     }
 
     static public IntVar minus(IntVar x) {
@@ -58,9 +61,32 @@ public class Factory {
             rv[i] = makeIntVar(cp, sz);
         return rv;
     }
-    static public Constraint makeDifferentVar(IntVar x, IntVar y,int c) { return new NotEqual(x,y,c);}
-    static public Constraint makeDifferentVar(IntVar x, IntVar y)       { return new NotEqual(x,y,0);}
 
+
+
+    // -------------- constraints -----------------------
+
+    static public void equal(IntVar x, int v) throws InconsistencyException {
+        x.assign(v);
+        x.getSolver().fixPoint();
+    }
+
+    static public void notEqual(IntVar x, int v) throws InconsistencyException {
+        x.remove(v);
+        x.getSolver().fixPoint();
+    }
+
+    static public Constraint notEqual(IntVar x, IntVar y, int c) { return new NotEqual(x,y,c);}
+
+    static public Constraint notEqual(IntVar x, IntVar y)       { return new NotEqual(x,y,0);}
+
+    static public Constraint minimize(IntVar x, DFSearch dfs) {
+        return new Minimize(x,dfs);
+    }
+
+    static public Constraint maximize(IntVar x, DFSearch dfs) {
+        return new Minimize(minus(x),dfs);
+    }
 
     static public IntVar element(int[][] T, IntVar x, IntVar y) throws InconsistencyException {
         int min = Integer.MAX_VALUE;
@@ -87,6 +113,18 @@ public class Factory {
         IntVar s = makeIntVar(cp,sumMin,sumMax);
         cp.post(new Sum(x,s));
         return s;
+    }
+
+    static public Constraint sum(IntVar[] x, IntVar y) {
+        return new Sum(x,y);
+    }
+
+    static public Constraint sum(IntVar[] x, int y) {
+        return new Sum(x,y);
+    }
+
+    static public Constraint allDifferent(IntVar[] x) {
+        return new AllDifferentBinary(x);
     }
 
 

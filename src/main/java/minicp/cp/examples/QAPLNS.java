@@ -61,7 +61,7 @@ public class QAPLNS {
         Solver cp = new Solver();
         IntVar[] x = makeIntVarArray(cp, n, n);
 
-        cp.post(new AllDifferentBinary(x));
+        cp.post(allDifferent(x));
 
         DFSearch dfs = new DFSearch(cp.getTrail(),firstFail(x));
 
@@ -76,7 +76,7 @@ public class QAPLNS {
             }
         }
         IntVar objective = sum(weightedDist);
-        cp.post(new Minimize(objective,dfs));
+        cp.post(minimize(objective,dfs));
 
 
         // --- Large Neighborhood Search ---
@@ -109,7 +109,7 @@ public class QAPLNS {
             // Assign the fragment 5% of the variables randomly chosen
             for (int j = 0; j < n; j++) {
                 if (rand.nextInt(100) < 5) {
-                    x[j].assign(xBest[j]);
+                    equal(x[j],xBest[j]);
                 }
             }
             dfs.start(statistics -> statistics.nFailures >= failureLimit);
