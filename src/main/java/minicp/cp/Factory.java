@@ -21,7 +21,6 @@ package minicp.cp;
 
 import minicp.cp.constraints.*;
 import minicp.cp.core.*;
-import minicp.reversible.Trail;
 import minicp.search.Choice;
 import minicp.search.DFSearch;
 import minicp.util.InconsistencyException;
@@ -46,6 +45,14 @@ public class Factory {
 
     static public IntVar minus(IntVar x) {
         return new IntVarViewOpposite(x);
+    }
+
+    static public IntVar plus(IntVar x, int v) {
+        return new IntVarViewOffset(x,v);
+    }
+
+    static public IntVar minus(IntVar x, int v) {
+        return new IntVarViewOffset(x,-v);
     }
 
     static public IntVar makeIntVar(Solver cp, int n) {
@@ -87,9 +94,9 @@ public class Factory {
         x.getSolver().fixPoint();
     }
 
-    static public Constraint notEqual(IntVar x, IntVar y, int c) { return new NotEqual(x,y,c);}
-
-    static public Constraint notEqual(IntVar x, IntVar y)       { return new NotEqual(x,y,0);}
+    static public Constraint notEqual(IntVar x, IntVar y) {
+        return new NotEqual(x,y);
+    }
 
     static public Constraint minimize(IntVar x, DFSearch dfs) {
         return new Minimize(x,dfs);

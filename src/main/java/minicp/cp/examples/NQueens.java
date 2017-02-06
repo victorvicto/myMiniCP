@@ -19,16 +19,13 @@
 
 package minicp.cp.examples;
 
-import minicp.cp.constraints.Equal;
-import minicp.cp.constraints.NotEqual;
 import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
 import minicp.util.InconsistencyException;
-import minicp.util.Box;
-import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import static minicp.search.Selector.*;
 import static minicp.cp.Factory.*;
@@ -38,14 +35,14 @@ public class NQueens {
     public static void main(String[] args) throws InconsistencyException {
         Solver cp = makeSolver();
         int n = 8;
-        IntVar[] q = makeIntVarArray(cp, n, n);
 
-        for (int i = 0; i < n; i++)
-            for (int j = i + 1; j < n; j++) {
-                cp.post(notEqual(q[i], q[j]));
-                cp.post(notEqual(q[i], q[j], i - j));
-                cp.post(notEqual(q[i], q[j], j - i));
-            }
+        IntVar[] q = makeIntVarArray(cp, n, n);
+        IntVar [] ql = IntStream.range(0,n).mapToObj(i -> plus(q[i],i)).toArray(IntVar[]::new);
+        IntVar [] qr = IntStream.range(0,n).mapToObj(i -> minus(q[i],i)).toArray(IntVar[]::new);
+
+        cp.post(allDifferent(q));
+        cp.post(allDifferent(ql));
+        cp.post(allDifferent(qr));
 
         SearchStatistics stats = makeDfs(cp,
                 selectMin(q,

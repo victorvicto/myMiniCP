@@ -32,15 +32,15 @@ public class DiffVarTest {
 
     @Test
     public void diffVar() {
-        Solver cp  = new Solver();
+        Solver cp  = makeSolver();
 
         IntVar x = makeIntVar(cp,10);
         IntVar y = makeIntVar(cp,10);
 
         try {
-            cp.post(new NotEqual(x,y));
+            cp.post(notEqual(x,y));
 
-            cp.post(new Equal(x,6));
+            equal(x,6);
 
         } catch (InconsistencyException e) {
             assert(false);

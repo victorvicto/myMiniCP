@@ -27,32 +27,22 @@ import minicp.util.InconsistencyException;
 public class NotEqual extends Constraint {
 
     private IntVar x, y;
-    private int c;
 
-    public NotEqual(IntVar x, IntVar y) { // x != y + c
-        this(x,y,0);
-    }
-
-    public NotEqual(IntVar x, int y) { // x != y + c
-        this(x, Factory.makeIntVar(x.getSolver(),y,y));
-    }
-
-    public NotEqual(IntVar x, IntVar y, int c) { // x != y + c
+    public NotEqual(IntVar x, IntVar y) { // x != y
         super(x.getSolver());
         this.x = x;
         this.y = y;
-        this.c = c;
     }
 
     @Override
     public void post() throws InconsistencyException {
         if (y.isBound())
-            x.remove(y.getMin() + c);
+            x.remove(y.getMin());
         else if (x.isBound())
-            y.remove(x.getMin() - c);
+            y.remove(x.getMin());
         else {
-            x.whenBind(() -> y.remove(x.getMin() - c));
-            y.whenBind(() -> x.remove(y.getMin() + c));
+            x.whenBind(() -> y.remove(x.getMin()));
+            y.whenBind(() -> x.remove(y.getMin()));
         }
     }
 }

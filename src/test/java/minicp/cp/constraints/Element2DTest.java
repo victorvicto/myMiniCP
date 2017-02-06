@@ -27,6 +27,7 @@ import minicp.util.InconsistencyException;
 import org.junit.Test;
 
 import static minicp.cp.Factory.makeIntVar;
+import static minicp.cp.Factory.makeSolver;
 import static minicp.cp.core.Heuristics.firstFail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -39,7 +40,7 @@ public class Element2DTest {
 
         try {
 
-            Solver cp = new Solver();
+            Solver cp = makeSolver();
             IntVar x = makeIntVar(cp, -2, 40);
             IntVar y = makeIntVar(cp, -3, 10);
             IntVar z = makeIntVar(cp, 2, 40);
