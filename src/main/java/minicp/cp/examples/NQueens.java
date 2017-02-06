@@ -19,8 +19,8 @@
 
 package minicp.cp.examples;
 
-import minicp.cp.constraints.DifferentVal;
-import minicp.cp.constraints.EqualVal;
+import minicp.cp.constraints.Equal;
+import minicp.cp.constraints.NotEqual;
 import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
 import minicp.util.InconsistencyException;
@@ -56,10 +56,10 @@ public class NQueens {
                             int v = qi.getMin();
                             return branch(
                                     () -> {
-                                        cp.post(new EqualVal(qi, v));
+                                        cp.post(new Equal(qi, v));
                                     },
                                     () -> {
-                                        cp.post(new DifferentVal(qi, v));
+                                        cp.post(new NotEqual(qi, v));
                                     }
                             );
                         }

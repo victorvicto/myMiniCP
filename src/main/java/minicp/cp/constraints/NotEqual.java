@@ -19,27 +19,31 @@
 
 package minicp.cp.constraints;
 
+import minicp.cp.Factory;
 import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
 import minicp.util.InconsistencyException;
 
-public class DifferentVar extends Constraint {
+public class NotEqual extends Constraint {
 
     private IntVar x, y;
     private int c;
 
-    public DifferentVar(IntVar x, IntVar y) { // x != y + c
-        super(x.getSolver());
-        this.x = x;
-        this.y = y;
-        this.c = 0;
+    public NotEqual(IntVar x, IntVar y) { // x != y + c
+        this(x,y,0);
     }
-    public DifferentVar(IntVar x, IntVar y, int c) { // x != y + c
+
+    public NotEqual(IntVar x, int y) { // x != y + c
+        this(x, Factory.makeIntVar(x.getSolver(),y,y));
+    }
+
+    public NotEqual(IntVar x, IntVar y, int c) { // x != y + c
         super(x.getSolver());
         this.x = x;
         this.y = y;
         this.c = c;
     }
+
     @Override
     public void post() throws InconsistencyException {
         if (y.isBound())

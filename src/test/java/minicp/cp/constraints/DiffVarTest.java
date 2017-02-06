@@ -38,9 +38,9 @@ public class DiffVarTest {
         IntVar y = makeIntVar(cp,10);
 
         try {
-            cp.post(new DifferentVar(x,y));
+            cp.post(new NotEqual(x,y));
 
-            cp.post(new EqualVal(x,6));
+            cp.post(new Equal(x,6));
 
         } catch (InconsistencyException e) {
             assert(false);

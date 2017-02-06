@@ -23,12 +23,12 @@ import minicp.cp.core.Constraint;
 import minicp.cp.core.IntVar;
 import minicp.util.InconsistencyException;
 
-public class EqualVal extends Constraint {
+public class Equal extends Constraint {
 
     private IntVar _x;
     private int    _v;
 
-    public EqualVal(IntVar x, int v) {
+    public Equal(IntVar x, int v) {
         super(x.getSolver());
         _x = x;
         _v = v;

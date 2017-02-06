@@ -38,7 +38,7 @@ public class AllDifferentBinary extends Constraint {
         Solver cp = x[0].getSolver();
         for (int i = 0; i < x.length; i++) {
             for (int j = i+1; j < x.length; j++) {
-                cp.post(new DifferentVar(x[i],x[j]),false);
+                cp.post(new NotEqual(x[i],x[j]),false);
             }
         }
     }

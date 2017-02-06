@@ -19,7 +19,7 @@
 
 package minicp.cp;
 
-import minicp.cp.constraints.DifferentVar;
+import minicp.cp.constraints.NotEqual;
 import minicp.cp.constraints.Element2D;
 import minicp.cp.constraints.Sum;
 import minicp.cp.core.*;
@@ -58,8 +58,8 @@ public class Factory {
             rv[i] = makeIntVar(cp, sz);
         return rv;
     }
-    static public Constraint makeDifferentVar(IntVar x, IntVar y,int c) { return new DifferentVar(x,y,c);}
-    static public Constraint makeDifferentVar(IntVar x, IntVar y)       { return new DifferentVar(x,y,0);}
+    static public Constraint makeDifferentVar(IntVar x, IntVar y,int c) { return new NotEqual(x,y,c);}
+    static public Constraint makeDifferentVar(IntVar x, IntVar y)       { return new NotEqual(x,y,0);}
 
 
     static public IntVar element(int[][] T, IntVar x, IntVar y) throws InconsistencyException {
