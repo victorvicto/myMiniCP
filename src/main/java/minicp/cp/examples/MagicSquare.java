@@ -20,8 +20,6 @@
 package minicp.cp.examples;
 
 
-import minicp.cp.constraints.AllDifferentBinary;
-import minicp.cp.constraints.Sum;
 import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
 import minicp.search.DFSearch;

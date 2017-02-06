@@ -57,12 +57,12 @@ public class QAP {
 
         // ----- build the model ---
 
-        Solver cp = new Solver();
+        Solver cp = makeSolver();
         IntVar[] x = makeIntVarArray(cp, n, n);
 
         cp.post(allDifferent(x));
 
-        DFSearch dfs = new DFSearch(cp.getTrail(),firstFail(x));
+        DFSearch dfs = makeDfs(cp,firstFail(x));
 
 
         // build the objective function

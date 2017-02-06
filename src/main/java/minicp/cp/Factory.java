@@ -21,6 +21,8 @@ package minicp.cp;
 
 import minicp.cp.constraints.*;
 import minicp.cp.core.*;
+import minicp.reversible.Trail;
+import minicp.search.Choice;
 import minicp.search.DFSearch;
 import minicp.util.InconsistencyException;
 
@@ -28,6 +30,10 @@ import minicp.util.InconsistencyException;
 import java.util.Set;
 
 public class Factory {
+
+    static public Solver makeSolver() {
+        return new Solver();
+    }
 
     static public IntVar mul(IntVar x, int a) {
         if (a == 0) return makeIntVar(x.getSolver(),0,0);
@@ -60,6 +66,11 @@ public class Factory {
         for (int i = 0; i < n; i++)
             rv[i] = makeIntVar(cp, sz);
         return rv;
+    }
+
+
+    static public DFSearch makeDfs(Solver cp, Choice branching) {
+        return new DFSearch(cp.getTrail(),branching);
     }
 
 

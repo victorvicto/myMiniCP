@@ -27,13 +27,16 @@ import minicp.util.InconsistencyException;
 import minicp.util.Box;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
+
+import java.util.Arrays;
+
 import static minicp.search.Selector.*;
 import static minicp.cp.Factory.*;
 
 public class NQueens {
 
     public static void main(String[] args) throws InconsistencyException {
-        Solver cp = new Solver();
+        Solver cp = makeSolver();
         int n = 8;
         IntVar[] q = makeIntVarArray(cp, n, n);
 
@@ -44,11 +47,7 @@ public class NQueens {
                 cp.post(notEqual(q[i], q[j], j - i));
             }
 
-        // count the number of solution (manually)
-        Box<Integer> nbSols = new Box<>(0);
-
-
-        SearchStatistics stats = new DFSearch(cp.getTrail(),
+        SearchStatistics stats = makeDfs(cp,
                 selectMin(q,
                         qi -> qi.getSize() > 1,
                         qi -> qi.getSize(),
@@ -65,10 +64,10 @@ public class NQueens {
                         }
                 )
         ).onSolution(() ->
-                nbSols.set(nbSols.get() + 1)
+                System.out.println("solution:"+ Arrays.toString(q))
         ).start();
 
-        System.out.format("#Solutions: %s\n", nbSols);
+        System.out.format("#Solutions: %s\n", stats.nSolutions);
         System.out.format("Statistics: %s\n", stats);
 
     }
