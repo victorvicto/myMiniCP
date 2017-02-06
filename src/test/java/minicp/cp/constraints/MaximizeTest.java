@@ -21,35 +21,49 @@ package minicp.cp.constraints;
 
 import minicp.cp.core.IntVar;
 import minicp.cp.core.Solver;
+import minicp.search.DFSearch;
+import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
+import minicp.util.NotImplementedException;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static minicp.cp.Factory.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static minicp.search.Selector.*;
 
-
-public class DiffVarTest {
+public class MaximizeTest {
 
     @Test
-    public void diffVar() {
-        Solver cp  = makeSolver();
-
-        IntVar x = makeIntVar(cp,10);
-        IntVar y = makeIntVar(cp,10);
-
+    public void maximizeTest() {
         try {
-            cp.post(notEqual(x,y));
+            try {
 
-            equal(x,6);
+                Solver cp = makeSolver();
+                IntVar y = makeIntVar(cp, 10,20);
 
-        } catch (InconsistencyException e) {
-            assert(false);
+                IntVar[] x = new IntVar[]{y};
+                DFSearch dfs = makeDfs(cp,() -> y.isBound() ? TRUE : branch(() -> equal(y,y.getMin()),() -> notEqual(y,y.getMin())));
+
+                cp.post(maximize(y,dfs));
+
+                SearchStatistics stats = dfs.start();
+
+                assertEquals(stats.nSolutions,11);
+
+
+            } catch (InconsistencyException e) {
+                fail("should not fail");
+            }
+        } catch (NotImplementedException e) {
+            e.print();
         }
 
-
-        assertFalse(y.contains(6));
-
     }
+
+
+
+
 
 
 }

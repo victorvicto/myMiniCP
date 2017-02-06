@@ -36,7 +36,7 @@ public class IntVarTest {
 
     @Test
     public void testIntVar() {
-        Solver cp  = new Solver();
+        Solver cp  = makeSolver();
 
         IntVar x = makeIntVar(cp,10);
         IntVar y = makeIntVar(cp,10);
@@ -80,7 +80,7 @@ public class IntVarTest {
     @Test
     public void onDomainChangeOnBind() {
         propagateCalled = false;
-        Solver cp  = new Solver();
+        Solver cp  = makeSolver();
 
         IntVar x = makeIntVar(cp,10);
         IntVar y = makeIntVar(cp,10);
@@ -170,8 +170,7 @@ public class IntVarTest {
 
         try {
 
-            Solver cp  = new Solver();
-
+            Solver cp  = makeSolver();
 
             Set<Integer> dom = new HashSet<>(Arrays.asList(-7,-10,6,9,10,12));
 

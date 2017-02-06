@@ -22,12 +22,13 @@ package minicp.cp.core;
 import minicp.util.InconsistencyException;
 import org.junit.Test;
 
-
-import static minicp.cp.Factory.*;
+import static minicp.cp.Factory.makeIntVar;
+import static minicp.cp.Factory.mul;
+import static minicp.cp.Factory.plus;
 import static org.junit.Assert.*;
 
 
-public class IntVarViewMulTest {
+public class IntVarViewOffsetTest {
 
     public boolean propagateCalled = false;
 
@@ -35,10 +36,10 @@ public class IntVarViewMulTest {
     public void testIntVar() {
         Solver cp  = new Solver();
 
-        IntVar x = mul(mul(makeIntVar(cp,-3,4),-3),-1); // domain is {-9,-6,-3,0,3,6,9,12}
+        IntVar x = plus(makeIntVar(cp,-3,4),3); // domain is {0,1,2,3,4,5,6,7}
 
-        assertEquals(-9,x.getMin());
-        assertEquals(12,x.getMax());
+        assertEquals(0,x.getMin());
+        assertEquals(7,x.getMax());
         assertEquals(8,x.getSize());
 
         cp.getTrail().push();
@@ -48,19 +49,19 @@ public class IntVarViewMulTest {
 
             assertFalse(x.isBound());
 
-            x.remove(-6);
-            assertFalse(x.contains(-6));
-            x.remove(2);
-            assertTrue(x.contains(0));
-            assertTrue(x.contains(3));
-            assertEquals(7,x.getSize());
-            x.removeAbove(7);
+            x.remove(0);
+            assertFalse(x.contains(0));
+            x.remove(3);
+            assertTrue(x.contains(1));
+            assertTrue(x.contains(2));
+            assertEquals(6,x.getSize());
+            x.removeAbove(6);
             assertEquals(6,x.getMax());
-            x.removeBelow(-8);
-            assertEquals(-3,x.getMin());
-            x.assign(3);
+            x.removeBelow(3);
+            assertEquals(4,x.getMin());
+            x.assign(5);
             assertTrue(x.isBound());
-            assertEquals(3,x.getMax());
+            assertEquals(5,x.getMax());
 
 
 
@@ -70,7 +71,7 @@ public class IntVarViewMulTest {
         }
 
         try {
-            x.assign(8);
+            x.assign(4);
             fail( "should have failed" );
         } catch (InconsistencyException expectedException) {}
 
@@ -82,13 +83,14 @@ public class IntVarViewMulTest {
     }
 
 
+
     @Test
     public void onDomainChangeOnBind() {
         propagateCalled = false;
         Solver cp  = new Solver();
 
-        IntVar x = mul(makeIntVar(cp,10),1);
-        IntVar y = mul(makeIntVar(cp,10),1);
+        IntVar x = plus(makeIntVar(cp,10),1); // 1..11
+        IntVar y = plus(makeIntVar(cp,10),1); // 1..11
 
         Constraint cons = new Constraint(cp) {
 
@@ -101,17 +103,17 @@ public class IntVarViewMulTest {
 
         try {
             cp.post(cons);
-            x.remove(8);
+            x.remove(9);
             cp.fixPoint();
             assertFalse(propagateCalled);
-            x.assign(4);
+            x.assign(5);
             cp.fixPoint();
             assertTrue(propagateCalled);
             propagateCalled = false;
-            y.remove(10);
+            y.remove(11);
             cp.fixPoint();
             assertFalse(propagateCalled);
-            y.remove(9);
+            y.remove(10);
             cp.fixPoint();
             assertTrue(propagateCalled);
 
@@ -126,8 +128,8 @@ public class IntVarViewMulTest {
 
         Solver cp = new Solver();
 
-        IntVar x = mul(makeIntVar(cp, 10),1);
-        IntVar y = mul(makeIntVar(cp, 10),1);
+        IntVar x = plus(makeIntVar(cp, 10),1);
+        IntVar y = plus(makeIntVar(cp, 10),1);
 
         Constraint cons = new Constraint(cp) {
 
@@ -140,22 +142,22 @@ public class IntVarViewMulTest {
 
         try {
             cp.post(cons);
-            x.remove(8);
-            cp.fixPoint();
-            assertFalse(propagateCalled);
             x.remove(9);
             cp.fixPoint();
             assertFalse(propagateCalled);
-            x.assign(4);
+            x.remove(10);
+            cp.fixPoint();
+            assertFalse(propagateCalled);
+            x.assign(5);
             cp.fixPoint();
             assertTrue(propagateCalled);
             propagateCalled = false;
-            assertFalse(y.contains(10));
-            y.remove(10);
+            assertFalse(y.contains(11));
+            y.remove(11);
             cp.fixPoint();
             assertFalse(propagateCalled);
             propagateCalled = false;
-            y.remove(2);
+            y.remove(3);
             cp.fixPoint();
             assertTrue(propagateCalled);
 
