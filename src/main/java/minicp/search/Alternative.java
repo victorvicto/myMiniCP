@@ -23,7 +23,7 @@ import minicp.util.InconsistencyException;
 
 @FunctionalInterface
 public interface Alternative {
-    void execute() throws InconsistencyException;
+    void call() throws InconsistencyException;
 }
 
 

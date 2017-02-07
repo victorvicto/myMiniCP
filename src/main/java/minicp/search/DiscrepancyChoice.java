@@ -41,10 +41,10 @@ public abstract class DiscrepancyChoice {
 
     public Alternative[] getAlternatives() throws InconsistencyException {
         // Hint:
-        // Let b.alts denote b.getAlternatives()
+        // Let b.alts denote b.call()
         // Filter-out alternatives from b.alts that would exceed maxDiscrepancy
         // Therefore wrap each alternative in b.alts
-        // such that the execute method of the wrapped alternatives
+        // such that the call method of the wrapped alternatives
         // augment the currentDiscrepancy depending on its position
         // +0 for b.alts[0], ..., +i for b.alts[i]
         throw new NotImplementedException();

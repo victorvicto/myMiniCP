@@ -22,5 +22,5 @@ package minicp.search;
 
 @FunctionalInterface
 public interface Choice {
-    Alternative[] getAlternatives();
+    Alternative[] call();
 }

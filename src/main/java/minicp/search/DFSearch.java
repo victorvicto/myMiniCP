@@ -83,7 +83,7 @@ public class DFSearch {
 
     private void dfs(SearchStatistics statistics, SearchLimit limit) {
         if (limit.stopSearch(statistics)) throw new StopSearchException();
-        Alternative [] alternatives = branching.getAlternatives();
+        Alternative [] alternatives = branching.call();
         if (alternatives.length == 0) {
             statistics.nSolutions++;
             notifySolutionFound();
@@ -93,7 +93,7 @@ public class DFSearch {
                 state.push();
                 try {
                     statistics.nNodes++;
-                    alt.execute();
+                    alt.call();
                     dfs(statistics,limit);
                 } catch (InconsistencyException e) {
                     notifyFailure();
