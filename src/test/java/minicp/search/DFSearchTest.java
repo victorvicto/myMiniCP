@@ -19,7 +19,7 @@
 
 package minicp.search;
 
-import minicp.cp.core.Solver;
+import minicp.engine.core.Solver;
 import minicp.reversible.ReversibleInt;
 
 import static minicp.search.Selector.*;

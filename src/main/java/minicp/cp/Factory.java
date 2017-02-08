@@ -19,8 +19,8 @@
 
 package minicp.cp;
 
-import minicp.cp.constraints.*;
-import minicp.cp.core.*;
+import minicp.engine.constraints.*;
+import minicp.engine.core.*;
 import minicp.search.Choice;
 import minicp.search.DFSearch;
 import minicp.util.InconsistencyException;

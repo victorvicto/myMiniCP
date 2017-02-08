@@ -317,7 +317,7 @@ As a result we get an object that contains some statistics about the search.
 Constraints
 =============================
 
-Every constraint extends the :javaref:`minicp.cp.core.Constraint` class.
+Every constraint extends the :javaref:`minicp.engine.core.Constraint` class.
 
 A constraint has two responsibilities:
 
@@ -365,7 +365,7 @@ In case of domain wipe-out (empty domain), the ``remove`` throws an exception.
 Store and fix-point
 ====================
 
-The :javaref:`minicp.cp.core.Store` class deals with the propagation and the fix-point algorithm.
+The :javaref:`minicp.engine.core.Store` class deals with the propagation and the fix-point algorithm.
 It contains a stack with all the constraints that still need to be propagated.
 
 .. literalinclude:: ../../src/main/java/minicp/cp/core/Store.java
@@ -389,7 +389,7 @@ When creating a model, the user adds constraint with the ``add`` method which by
 Variables
 =============================
 
-A CP variable is implemented in :javaref:`minicp.cp.core.IntVar`.
+A CP variable is implemented in :javaref:`minicp.engine.core.IntVar`.
 Instance variables of this class are:
 
 
@@ -442,7 +442,7 @@ during the propagation through the ``remove`` method:
 
 
 Although you can already probably guess how it is implemented,
-we invite you to read the code of :javaref:`minicp.cp.core.IntVar` to learn
+we invite you to read the code of :javaref:`minicp.engine.core.IntVar` to learn
 more about the implementation of the similar ``assign`` operation.
 
 hello

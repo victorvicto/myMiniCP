@@ -1,0 +1,46 @@
+/*
+ * This file is part of mini-cp.
+ *
+ * mini-cp is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Foobar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with mini-cp.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
+ */
+
+package minicp.engine.constraints;
+
+import minicp.engine.core.Constraint;
+import minicp.engine.core.IntVar;
+import minicp.engine.core.Solver;
+import minicp.util.InconsistencyException;
+
+public class AllDifferentBinary extends Constraint {
+
+    private IntVar [] x;
+
+    public AllDifferentBinary(IntVar ... x) {
+        super(x[0].getSolver());
+        this.x = x;
+    }
+
+    @Override
+    public void post() throws InconsistencyException {
+        Solver cp = x[0].getSolver();
+        for (int i = 0; i < x.length; i++) {
+            for (int j = i+1; j < x.length; j++) {
+                cp.post(new NotEqual(x[i],x[j]),false);
+            }
+        }
+    }
+
+}
