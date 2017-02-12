@@ -76,9 +76,9 @@ public class Factory {
     }
     @FunctionalInterface
     public interface BodyClosure {
-        IntVar call(int i);
+        IntVar call(int i) throws InconsistencyException ;
     }
-    static public IntVar[] makeIntVarArray(Solver cp,int n,BodyClosure body) {
+    static public IntVar[] makeIntVarArray(Solver cp,int n,BodyClosure body) throws InconsistencyException {
         IntVar[] rv = new IntVar[n];
         for(int i = 0; i < n;i++)
             rv[i] = body.call(i);
@@ -128,7 +128,13 @@ public class Factory {
         x.getSolver().post(new Element2D(T,x,y,z));
         return z;
     }
-
+    static public IntVar[] all(int low,int up,BodyClosure body) throws InconsistencyException  {
+        int sz = up - low + 1;
+        IntVar[] t = new IntVar[sz];
+        for(int i=low;i <= up;i++)
+            t[i - low] = body.call(i);
+        return t;
+    }
     static public IntVar sum(IntVar[] x) throws InconsistencyException {
         int sumMin = 0;
         int sumMax = 0;
@@ -141,18 +147,20 @@ public class Factory {
         cp.post(new Sum(x,s));
         return s;
     }
-
-    static public Constraint sum(IntVar[] x, IntVar y) {
-        return new Sum(x,y);
+    static public IntVar booleqc(IntVar x,final int c)  throws InconsistencyException  {
+        IntVar b = makeIntVar(x.getSolver(),0,1);
+        Solver cp = x.getSolver();
+        cp.post(new BoolEQc(b,x,c));
+        return b;
     }
 
-    static public Constraint sum(IntVar[] x, int y) {
+    static public Constraint sum(IntVar[] x, IntVar y) throws InconsistencyException  {
         return new Sum(x,y);
     }
-
-    static public Constraint allDifferent(IntVar[] x) {
+    static public Constraint sum(IntVar[] x, int y) throws InconsistencyException  {
+        return new Sum(x,y);
+    }
+    static public Constraint allDifferent(IntVar[] x) throws InconsistencyException  {
         return new AllDifferentBinary(x);
     }
-
-
 }
