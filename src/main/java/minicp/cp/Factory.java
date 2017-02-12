@@ -74,7 +74,16 @@ public class Factory {
             rv[i] = makeIntVar(cp, sz);
         return rv;
     }
-
+    @FunctionalInterface
+    public interface BodyClosure {
+        IntVar call(int i);
+    }
+    static public IntVar[] makeIntVarArray(Solver cp,int n,BodyClosure body) {
+        IntVar[] rv = new IntVar[n];
+        for(int i = 0; i < n;i++)
+            rv[i] = body.call(i);
+        return rv;
+    }
 
     static public DFSearch makeDfs(Solver cp, Choice branching) {
         return new DFSearch(cp.getTrail(),branching);
