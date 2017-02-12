@@ -27,7 +27,7 @@ import java.util.List;
 
 public class DFSearch {
 
-    private Choice branching;
+    private Choice choice;
     private Trail state;
 
     private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
@@ -63,7 +63,7 @@ public class DFSearch {
 
     public DFSearch(Trail state, Choice branching) {
         this.state = state;
-        this.branching = branching;
+        this.choice = branching;
     }
 
     public SearchStatistics start(SearchLimit limit) {
@@ -83,7 +83,7 @@ public class DFSearch {
 
     private void dfs(SearchStatistics statistics, SearchLimit limit) {
         if (limit.stopSearch(statistics)) throw new StopSearchException();
-        Alternative [] alternatives = branching.call();
+        Alternative [] alternatives = choice.call();
         if (alternatives.length == 0) {
             statistics.nSolutions++;
             notifySolutionFound();
