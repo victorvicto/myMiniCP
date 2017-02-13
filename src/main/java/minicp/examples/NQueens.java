@@ -36,8 +36,6 @@ public class NQueens {
         IntVar[] q = makeIntVarArray(cp, n, n);
         IntVar[] ql = makeIntVarArray(cp,n,i -> plus(q[i],i));
         IntVar[] qr = makeIntVarArray(cp,n,i -> plus(q[i],-i));
-        //IntVar [] ql = IntStream.range(0,n).mapToObj(i -> plus(q[i], i)).toArray(IntVar[]::new);
-        //IntVar [] qr = IntStream.range(0,n).mapToObj(i -> plus(q[i],-i)).toArray(IntVar[]::new);
 
         cp.post(allDifferent(q));
         cp.post(allDifferent(ql));
