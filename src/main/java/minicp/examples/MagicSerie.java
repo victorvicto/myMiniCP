@@ -1,3 +1,22 @@
+/*
+ * This file is part of mini-cp.
+ *
+ * mini-cp is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Foobar is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with mini-cp.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
+ */
+
 package minicp.examples;
 
 import minicp.engine.core.IntVar;
@@ -12,9 +31,7 @@ import static minicp.cp.Factory.notEqual;
 import static minicp.search.Selector.branch;
 import static minicp.search.Selector.selectMin;
 
-/**
- * Created by ldm on 2/12/17.
- */
+
 public class MagicSerie {
     public static void main(String[] args) throws InconsistencyException {
 
@@ -25,7 +42,7 @@ public class MagicSerie {
 
         for (int i = 0; i < n; i++) {
             final int fi = i;
-            cp.post(sum(all(0,n-1,j -> booleqc(s[j],fi)),s[i]));
+            cp.post(sum(all(0,n-1,j -> isEqual(s[j],fi)),s[i]));
         }
         cp.post(sum(all(0,n-1,i -> mul(s[i],i)),n));
         cp.post(sum(all(0,n-1,i -> mul(s[i],i-1)),0));

@@ -47,7 +47,7 @@ The next example manipulates ``ReversibleInt`` objects within a ``ReversibleCont
 A reversible state has two operations ``push`` and ``pop``:
 
 * The ``push`` operation records the trail of all the objects created in this state. The reversible state is a stack of states recorded at the time of the ``push`` operations.
-* The ``pop`` operation restores and removes top-most trail of the stack of states. The ``pop`` as like an undo operation.
+* The ``pop`` operation restores and removes top-most trail of the stack of states. The ``pop`` is like an undo operation.
 
 In the above example, one can see that the first ``pop`` operation
 restores the objects at the value they had at the time of the previous push operation: `a=11,b=13`.

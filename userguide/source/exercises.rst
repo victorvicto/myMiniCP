@@ -200,6 +200,8 @@ LNS
 
 TODO
 
+Implement: The closure must be deactivated when c is lost
+x.whenValueLost(c, () -> {});
 
 
 

@@ -67,6 +67,10 @@ public class Factory {
         return new IntVarImpl(cp,values);
     }
 
+    static public BoolVar makeBoolVar(Solver cp) {
+        return new BoolVarImpl(cp);
+    }
+
     // Factory
     static public IntVar[] makeIntVarArray(Solver cp, int n, int sz) {
         IntVar[] rv = new IntVar[n];
@@ -74,10 +78,12 @@ public class Factory {
             rv[i] = makeIntVar(cp, sz);
         return rv;
     }
+
     @FunctionalInterface
     public interface BodyClosure {
         IntVar call(int i) throws InconsistencyException ;
     }
+
     static public IntVar[] makeIntVarArray(Solver cp,int n,BodyClosure body) throws InconsistencyException {
         IntVar[] rv = new IntVar[n];
         for(int i = 0; i < n;i++)
@@ -85,10 +91,17 @@ public class Factory {
         return rv;
     }
 
+    static public IntVar[] all(int low, int up, BodyClosure body) throws InconsistencyException {
+        int sz = up - low + 1;
+        IntVar[] t = new IntVar[sz];
+        for (int i = low; i <= up; i++)
+            t[i - low] = body.call(i);
+        return t;
+    }
+
     static public DFSearch makeDfs(Solver cp, Choice branching) {
         return new DFSearch(cp.getTrail(),branching);
     }
-
 
 
     // -------------- constraints -----------------------
@@ -107,6 +120,13 @@ public class Factory {
         return new NotEqual(x,y);
     }
 
+    static public BoolVar isEqual(IntVar x, final int c)  throws InconsistencyException  {
+        BoolVar b = makeBoolVar(x.getSolver());
+        Solver cp = x.getSolver();
+        cp.post(new IsEqual(b,x,c));
+        return b;
+    }
+
     static public Constraint minimize(IntVar x, DFSearch dfs) {
         return new Minimize(x,dfs);
     }
@@ -120,21 +140,15 @@ public class Factory {
         int max = Integer.MIN_VALUE;
         for (int i = 0; i < T.length; i++) {
             for (int j = 0; j < T[i].length; j++) {
-                min = Math.min(min,T[i][j]);
-                max = Math.max(max,T[i][j]);
+                min = Math.min(min, T[i][j]);
+                max = Math.max(max, T[i][j]);
             }
         }
-        IntVar z = makeIntVar(x.getSolver(),min,max);
-        x.getSolver().post(new Element2D(T,x,y,z));
+        IntVar z = makeIntVar(x.getSolver(), min, max);
+        x.getSolver().post(new Element2D(T, x, y, z));
         return z;
     }
-    static public IntVar[] all(int low,int up,BodyClosure body) throws InconsistencyException  {
-        int sz = up - low + 1;
-        IntVar[] t = new IntVar[sz];
-        for(int i=low;i <= up;i++)
-            t[i - low] = body.call(i);
-        return t;
-    }
+
     static public IntVar sum(IntVar[] x) throws InconsistencyException {
         int sumMin = 0;
         int sumMax = 0;
@@ -143,23 +157,19 @@ public class Factory {
             sumMax += x[i].getMax();
         }
         Solver cp = x[0].getSolver();
-        IntVar s = makeIntVar(cp,sumMin,sumMax);
-        cp.post(new Sum(x,s));
+        IntVar s = makeIntVar(cp, sumMin, sumMax);
+        cp.post(new Sum(x, s));
         return s;
-    }
-    static public IntVar booleqc(IntVar x,final int c)  throws InconsistencyException  {
-        IntVar b = makeIntVar(x.getSolver(),0,1);
-        Solver cp = x.getSolver();
-        cp.post(new BoolEQc(b,x,c));
-        return b;
     }
 
     static public Constraint sum(IntVar[] x, IntVar y) throws InconsistencyException  {
         return new Sum(x,y);
     }
+
     static public Constraint sum(IntVar[] x, int y) throws InconsistencyException  {
         return new Sum(x,y);
     }
+
     static public Constraint allDifferent(IntVar[] x) throws InconsistencyException  {
         return new AllDifferentBinary(x);
     }
