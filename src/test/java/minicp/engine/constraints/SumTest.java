@@ -23,6 +23,7 @@ import minicp.util.NotImplementedException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static minicp.cp.Heuristics.*;
 import static minicp.cp.Factory.*;
@@ -223,6 +224,35 @@ public class SumTest {
         } catch (InconsistencyException e) {
             fail("should not fail");
         }
+    }
+
+    @Test
+    public void sum9() {
+        Solver cp = new Solver();
+
+        IntVar[] x = new IntVar[]{makeIntVar(cp, -9, -9)};
+        boolean failed = false;
+        try {
+            cp.post(new Sum(x));
+        } catch (InconsistencyException e) {
+            failed = true;
+        }
+        assertTrue(failed);
+    }
+
+
+    @Test
+    public void sum10() {
+        Solver cp = new Solver();
+
+        IntVar[] x = new IntVar[]{makeIntVar(cp, -9, -4)};
+        boolean failed = false;
+        try {
+            cp.post(new Sum(x));
+        } catch (InconsistencyException e) {
+            failed = true;
+        }
+        assertTrue(failed);
     }
 
 
