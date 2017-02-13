@@ -21,15 +21,15 @@ import minicp.util.InconsistencyException;
 public class ConstraintClosure extends Constraint {
 
     @FunctionalInterface
-    public interface Closure {
+    public interface Filtering {
         void call() throws InconsistencyException;
     }
 
-    private final Closure c;
+    private final Filtering filtering;
 
-    public ConstraintClosure(Solver cp, Closure c) {
+    public ConstraintClosure(Solver cp, Filtering filtering) {
         super(cp);
-        this.c = c;
+        this.filtering = filtering;
     }
 
     @Override
@@ -39,6 +39,6 @@ public class ConstraintClosure extends Constraint {
 
     @Override
     public void propagate() throws InconsistencyException {
-        c.call();
+        filtering.call();
     }
 }

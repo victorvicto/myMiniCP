@@ -36,17 +36,17 @@ public class IntVarViewMul implements IntVar {
     }
 
     @Override
-    public void whenDomainChange(ConstraintClosure.Closure c) {
+    public void whenDomainChange(ConstraintClosure.Filtering c) {
         x.whenDomainChange(c);
     }
 
     @Override
-    public void whenBind(ConstraintClosure.Closure c) {
+    public void whenBind(ConstraintClosure.Filtering c) {
         x.whenBind(c);
     }
 
     @Override
-    public void whenBoundsChange(ConstraintClosure.Closure c) {
+    public void whenBoundsChange(ConstraintClosure.Filtering c) {
         x.whenBoundsChange(c);
     }
 

@@ -98,7 +98,7 @@ public class QAPLNS {
             System.out.println("restart number #"+i);
 
             // Record the state such that the fragment constraints can be cancelled
-            cp.getTrail().push();
+            cp.push();
 
             // Assign the fragment 5% of the variables randomly chosen
             for (int j = 0; j < n; j++) {
@@ -109,7 +109,7 @@ public class QAPLNS {
             dfs.start(statistics -> statistics.nFailures >= failureLimit);
 
             // cancel all the fragment constraints
-            cp.getTrail().pop();
+            cp.pop();
         }
 
     }

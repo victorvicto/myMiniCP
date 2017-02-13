@@ -126,7 +126,7 @@ public class DFSearchTest {
                     }
             );
         });
-        
+
         Counter nFails = new Counter();
         dfs.onFail(() -> {
             nFails.incr();

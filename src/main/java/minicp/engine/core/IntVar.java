@@ -30,21 +30,21 @@ public interface IntVar {
      * of this variable changes
      * @param c
      */
-    void whenDomainChange(ConstraintClosure.Closure c);
+    void whenDomainChange(ConstraintClosure.Filtering c);
 
     /**
      * Ask that the closure is called whenever the domain
      * of this variable is reduced to a single value
      * @param c
      */
-    void whenBind(ConstraintClosure.Closure c);
+    void whenBind(ConstraintClosure.Filtering c);
 
     /**
      * Ask that the closure is called whenever
      * the max or min value of the domain of this variable changes
      * @param c
      */
-    void whenBoundsChange(ConstraintClosure.Closure c);
+    void whenBoundsChange(ConstraintClosure.Filtering c);
 
     /**
      * Ask that c.propagate() is called whenever the domain change

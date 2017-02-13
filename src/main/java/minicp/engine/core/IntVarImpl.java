@@ -108,17 +108,18 @@ public class IntVarImpl implements IntVar {
         return domain.toString();
     }
 
-    public void whenDomainChange(ConstraintClosure.Closure c) {
+    public void whenDomainChange(ConstraintClosure.Filtering c) {
         onDomain.push(new ConstraintClosure(cp,c));
     }
 
-    public void whenBind(ConstraintClosure.Closure c) {
+    public void whenBind(ConstraintClosure.Filtering c) {
         onBind.push(new ConstraintClosure(cp,c));
     }
 
-    public void whenBoundsChange(ConstraintClosure.Closure c) {
+    public void whenBoundsChange(ConstraintClosure.Filtering c) {
         onBounds.push(new ConstraintClosure(cp,c));
     }
+
     public void propagateOnDomainChange(Constraint c) {
         onDomain.push(c);
     }
