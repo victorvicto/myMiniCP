@@ -115,6 +115,9 @@ public class Factory {
     static public Constraint notEqual(IntVar x, IntVar y) {
         return new NotEqual(x,y);
     }
+    static public Constraint notEqual(IntVar x, IntVar y,int c) {
+        return new NotEqual(x,y,c);
+    }
 
     static public BoolVar isEqual(IntVar x, final int c)  throws InconsistencyException  {
         BoolVar b = makeBoolVar(x.getSolver());
