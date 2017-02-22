@@ -1,28 +1,25 @@
 /*
- * This file is part of mini-cp.
- *
  * mini-cp is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
  *
- * Foobar is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with mini-cp.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
+ * Copyright (c)  2017. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
  */
 
 package minicp.search;
 
-import minicp.engine.core.Solver;
 import minicp.reversible.ReversibleInt;
 
 import static minicp.search.Selector.*;
+
+import minicp.reversible.Trail;
 import minicp.util.Counter;
 import minicp.util.InconsistencyException;
 import org.junit.Test;
@@ -32,28 +29,24 @@ public class DFSearchTest {
 
     @Test
     public void testExample1() {
-        Solver cp = new Solver();
-        ReversibleInt i = new ReversibleInt(cp.getTrail(),0);
+        Trail tr = new Trail();
+        ReversibleInt i = new ReversibleInt(tr,0);
         int [] values = new int[3];
 
-        Choice myBranching = () -> {
-                if (i.getValue() >= values.length)
-                    return TRUE;
-                else return branch(
-                        ()-> { // left branch
-                            values[i.getValue()] = 0;
-                            i.increment();
-                        },
-                        ()-> { // right branch
-                            values[i.getValue()] = 1;
-                            i.increment();
-                        }
-                );
-            };
-
-
-
-        DFSearch dfs = new DFSearch(cp.getTrail(),myBranching);
+        DFSearch dfs = new DFSearch(tr,() -> {
+            if (i.getValue() >= values.length)
+                return TRUE;
+            else return branch(
+                    ()-> { // left branch
+                        values[i.getValue()] = 0;
+                        i.increment();
+                    },
+                    ()-> { // right branch
+                        values[i.getValue()] = 1;
+                        i.increment();
+                    }
+            );
+        });
 
         dfs.onSolution(() -> {
             // System.out.println(Arrays.toString(values));
@@ -71,32 +64,29 @@ public class DFSearchTest {
 
     @Test
     public void testDFS() {
-        Solver cp = new Solver();
-        ReversibleInt i = new ReversibleInt(cp.getTrail(),0);
+        Trail tr = new Trail();
+        ReversibleInt i = new ReversibleInt(tr,0);
         boolean [] values = new boolean[4];
-
-        Choice myBranching = () -> {
-                if (i.getValue() >= values.length)
-                    return TRUE;
-                else return branch (
-                        ()-> {
-                            // left branch
-                            values[i.getValue()] = false;
-                            i.increment();
-                        },
-                        ()-> {
-                            // right branch
-                            values[i.getValue()] = true;
-                            i.increment();
-                        }
-                );
-            };
-
 
         Counter nSols = new Counter();
 
 
-        DFSearch dfs = new DFSearch(cp.getTrail(),myBranching);
+        DFSearch dfs = new DFSearch(tr,() -> {
+            if (i.getValue() >= values.length)
+                return TRUE;
+            else return branch (
+                    ()-> {
+                        // left branch
+                        values[i.getValue()] = false;
+                        i.increment();
+                    },
+                    ()-> {
+                        // right branch
+                        values[i.getValue()] = true;
+                        i.increment();
+                    }
+            );
+        });
 
         dfs.onSolution(() -> {
            nSols.incr();
@@ -115,31 +105,27 @@ public class DFSearchTest {
 
     @Test
     public void testDFSSearchLimit() {
-        Solver cp = new Solver();
-        ReversibleInt i = new ReversibleInt(cp.getTrail(),0);
+        Trail tr = new Trail();
+        ReversibleInt i = new ReversibleInt(tr,0);
         boolean [] values = new boolean[4];
 
-        Choice myBranching = () -> {
-                if (i.getValue() >= values.length) {
-                    return branch(() -> {throw new InconsistencyException();});
-                }
-                else return branch (
-                        ()-> {
-                            // left branch
-                            values[i.getValue()] = false;
-                            i.increment();
-                        },
-                        ()-> {
-                            // right branch
-                            values[i.getValue()] = true;
-                            i.increment();
-                        }
-                );
-            };
-
-
-
-        DFSearch dfs = new DFSearch(cp.getTrail(),myBranching);
+        DFSearch dfs = new DFSearch(tr,() -> {
+            if (i.getValue() >= values.length) {
+                return branch(() -> {throw new InconsistencyException();});
+            }
+            else return branch (
+                    ()-> {
+                        // left branch
+                        values[i.getValue()] = false;
+                        i.increment();
+                    },
+                    ()-> {
+                        // right branch
+                        values[i.getValue()] = true;
+                        i.increment();
+                    }
+            );
+        });
 
         Counter nFails = new Counter();
         dfs.onFail(() -> {

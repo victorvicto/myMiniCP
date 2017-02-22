@@ -47,7 +47,7 @@ The next example manipulates ``ReversibleInt`` objects within a ``ReversibleCont
 A reversible state has two operations ``push`` and ``pop``:
 
 * The ``push`` operation records the trail of all the objects created in this state. The reversible state is a stack of states recorded at the time of the ``push`` operations.
-* The ``pop`` operation restores and removes top-most trail of the stack of states. The ``pop`` as like an undo operation.
+* The ``pop`` operation restores and removes top-most trail of the stack of states. The ``pop`` is like an undo operation.
 
 In the above example, one can see that the first ``pop`` operation
 restores the objects at the value they had at the time of the previous push operation: `a=11,b=13`.
@@ -321,8 +321,8 @@ Every constraint extends the :javaref:`minicp.engine.core.Constraint` class.
 
 A constraint has two responsibilities:
 
-1. checking that it is consistent according to it’s definition
-2. removing inconsistent values from the domain of it’s scope
+1. checking that it is consistent according to its definition
+2. removing inconsistent values from the domain of its scope
 
 These requirements are achieved by implementing the ``post`` and ``propagate`` methods:
 
@@ -333,7 +333,7 @@ These requirements are achieved by implementing the ``post`` and ``propagate`` m
     :lines: 27-33
 
 - ``post``:  is in charge of checking if the constraint is consistent according
-  to it’s semantic and the current domains. It can also do a first propagation to remove inconsistent values.
+  to its semantic and the current domains. It can also do a first propagation to remove inconsistent values.
   It is also in this method that you register the constraint for potential domain modifications.
 - ``propagate`` is called when a domain of a variable has been modified and so the constraint
   can potentially remove new inconsistent values or detect it is inconsistent.
@@ -435,7 +435,7 @@ during the propagation through the ``remove`` method:
         }
 
 1. The value is removed from the domain.
-2. All the constraints that were interested to be awakened if a change occurs on this variable.
+2. All the constraints that were interested to be awakened if a change occurs on this variable
    are enqueued in the propagation queue of the store.
 3. If after this removal the domain is a singleton, the constraints interested by bind events are also awakened.
 4. An ``INCONSISTENCY`` exception is thrown in case of removal of the last value in the domain.

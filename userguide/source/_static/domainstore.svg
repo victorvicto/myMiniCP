@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright Laurent Michel, Pierre Schaus Pascal Van Hentenryck
+  ~ mini-cp is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Lesser General Public License  v3
+  ~ as published by the Free Software Foundation.
+  ~
+  ~ mini-cp is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY.
+  ~ See the GNU Lesser General Public License  for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public License
+  ~ along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
+  ~
+  ~ Copyright (filtering)  2017. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
   -->
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="454.34pt" height="454.34pt" viewBox="0 0 454.34 454.34" version="1.1">

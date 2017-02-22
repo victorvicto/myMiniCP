@@ -15,37 +15,46 @@
 
 package minicp.engine.constraints;
 
+import minicp.engine.core.BoolVar;
 import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
-import minicp.search.DFSearch;
 import minicp.util.InconsistencyException;
 
-public class Minimize extends Constraint {
+public class IsEqual extends Constraint { // b <=> x == c
 
-    public int bound = Integer.MAX_VALUE;
-    public final IntVar x;
-    public final DFSearch dfs;
+    private final BoolVar b;
+    private final IntVar x;
+    private final int c;
 
-    public Minimize(IntVar x, DFSearch dfs) {
+    public IsEqual(BoolVar b, IntVar x, int c) {
         super(x.getSolver());
+        this.b = b;
         this.x = x;
-        this.dfs = dfs;
+        this.c = c;
     }
-
-    protected void tighten() {
-        if (!x.isBound()) throw new RuntimeException("objective not bound");
-        this.bound = x.getMax() - 1;
-    }
-
 
     @Override
     public void post() throws InconsistencyException {
-        x.whenBoundsChange(() -> x.removeAbove(bound));
-        // Ensure that the constraint is scheduled on backtrack
-        dfs.onSolution(() -> {
-            tighten();
-            cp.schedule(this);
-        });
-        dfs.onFail(() -> cp.schedule(this));
+        if (b.isTrue()) {
+            x.assign(c);
+        } else if (b.isFalse()) {
+            x.remove(c);
+        } else if (x.isBound()) {
+            b.assign(x.getMin() == c);
+        } else if (!x.contains(c)) {
+            b.assign(0);
+        } else {
+            b.whenBind(() -> {
+                if (b.isTrue()) x.assign(c);
+                else x.remove(c);
+            });
+            x.whenBind(() ->
+                b.assign(x.getMin() == c)
+            );
+            x.whenDomainChange(() -> {
+                if (!x.contains(c))
+                    b.assign(0);
+            });
+        }
     }
 }

@@ -1,20 +1,16 @@
 /*
- * This file is part of mini-cp.
- *
  * mini-cp is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * it under the terms of the GNU Lesser General Public License  v3
+ * as published by the Free Software Foundation.
  *
- * Foobar is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * mini-cp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY.
+ * See the GNU Lesser General Public License  for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with mini-cp.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * Copyright (c) 2016 L. Michel, P. Schaus, P. Van Hentenryck
+ * Copyright (c)  2017. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
  */
 
 
@@ -39,17 +35,17 @@ public class IntVarViewOffset implements IntVar {
     }
 
     @Override
-    public void whenDomainChange(ConstraintClosure.Closure c) {
+    public void whenDomainChange(ConstraintClosure.Filtering c) {
         x.whenDomainChange(c);
     }
 
     @Override
-    public void whenBind(ConstraintClosure.Closure c) {
+    public void whenBind(ConstraintClosure.Filtering c) {
         x.whenBind(c);
     }
 
     @Override
-    public void whenBoundsChange(ConstraintClosure.Closure c) {
+    public void whenBoundsChange(ConstraintClosure.Filtering c) {
         x.whenBoundsChange(c);
     }
 

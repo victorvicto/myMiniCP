@@ -13,16 +13,17 @@
  * Copyright (c)  2017. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
  */
 
-
 package minicp.engine.core;
 
 
-public interface DomainListener {
-    void bind();
+import minicp.util.InconsistencyException;
 
-    void change(int domainSize);
+public interface BoolVar extends IntVar {
 
-    void removeBelow(int domainSize);
+    public boolean isTrue();
 
-    void removeAbove(int domainSize);
+    public boolean isFalse();
+
+    public void assign(boolean b) throws InconsistencyException;
+
 }
