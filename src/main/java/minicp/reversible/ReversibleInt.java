@@ -16,21 +16,14 @@
 package minicp.reversible;
 
 
-public class ReversibleInt {
-
+public class ReversibleInt implements RevInt {
     class TrailEntryInt implements TrailEntry {
-
         private final int v;
-
         public TrailEntryInt(int v) {
             this.v = v;
         }
-
-        public void restore() {
-            ReversibleInt.this.v = v;
-        }
+        public void restore()       { ReversibleInt.this.v = v;}
     }
-
     private Trail trail;
     private int v;
     private Long lastMagic = -1L;
@@ -49,23 +42,17 @@ public class ReversibleInt {
         }
     }
 
-    public void setValue(int v) {
+    public int setValue(int v) {
         if (v != this.v) {
             trail();
             this.v = v;
         }
+        return this.v;
     }
 
-    public int increment() {
-        setValue(getValue()+1);
-        return getValue();
-    }
-    public int decrement() {
-        setValue(getValue()-1);
-        return getValue();
-    }
-
-    public int getValue() { return this.v; }
+    public int increment() { return setValue(getValue()+1);}
+    public int decrement() { return setValue(getValue()-1);}
+    public int getValue()  { return this.v; }
 
     @Override
     public String toString() {

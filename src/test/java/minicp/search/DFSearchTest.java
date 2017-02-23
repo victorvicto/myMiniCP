@@ -15,14 +15,20 @@
 
 package minicp.search;
 
+import minicp.engine.core.IntVar;
+import minicp.engine.core.Solver;
 import minicp.reversible.ReversibleInt;
+import java.util.Arrays;
 
+import static minicp.cp.Factory.makeSolver;
 import static minicp.search.Selector.*;
 
 import minicp.reversible.Trail;
 import minicp.util.Counter;
 import minicp.util.InconsistencyException;
 import org.junit.Test;
+import static minicp.search.Selector.*;
+import static minicp.cp.Factory.*;
 
 
 public class DFSearchTest {
@@ -49,7 +55,7 @@ public class DFSearchTest {
         });
 
         dfs.onSolution(() -> {
-            // System.out.println(Arrays.toString(values));
+            System.out.println(Arrays.toString(values));
         });
 
 
@@ -59,6 +65,36 @@ public class DFSearchTest {
         assert(stats.nFailures == 0);
         assert(stats.nNodes == (8+4+2));
     }
+
+    @Test
+    public void testExample2() {
+        Solver cp = makeSolver();
+        IntVar[] values = makeIntVarArray(cp,3,2);
+
+        DFSearch dfs = new DFSearch(cp.getTrail(),() -> {
+            int sel = -1;
+            for(int i = 0 ; i < values.length;i++)
+                if (values[i].getSize() > 1 && sel == -1)
+                    sel = i;
+            final int i = sel;
+            if (i == -1)
+                return TRUE;
+            else return branch(()-> equal(values[i],0),
+                               ()-> equal(values[i],1));
+        });
+
+        dfs.onSolution(() -> {
+            System.out.println(Arrays.toString(values));
+        });
+
+
+        SearchStatistics stats = dfs.start();
+
+        assert(stats.nSolutions == 8);
+        assert(stats.nFailures == 0);
+        assert(stats.nNodes == (8+4+2));
+    }
+
 
 
 
