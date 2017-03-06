@@ -32,29 +32,22 @@ public class IntVarImpl implements IntVar {
     private DomainListener domListener = new DomainListener() {
         @Override
         public void bind() {
-            scheduleAll(onDomain);
             scheduleAll(onBind);
         }
 
         @Override
         public void change(int domainSize) {
             scheduleAll(onDomain);
-            if (domainSize == 1)
-                scheduleAll(onBind);
         }
 
         @Override
         public void removeBelow(int domainSize) {
             scheduleAll(onBounds);
-            if (domainSize == 1)
-                scheduleAll(onBind);
         }
 
         @Override
         public void removeAbove(int domainSize) {
             scheduleAll(onBounds);
-            if (domainSize == 1)
-                scheduleAll(onBind);
         }
     };
 

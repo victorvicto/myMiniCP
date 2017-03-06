@@ -30,7 +30,7 @@ public class NotEqual extends Constraint {
         this.y = y;
         this.c = 0;
     }
-    public NotEqual(IntVar x, IntVar y,int c) { // x != y + c
+    public NotEqual(IntVar x, IntVar y, int c) { // x != y + c
         super(x.getSolver());
         this.x = x;
         this.y = y;

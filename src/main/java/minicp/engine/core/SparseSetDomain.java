@@ -66,8 +66,8 @@ public class SparseSetDomain extends IntDomain {
     public void removeAllBut(int v, DomainListener x) throws InconsistencyException {
         if (domain.contains(v - offset)) {
             if (domain.getSize() != 1) {
-                boolean maxChanged = getMax() == v;
-                boolean minChanged = getMin() == v;
+                boolean maxChanged = getMax() != v;
+                boolean minChanged = getMin() != v;
                 domain.removeAllBut(v - offset);
                 x.bind();
                 x.change(domain.getSize());
@@ -86,6 +86,7 @@ public class SparseSetDomain extends IntDomain {
             domain.removeBelow(value - offset);
             x.removeBelow(domain.getSize());
             x.change(domain.getSize());
+            if (domain.getSize() == 1) x.bind();
         }
         if (domain.getSize() == 0)  throw new InconsistencyException();
         else return domain.getMin() + offset;
@@ -96,6 +97,7 @@ public class SparseSetDomain extends IntDomain {
             domain.removeAbove(value - offset);
             x.removeAbove(domain.getSize());
             x.change(domain.getSize());
+            if (domain.getSize() == 1) x.bind();
         }
         if (domain.getSize() == 0)  throw new InconsistencyException();
         else return domain.getMax() + offset;
