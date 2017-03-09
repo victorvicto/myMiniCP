@@ -44,8 +44,19 @@ public class NotEqual extends Constraint {
         else if (x.isBound())
             y.remove(x.getMin() - c);
         else {
-            x.whenBind(() -> y.remove(x.getMin() - c));
-            y.whenBind(() -> x.remove(y.getMin() + c));
+            x.propagateOnBind(this);
+            y.propagateOnBind(this);
+
+            //x.whenBind(() -> y.remove(x.getMin() - c));
+            //y.whenBind(() -> x.remove(y.getMin() + c));
         }
     }
+
+    @Override
+    public void propagate() throws InconsistencyException {
+        if (y.isBound()) x.remove(y.getMin() + c);
+        else y.remove(x.getMin() - c);
+        this.deactivate();
+    }
+
 }

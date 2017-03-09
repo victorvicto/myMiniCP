@@ -17,6 +17,14 @@ package minicp.util;
 
 
 public class InconsistencyException extends Throwable {
+
+    public static final InconsistencyException INCONSISTENCY = new InconsistencyException();
+
     private static final long serialVersionUID = 1240061199250453776L;
     public String toString() { return "inconsistency";}
+
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this;
+    }
 }

@@ -18,6 +18,7 @@ package minicp.engine.core;
 import minicp.reversible.Trail;
 import minicp.reversible.ReversibleSparseSet;
 import minicp.util.InconsistencyException;
+import static minicp.util.InconsistencyException.INCONSISTENCY;
 
 
 public class SparseSetDomain extends IntDomain {
@@ -55,7 +56,7 @@ public class SparseSetDomain extends IntDomain {
             boolean maxChanged = getMax() == v;
             boolean minChanged = getMin() == v;
             domain.remove(v - offset);
-            if (domain.getSize() == 0) throw new InconsistencyException();
+            if (domain.getSize() == 0) throw INCONSISTENCY;
             x.change(domain.getSize());
             if (maxChanged) x.removeAbove(domain.getSize());
             if (minChanged) x.removeBelow(domain.getSize());
@@ -77,7 +78,7 @@ public class SparseSetDomain extends IntDomain {
         }
         else {
             domain.removeAll();
-            throw new InconsistencyException();
+            throw InconsistencyException.INCONSISTENCY;
         }
     }
 
@@ -88,7 +89,7 @@ public class SparseSetDomain extends IntDomain {
             x.change(domain.getSize());
             if (domain.getSize() == 1) x.bind();
         }
-        if (domain.getSize() == 0)  throw new InconsistencyException();
+        if (domain.getSize() == 0) throw INCONSISTENCY;
         else return domain.getMin() + offset;
     }
 
@@ -99,7 +100,7 @@ public class SparseSetDomain extends IntDomain {
             x.change(domain.getSize());
             if (domain.getSize() == 1) x.bind();
         }
-        if (domain.getSize() == 0)  throw new InconsistencyException();
+        if (domain.getSize() == 0) throw INCONSISTENCY;
         else return domain.getMax() + offset;
     }
 }
