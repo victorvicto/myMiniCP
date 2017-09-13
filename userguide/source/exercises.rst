@@ -33,9 +33,62 @@ Be able to
 Implement the less or equal reified constraint
 =================================
 
+Implement `IsLessOrEqual.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/IsLessOrEqual.java?at=master>`_
 
-The file is ``*``
-Check that your implementation pass the tests.
+This is a reified constraint for `b iff x <= c`
+that is boolean variable `b` is set true if and only if `x` variable is less or equal to value `c`.
+
+For example the constraint holds for
+
+.. code-block:: java
+
+    b = true , x = 4, c = 5
+    b = false, x = 4, c = 2
+
+
+but is violated for
+
+.. code-block:: java
+
+    b = true , x = 5, c = 4
+    b = false, x = 2, c = 4
+
+
+Check that your implementation pass the tests `IsLessOrEqualTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/IsEqualTest.java?at=master>`_
+
+
+Implement element constraint
+=================================
+
+
+Implement `Element1D.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Element1D.java?at=master>`_
+
+
+Two possibilities:
+
+1. extends `Element2D` and reformulate `Element1D` as an `Element2D` constraint in super call of the constructor.
+2. implement a dedicated algo (propagate, etc) for `Element1D` by taking inspiration from `Element2D`.
+
+An element constraint is to index an array `T` by an index variable `x` and link the result with a variable `z`.
+More exactly the relation `T[x]=z` must hold.
+
+Assuming `T=[1,3,5,7,3]`, the constraint holds for
+
+.. code-block:: java
+
+    x = 1, z = 3
+    x = 3, z = 7
+
+
+but is violated for
+
+.. code-block:: java
+
+    x = 0, z = 2
+    x = 3, z = 3
+
+
+Check that your implementation pass the tests `Element1DTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DTest.java?at=master>`_
 
 
 
