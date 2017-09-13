@@ -19,14 +19,15 @@ import minicp.engine.core.BoolVar;
 import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
 import minicp.util.InconsistencyException;
+import minicp.util.NotImplementedException;
 
-public class IsEqual extends Constraint { // b <=> x == c
+public class IsLessOrEqual extends Constraint { // b <=> x <= c
 
     private final BoolVar b;
     private final IntVar x;
     private final int c;
 
-    public IsEqual(BoolVar b, IntVar x, int c) {
+    public IsLessOrEqual(BoolVar b, IntVar x, int c) {
         super(x.getSolver());
         this.b = b;
         this.x = x;
@@ -35,29 +36,7 @@ public class IsEqual extends Constraint { // b <=> x == c
 
     @Override
     public void post() throws InconsistencyException {
-        if (b.isTrue()) {
-            x.assign(c);
-        } else if (b.isFalse()) {
-            x.remove(c);
-        } else if (x.isBound()) {
-            b.assign(x.getMin() == c);
-        } else if (!x.contains(c)) {
-            b.assign(0);
-        } else {
-            b.whenBind(() -> {
-                if (b.isTrue()) x.assign(c);
-                else {
-                    // should deactivate the constraint as it is entailed
-                    x.remove(c);
-                }
-            });
-            x.whenBind(() ->
-                b.assign(x.getMin() == c)
-            );
-            x.whenDomainChange(() -> {
-                if (!x.contains(c))
-                    b.assign(0);
-            });
-        }
+        // TODO
+        throw new NotImplementedException("IsLessOrEqual");
     }
 }
