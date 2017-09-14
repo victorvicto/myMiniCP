@@ -53,7 +53,7 @@ but is violated for
     b = false, x = 2, c = 4
 
 
-Check that your implementation pass the tests `IsLessOrEqualTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/IsEqualTest.java?at=master>`_
+Check that your implementation passes the tests `IsLessOrEqualTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/IsEqualTest.java?at=master>`_
 
 
 Element constraint
@@ -87,14 +87,80 @@ but is violated for
     x = 3, z = 3
 
 
-Check that your implementation pass the tests `Element1DTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DTest.java?at=master>`_
+Check that your implementation passes the tests `Element1DTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DTest.java?at=master>`_
 
 
 Circuit Constraint
 ========================
 
+The circuit constraint enforces an hamiltonian circuit on a successor array.
+On the next example the successor array is `[2,4,1,5,3,0]`
 
-Circuit Filtering [TSP1998]_
+.. image:: _static/circuit.svg
+    :scale: 50
+    :width: 250
+    :alt: Circuit
+
+
+All the successors must be different.
+but enforcing the `allDifferent` constraint is not enough.
+We must also guarantee it forms a proper circuit (without sub-tours).
+This can be done efficiently and incrementally by keeping track of the sub-chains
+in appearing the search.
+The data-structure for the sub-chains should be a reversible.
+Our instance variables used to keep track of the sub-chains are:
+
+.. code-block:: java
+
+    IntVar [] x;
+    ReversibleInt [] dest;
+    ReversibleInt [] orig;
+    ReversibleInt [] lengthToDest;
+
+
+
+* `dest[i]` is the furthest node we can reach from node `i` following the instantiated edges.
+* `orig[i]` is the furthest node we can reach from node `i` following instantiated edges in reverse direction.
+* `lengthToDest[i]` is the number of instantiated on the path from node `i` to `dest[i]`.
+
+Consider the following example with instantiated edges colored in grey.
+
+.. image:: _static/circuit-subtour.svg
+    :scale: 50
+    :width: 250
+    :alt: Circuit
+
+Before the addition of the green link we have
+
+.. code-block:: java
+
+    dest = [2,1,2,5,5,5];
+    orig = [0,1,0,4,4,4];
+    lengthToDest = [1,0,0,1,2,0];
+
+After the addition of the green link we have
+
+.. code-block:: java
+
+    dest = [2,1,2,2,2,2];
+    orig = [4,1,4,4,4,4];
+    lengthToDest = [1,0,0,3,4,2];
+
+
+In your implementation you must update the reversible integers to reflect
+the change after the addition of every new edge.
+You can use the `CPIntVar.whenBind(...)` method for that.
+
+The filtering in itself consists in preventing to close a
+sub-tour that would have a length less than `n` (the number of nodes).
+Since node 4 has a length to destination (node 2) of 4 (<6), the destination node 2 can not have 4 as successor
+and the red link is deleted.
+This filtering was introduced in [TSP1998]_ for solving the TSP with CP.
+
+
+Implement `Circuit.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Circuit.java?at=master>`_
+Check that your implementation passes the tests `CircuitTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Circuit.java?at=master>`_
+
 
 .. [TSP1998] Pesant, G., Gendreau, M., Potvin, J. Y., & Rousseau, J. M. (1998). An exact constraint logic programming algorithm for the traveling salesman problem with time windows. Transportation Science, 32(1), 12-29.
 
