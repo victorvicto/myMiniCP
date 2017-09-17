@@ -158,8 +158,9 @@ and the red link is deleted.
 This filtering was introduced in [TSP1998]_ for solving the TSP with CP.
 
 
-Implement `Circuit.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Circuit.java?at=master>`_
-Check that your implementation passes the tests `CircuitTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Circuit.java?at=master>`_
+Implement `Circuit.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Circuit.java?at=master>`_.
+
+Check that your implementation passes the tests `CircuitTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CircuitTest.java?at=master>`_.
 
 
 .. [TSP1998] Pesant, G., Gendreau, M., Potvin, J. Y., & Rousseau, J. M. (1998). An exact constraint logic programming algorithm for the traveling salesman problem with time windows. Transportation Science, 32(1), 12-29.
@@ -168,18 +169,175 @@ Check that your implementation passes the tests `CircuitTest.java <https://bitbu
 Custom search strategy
 =================================
 
-For the TSP
+Modify `TSP.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/TSP.java?at=master>`_
+to implement a custom search strategy.
+A skeleton is the following one:
+
+
+.. code-block:: java
+
+        DFSearch dfs = makeDfs(cp,
+                selectMin(succ,
+                        succi -> succi.getSize() > 1, // filter
+                        succi -> succi.getSize(), // variable selector
+                        succi -> {
+                            int v = succi.getMin(); // value selector (TODO)
+                            return branch(() -> equal(succi,v),
+                                    () -> notEqual(succi,v));
+                        }
+                ));
+
+
+
+
+
+* The unbound variable selected is one with smallest domain (first-fail).
+* It is then assigned the minimum value in the domain.
+
+This value selection strategy is not well suited for the TSP (and VRP).
+The one you design should be more similar to the decision you would
+make manually in a greedy fashion.
+For instance you can select as a successor for `succi`
+the closest city in the domain.
+
+Hint: Since there is no iterator on the domain of a variable, you can
+iterate from the minimum value to the maximum one using
+and check if it is in the domain with the `contains` method.
+
+You can also implement a min-regret variable selection strategy.
+It selects the variable with the largest different between the closest
+successor city and the second closest one.
+The idea is that it is critical to decide the successor for this city first
+because otherwise you will regret it the most.
+
+Observe the first solution obtained and its objective value ?
+Is it better than the naive first fail ?
+Also observe the time and number of backtracks necessary for proving optimality.
+By how much did you reduce the computation time ?
 
 
 LNS
 =================================================================
 
-For the TSP
+Modify further `TSP.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/TSP.java?at=master>`_
+to implement a LNS search.
+Use the larger 17x17 distance matrix for this exercise.
+
+What you should do:
+
+
+* Record the assignment of the current best solution. Hint: use the `onSolution` call-back on the `DFSearch`object.
+* Implement a restart strategy fixing randomly '10%' of the variables to their value in the current best solution.
+* Each restart has a failure limit of 100 backtracks.
+
+An example of LNS search is given in  `QAPLNS.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/QAPLNS.java?at=master>`_.
+You can simply copy/paste/modify this implementation for the TSP.
+
+
+Does it converge faster to good solutions than the standard DFS ?
+What is the impact of the percentage of variables relaxed (experiment with 5, 10 and 20%) ?
+What is the impact of the failure limit (experiment with 50, 100 and 1000)?
+Which parameter setting work best? How would you choose it?
+
 
 Cumulative Constraint: Decomposition
 ========================
 
-TODO
+The `Cumulative` constraint models a scheduling resource with fixed capacity.
+It has the following signature:
+
+.. code-block:: java
+
+    public Cumulative(IntVar[] start, int[] duration, int[] demand, int capa)
+
+where `capa` is the capacity of the resource and `start`, `duration`, and `demand` arrays are of the same size and represents
+properties of activities:
+
+* `start[i]` is the variable specifying the start time of activity `i`
+* `duration[i]` is the duration of activity `i`
+* `demand[i]` is the resource consumption or demand of activity `i`
+
+
+
+
+The constraint ensures that the cumulative consumption of activities (also called consumption profile)
+at any time is below a given capacity:
+
+.. math:: \forall t: \sum_{i \mid t \in \left [start[i]..start[i]+duration[i]-1 \right ]} demand[i] \le capa
+
+
+
+The next visual example depicts three activities and its corresponding
+consumption profile. As can be observed the profile never exceeds
+the capacity 4.
+
+
+.. image:: _static/scheduling.svg
+    :scale: 50
+    :width: 400
+    :alt: scheduling cumulative
+
+
+It corresponds to the instantiation of the Cumulative constraint:
+
+.. code-block:: java
+
+    Cumulative(start = [ 1, 2, 3], duration = [8, 3, 3], demand = [1, 2, 2], capa = 4)
+
+
+
+Implement `CumulativeDecomp.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/CumulativeDecomp.java?at=master>`_.
+This is a decomposition or reformulation of the cumulative constraint
+in terms of simple arithmetic and logical constraints as
+used in the above equation to describe its semantic.
+
+
+At any time `t` of the horizon a `BoolVar overlaps[i]`
+tells whether activity `i` overlaps time `t` or not.
+Then the overall consumption in `t` is obtained by:
+
+.. math:: \sum_{i} overlaps[i]*demand[i] \le capa
+
+
+First make sure you understand the following code, then
+add the few lines in the `TODO` to make
+sure `overlaps` has the intended meaning.
+
+
+.. code-block:: java
+
+    public void post() throws InconsistencyException {
+
+        int min = Arrays.stream(start).map(s -> s.getMin()).min(Integer::compare).get();
+        int max = Arrays.stream(end).map(e -> e.getMax()).max(Integer::compare).get();
+
+        for (int t = min; t < max; t++) {
+
+            BoolVar[] overlaps = new BoolVar[start.length];
+            for (int i = 0; i < start.length; i++) {
+                overlaps[i] = makeBoolVar(cp);
+
+                // TODO
+                // post the constraints to enforce
+                // that overlaps[i] is true iff start[i] <= t && t < tart[i] + duration[i]
+                // hint: use IsLessOrEqual, introduce BoolVar, use views minus, plus, etc.
+                //       logical constraints (such as logical and can be modeled with sum)
+
+            }
+
+            IntVar[] overlapHeights = makeIntVarArray(cp, start.length, i -> mul(overlaps[i], demand[i]));
+            IntVar cumHeight = sum(overlapHeights);
+            cumHeight.removeAbove(capa);
+
+        }
+
+
+
+
+Check that your implementation passes the tests `CumulativeDecompTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CumulativeDecompTest.java?at=master>`_.
+
+
+
 
 Cumulative Constraint: Time-Table filtering
 ========================
@@ -234,6 +392,10 @@ Implement a dedicated algorithm for the all-different.
 Whenever a variable is bound to a value, this value is removed from the domain of other variables.
 
 
+Implement a domain iterator (optional)
+============================
+
+TODO
 
 
 
