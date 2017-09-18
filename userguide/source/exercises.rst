@@ -356,7 +356,7 @@ More precisely, given an array `X` containing `n` variables, and an array `T` of
 
 .. math::
 
-    \exists i: \forall j T_{i,j} = X_j
+    \exists i: \forall\ j\ T_{i,j} = X_j
 
 That is, each line of the table is a valid assignment to `X`.
 
@@ -381,7 +381,7 @@ such line in the table.
 
 Many algorithms exists to filter table constraints (see the timeline below), and most of them are Global Arc Consistent (GAC).
 
-.. image:: _static/tableline.png
+.. image:: _static/tabletimeline.png
     :scale: 50
     :width: 250
     :alt: Timeline of Table constraint propagators
@@ -471,6 +471,15 @@ in this branch of the search tree.
 
 Uncomment the part marked as `advanced` in TableCT and modify the part of the code computing supported tuples to
 make it uses only variables that were modified.
+
+Final note on CT
+----------------
+
+Now that the propagator is working, we encourage you to read the code of `ReversibleBitSet`, and notice it is not
+exactly what is described in the CT paper [CT2016]_ ; the authors uses Reversible Sparse Bit Sets, which avoid doing
+computation on 0-words, that are words that only contains zeros.
+
+They are other small tricks to improve the speed of the propagator in the paper.
 
 .. [CT2016] Demeulenaere, J., Hartert, R., Lecoutre, C., Perez, G., Perron, L., Régin, J. C., & Schaus, P. (2016, September). Compact-table: Efficiently filtering table constraints with reversible sparse bit-sets. In International Conference on Principles and Practice of Constraint Programming (pp. 207-223). Springer.
 
