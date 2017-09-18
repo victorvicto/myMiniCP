@@ -241,7 +241,7 @@ Which parameter setting work best? How would you choose it?
 
 
 Cumulative Constraint: Decomposition
-========================
+====================================
 
 The `Cumulative` constraint models a scheduling resource with fixed capacity.
 It has the following signature:
@@ -304,6 +304,84 @@ add the few lines in the `TODO` to make
 sure `overlaps` has the intended meaning.
 
 
+
+Check that your implementation passes the tests `CumulativeDecompTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CumulativeDecompTest.java?at=master>`_.
+
+
+
+
+Cumulative Constraint: Time-Table filtering
+==============================================
+
+The Cumulative and Time-Table Filtering introduced in  [TT2015]_
+is an efficient yet simple filtering for Cumulative.
+
+It is a two stage algorithm:
+
+1. Build an optimistic profile of the resource consumption.
+2. Filter the earliest start of the activities such that they are not in conflict with the profile.
+
+Given a profile, consider the depicted activity that can be executed anywhere between
+the two brackets.
+Clearly it can not execute at its earliest start since this would
+violate the capacity of the resource.
+We need to push the activity up to 7, which is the earliest
+time it can start making it possible to executed
+over its entire duration without being in conflict with the profile and the capacity.
+
+
+.. image:: _static/timetable2.svg
+    :scale: 50
+    :width: 600
+    :alt: scheduling timetable1
+
+
+**Profiles**
+
+
+We provide a class `Profile.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master>`_
+that is able to build efficiently a resource profile given an array of rectangles in input.
+A profile is nothing else than an array of rectangles.
+A rectangle has three attributes:
+
+1. `start`
+2. `end`
+3. `height`
+
+
+An visual example is given next, three input rectangles are given to the constructor
+of `Profile.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master>`_
+and the built profile consists in 7 contiguous rectangles.
+The first rectangle `R0` starts at `Integer.MIN_VALUE` with a height of zero
+and the last rectangle `R6` ends in `Integer.MAX_VALUE` also with a height of zero.
+These two `dummy` rectangles are convenient since they guarantee
+the property that any `int` time point falls on one rectangle of the profile.
+
+
+.. image:: _static/profile.svg
+    :scale: 50
+    :width: 600
+    :alt: profile
+
+**Filtering**
+
+
+
+Implement `Cumulative.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Cumulative.java?at=master>`_.
+
+One first *TODO* task in the class is to build the optimistic profile
+based on the mandatory parts of the activities.
+As can be seen on the next visual example, a mandatory part of an activity
+is a part that is always executed whatever the start time of the activity.
+It is the rectangle starting at `start[i].getMax()` that ends in `start[i].getMin()+duration()`
+with a height equal to the demand of the activity.
+Be careful, not every activity has a mandatory part.
+
+.. image:: _static/timetable1.svg
+    :scale: 50
+    :width: 600
+    :alt: scheduling timetable1
+
 .. code-block:: java
 
     public void post() throws InconsistencyException {
@@ -334,15 +412,8 @@ sure `overlaps` has the intended meaning.
 
 
 
-Check that your implementation passes the tests `CumulativeDecompTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CumulativeDecompTest.java?at=master>`_.
+Check that your implementation passes the tests `CumulativeTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CumulativeTest.java?at=master>`_.
 
-
-
-
-Cumulative Constraint: Time-Table filtering
-========================
-
-Cumulative and Time-Table Filtering [TT2015]_
 
 .. [TT2015] Gay, S., Hartert, R., & Schaus, P. (2015, August). Simple and scalable time-table filtering for the cumulative constraint. In International Conference on Principles and Practice of Constraint Programming (pp. 149-157). Springer.
 
