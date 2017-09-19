@@ -125,5 +125,66 @@ public class CircuitTest {
         }
     }
 
+    @Test
+    public void testCircuitDomainFilter() {
+        try {
+            try {
+                Solver cp = new Solver();
 
+                IntVar[] x = new IntVar[10];
+                for (int i = 0; i < 10; i++)
+                    x[i] = makeIntVar(cp,0,9);
+
+                cp.post(new Circuit(x));
+
+                // No self-loop
+                for(int i = 0; i < x.length; i++)
+                    assertFalse(x[i].contains(i));
+
+                x[0].assign(1);
+                cp.fixPoint();
+                for(int i = 1; i < x.length; i++)
+                    assertFalse(x[i].contains(1));
+
+            } catch (InconsistencyException e) { fail("should not fail");}
+        } catch (NotImplementedException e) {
+            e.print();
+        }
+    }
+
+    @Test
+    public void testImmediateCircuit() {
+        try {
+            try {
+                Solver cp = new Solver();
+
+                IntVar[] x = new IntVar[1];
+                x[0] = makeIntVar(cp, 0, 0);
+
+                cp.post(new Circuit(x));
+            } catch (InconsistencyException e) { fail("should not fail");}
+        } catch (NotImplementedException e) {
+            e.print();
+        }
+    }
+
+    @Test
+    public void testCircuitDomainInit() {
+        try {
+            try {
+                Solver cp = new Solver();
+
+                IntVar[] x = new IntVar[10];
+                for (int i = 0; i < 10; i++)
+                    x[i] = makeIntVar(cp,-100,100);
+
+                cp.post(new Circuit(x));
+
+                assertEquals(0, x[2].getMin());
+                assertEquals(9, x[2].getMax());
+            } catch (InconsistencyException e) { fail("should not fail");}
+        } catch (NotImplementedException e) {
+            e.print();
+        }
+    }
 }
