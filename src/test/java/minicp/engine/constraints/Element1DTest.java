@@ -102,4 +102,32 @@ public class Element1DTest {
         }
     }
 
+    @Test
+    public void element1dTest3() {
+        try {
+            try {
+
+                Solver cp = new Solver();
+                IntVar y = makeIntVar(cp, 0, 4);
+                IntVar z = makeIntVar(cp, 6, 9);
+
+
+                int[] T = new int[]{9, 8, 7, 5, 6};
+
+                cp.post(new Element1D(T, y, z));
+
+                y.remove(3); //T[4]=5
+                y.remove(0); //T[0]=9
+
+                cp.fixPoint();
+
+                assertEquals(6, z.getMin());
+                assertEquals(8, z.getMax());
+            } catch (InconsistencyException e) {
+                fail("should not fail");
+            }
+        } catch (NotImplementedException e) {
+            e.print();
+        }
+    }
 }
