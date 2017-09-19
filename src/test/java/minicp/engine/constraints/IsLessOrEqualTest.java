@@ -41,15 +41,15 @@ public class IsLessOrEqualTest {
 
                 BoolVar b = makeBoolVar(cp);
 
-                cp.post(new IsLessOrEqual(b,x,3));
+                cp.post(new IsLessOrEqual(b, x, 3));
 
                 DFSearch search = new DFSearch(cp.getTrail(), firstFail(x));
-
-                SearchStatistics stats = search.start();
 
                 search.onSolution(() ->
                         assertTrue(x.getMin() <= 3 && b.isTrue() || x.getMin() > 3 && b.isFalse())
                 );
+
+                SearchStatistics stats = search.start();
 
                 assertEquals(12, stats.nSolutions);
 
@@ -71,7 +71,7 @@ public class IsLessOrEqualTest {
 
                 BoolVar b = makeBoolVar(cp);
 
-                cp.post(new IsLessOrEqual(b,x,-2));
+                cp.post(new IsLessOrEqual(b, x, -2));
 
                 cp.push();
                 equal(b, 1);
@@ -80,7 +80,7 @@ public class IsLessOrEqualTest {
 
                 cp.push();
                 equal(b, 0);
-                assertEquals(-1,x.getMin());
+                assertEquals(-1, x.getMin());
                 cp.pop();
 
             } catch (InconsistencyException e) {
@@ -101,12 +101,12 @@ public class IsLessOrEqualTest {
                 equal(x, -2);
                 {
                     BoolVar b = makeBoolVar(cp);
-                    cp.post(new IsLessOrEqual(b,x,-2));
+                    cp.post(new IsLessOrEqual(b, x, -2));
                     assertTrue(b.isTrue());
                 }
                 {
                     BoolVar b = makeBoolVar(cp);
-                    cp.post(new IsLessOrEqual(b,x,-3));
+                    cp.post(new IsLessOrEqual(b, x, -3));
                     assertTrue(b.isFalse());
                 }
 
@@ -129,13 +129,13 @@ public class IsLessOrEqualTest {
 
                 cp.push();
                 equal(b, 1);
-                cp.post(new IsLessOrEqual(b,x,-2));
+                cp.post(new IsLessOrEqual(b, x, -2));
                 assertEquals(-2, x.getMax());
                 cp.pop();
 
                 cp.push();
                 equal(b, 0);
-                cp.post(new IsLessOrEqual(b,x,-2));
+                cp.post(new IsLessOrEqual(b, x, -2));
                 assertEquals(-1, x.getMin());
 
                 cp.pop();
@@ -149,5 +149,34 @@ public class IsLessOrEqualTest {
         }
     }
 
+    @Test
+    public void test5() {
+        try {
+            try {
 
+                Solver cp = new Solver();
+                IntVar x = makeIntVar(cp, -4, 7);
+
+                BoolVar b = makeBoolVar(cp);
+
+                cp.post(new IsLessOrEqual(b, x, -2));
+
+                cp.push();
+                x.removeAbove(-2);
+                cp.fixPoint();
+                assertTrue(b.isTrue());
+                cp.pop();
+
+                cp.push();
+                x.removeBelow(-1);
+                cp.fixPoint();
+                assertTrue(b.isFalse());
+                cp.pop();
+            } catch (InconsistencyException e) {
+                fail("should not fail");
+            }
+        } catch (NotImplementedException e) {
+            e.print();
+        }
+    }
 }
