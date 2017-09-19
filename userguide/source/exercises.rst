@@ -106,7 +106,7 @@ All the successors must be different.
 but enforcing the `allDifferent` constraint is not enough.
 We must also guarantee it forms a proper circuit (without sub-tours).
 This can be done efficiently and incrementally by keeping track of the sub-chains
-in appearing the search.
+appearing during the search.
 The data-structure for the sub-chains should be a reversible.
 Our instance variables used to keep track of the sub-chains are:
 
@@ -121,7 +121,7 @@ Our instance variables used to keep track of the sub-chains are:
 
 * `dest[i]` is the furthest node we can reach from node `i` following the instantiated edges.
 * `orig[i]` is the furthest node we can reach from node `i` following instantiated edges in reverse direction.
-* `lengthToDest[i]` is the number of instantiated on the path from node `i` to `dest[i]`.
+* `lengthToDest[i]` is the number of instantiated edges on the path from node `i` to `dest[i]`.
 
 Consider the following example with instantiated edges colored in grey.
 
