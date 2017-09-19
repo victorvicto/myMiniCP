@@ -366,7 +366,7 @@ It is a two stage algorithm:
 1. Build an optimistic profile of the resource consumption and check it does not exceed the capacity.
 2. Filter the earliest start of the activities such that they are not in conflict with the profile.
 
-Consider on next example the depicted activity that can be executed anywhere between
+Consider on the next example the depicted activity that can be executed anywhere between
 the two brackets.
 It can not execute at its earliest start since this would
 violate the capacity of the resource.
@@ -395,7 +395,7 @@ A rectangle has three attributes: `start`, `end`, `height` as shown next:
     :alt: rectangle
 
 A profile is nothing else than a sequence of rectangles.
-An example of profile is given next built fro= three input rectangles provided to the constructor
+An example of profile is given next. It is built from three input rectangles provided to the constructor
 of `Profile.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master>`_.
 The profile consists in 7 contiguous rectangles.
 The first rectangle `R0` starts at `Integer.MIN_VALUE` with a height of zero
@@ -444,34 +444,26 @@ Be careful because not every activity has a mandatory part.
 
 *TODO 2* is to check that the profile is not exceeding the capacity.
 You can check that each rectangle of the profile is not exceeding the capacity
-otherwise you throw `InconsitencyException`.
+otherwise you throw an `InconsitencyException`.
+
+*TODO 3* is to filter the earliest start of unbound activities by pushing each
+activity (if needed) to the earliest slot when it can be executed without violating the capacity threshold.
 
 
 .. code-block:: java
 
-    public void post() throws InconsistencyException {
-
-        int min = Arrays.stream(start).map(s -> s.getMin()).min(Integer::compare).get();
-        int max = Arrays.stream(end).map(e -> e.getMax()).max(Integer::compare).get();
-
-        for (int t = min; t < max; t++) {
-
-            BoolVar[] overlaps = new BoolVar[start.length];
-            for (int i = 0; i < start.length; i++) {
-                overlaps[i] = makeBoolVar(cp);
-
-                // TODO
-                // post the constraints to enforce
-                // that overlaps[i] is true iff start[i] <= t && t < tart[i] + duration[i]
-                // hint: use IsLessOrEqual, introduce BoolVar, use views minus, plus, etc.
-                //       logical constraints (such as logical and can be modeled with sum)
+    for (int i = 0; i < start.length; i++) {
+            if (!start[i].isBound()) {
+                // j is the index of the profile rectangle overlapping t
+                int j = profile.rectangleIndex(start[i].getMin());
+                // TODO 3: push j to the right
+                // hint:
+                // You need to check that at every-point on the interval
+                // [start[i].getMin() ... start[i].getMin()+duration[i]-1] there is enough space.
+                // You may have to look-ahead on the next profile rectangle(s)
+                // Be careful that the activity you are currently pushing may have contributed to the profile.
 
             }
-
-            IntVar[] overlapHeights = makeIntVarArray(cp, start.length, i -> mul(overlaps[i], demand[i]));
-            IntVar cumHeight = sum(overlapHeights);
-            cumHeight.removeAbove(capa);
-
         }
 
 
