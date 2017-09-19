@@ -486,7 +486,8 @@ Check that your implementation passes the tests `CumulativeTest.java <https://bi
 Table Constraint
 ================
 
-The table constraint (also called extension constraint) represents a list of tuples assignable to a given list of variables.
+The table constraint (also called extension constraint)
+specify the list of solutions (tuples) assignable to a vector of variables.
 
 More precisely, given an array `X` containing `n` variables, and an array `T` of size `m*n`, this constraint holds:
 
@@ -515,42 +516,52 @@ Here is an example of a table, with five tuples and four variables:
 In this particular example, the assignment `X={1, 1, 4, 3}` is then valid, but not `X={4, 3, 3, 3}` as there are no
 such line in the table.
 
-Many algorithms exists to filter table constraints (see the timeline below), and most of them are Global Arc Consistent (GAC).
+Many algorithms exists to filter table constraints.
 
-.. image:: _static/tabletimeline.png
-    :scale: 50
-    :width: 250
-    :alt: Timeline of Table constraint propagators
-
-The current state-of-the-art GAC algorithm is Compact Table [CT2016]_ (abbreviated CT from now on).
+One of the fastest filtering algorithm nowadays is Compact Table (CT) [CT2016]_.
+In this exercise you'll implement a simple version of CT.
 
 CT works in two steps:
 
-* First, it computes the list of supported tuples. A tuple `T[i]` is supported if, *for each* element `j` of the tuple,
+1. Compute the list of supported tuples. A tuple `T[i]` is supported if, *for each* element `j` of the tuple,
   the domain of the variable `X[j]` contains the value `T[i][j]`.
-* Once the list of supported tuples has been computed, the pruning is easy. For each variable `x[j]` and value `v` in its
-  domain, the value `v` can be removed if it's not used by any tuple.
+2. Filter the domains. For each variable `x[j]` and value `v` in its
+  domain, the value `v` can be removed if it's not used by any supported tuple.
 
-In order to compute this efficiently, CT maintains for each pair variable/value the set of tuples the pair maintains.
-In the source code, we store this as table of sets named `supportedByVarVal`, where `supportedByVarVal[j][k]` contains
-the list of supported tuples of variable `X[j]` and value `k+xOffset[j]` (`xOffset[j]` is init to the minimum possible
-value of `X[j]`, in order to easy addressing of each value).
+
+
+
+
+Your task is to terminate the implementation in
+`TableCT.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/TableCT.java?at=master>`_.
+
+
+`TableCT` maintains for each pair
+variable/value the set of tuples the pair maintains as an array of bitsets:
+
+.. code-block:: java
+
+    private BitSet[][] supports;
+
+
+where `supports[j][v]` is
+the (bit)set of supported tuples for the assignment `x[j]=v`.
 
 Example
 -------
 
-As an example, consider that variable `X[0]` has domain `{0, 1, 3}`. Here are some values for `supportedByVarVal`:
-`supportedByVarVal[0][0] = {1, 2}`
-`supportedByVarVal[0][1] = {}`
-`supportedByVarVal[0][3] = {4, 5}`
+As an example, consider that variable `x[0]` has domain `{0, 1, 3}`. Here are some values for `supports`:
+`supportes[0][0] = {1, 2}`
+`supportes = {}`
+`supportes = {4, 5}`
 
 We can infer two things from this example: first, value `1` does not support any tuples, so it can be removed safely
-from the domain of `X[0]`. Moreover, the tuples supported by `X[0]` is the union of the tuples supported by its values;
-we immediately see that tuple `3` is not supported by `X[0]` and can be discarded from further calculations.
+from the domain of `x[0]`. Moreover, the tuples supported by `x[0]` is the union of the tuples supported by its values;
+we immediately see that tuple `3` is not supported by `x[0]` and can be discarded from further calculations.
 
-If we push the example further, and we say that variable `X[2]` has domain `{0, 1}`, we immediately see that tuples `0`
-and `1` are not supported by variable `X[2]`, and, as such, can be discarded. From this, we can infer that the value
-`0` can be removed from variable `X[0]` as they don't support any tuple anymore.
+If we push the example further, and we say that variable `x[2]` has domain `{0, 1}`, we immediately see that tuples `0`
+and `1` are not supported by variable `x[2]`, and, as such, can be discarded. From this, we can infer that the value
+`0` can be removed from variable `x[0]` as they don't support any tuple anymore.
 
 
 Using bit sets
@@ -592,30 +603,23 @@ For now, you "simply" have to compute, for each call to `propagate()`:
 
 Once it's done and working (run the tests!) you can go to the next part of this exercise.
 
-A reversible implementation
----------------------------
+..
+.. A reversible implementation
+.. ---------------------------
 
-Recomputing the set of supported tuples at each call to propagate is useless; we can simply store the set of currently
+.. Recomputing the set of supported tuples at each call to propagate is useless; we can simply store the set of currently
 supported ones and update it each time a variable is modified.
 
-In order to do that, we provide a class called `ReversibleBitSet`, that can store a bit set and reverse it when
+.. In order to do that, we provide a class called `ReversibleBitSet`, that can store a bit set and reverse it when
 the solver goes back in the search tree.
 
-A simple method to detect that a variable has changed is to check the size of its domain. We will use an array
+.. A simple method to detect that a variable has changed is to check the size of its domain. We will use an array
 of `ReversibleInt`, called `ReversibleInt[] lastSize`, which contains the last seen size of each variable
 in this branch of the search tree.
 
-Uncomment the part marked as `advanced` in TableCT and modify the part of the code computing supported tuples to
+.. Uncomment the part marked as `advanced` in TableCT and modify the part of the code computing supported tuples to
 make it uses only variables that were modified.
 
-Final note on CT
-----------------
-
-Now that the propagator is working, we encourage you to read the code of `ReversibleBitSet`, and notice it is not
-exactly what is described in the CT paper [CT2016]_ ; the authors uses Reversible Sparse Bit Sets, which avoid doing
-computation on 0-words, that are words that only contains zeros.
-
-They are other small tricks to improve the speed of the propagator in the paper.
 
 .. [CT2016] Demeulenaere, J., Hartert, R., Lecoutre, C., Perez, G., Perron, L., Régin, J. C., & Schaus, P. (2016, September). Compact-table: Efficiently filtering table constraints with reversible sparse bit-sets. In International Conference on Principles and Practice of Constraint Programming (pp. 207-223). Springer.
 

@@ -32,6 +32,7 @@ import static minicp.cp.Factory.*;
 import static minicp.cp.Heuristics.firstFail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TableTest {
 
@@ -50,14 +51,47 @@ public class TableTest {
         return r;
     }
 
+
+    @Test
+    public void simpleTest1() {
+        try {
+            try {
+                Solver cp = makeSolver();
+                IntVar[] x = makeIntVarArray(cp, 3, 12);
+                int[][] table = new int[][]{{0, 0, 2},
+                                            {3, 5, 7},
+                                            {6, 9, 10},
+                                            {1, 2, 3}};
+                cp.post(new TableCT(x, table));
+
+                assertEquals(4, x[0].getSize());
+                assertEquals(4, x[1].getSize());
+                assertEquals(4, x[2].getSize());
+
+                assertEquals(0,x[0].getMin());
+                assertEquals(6,x[0].getMax());
+                assertEquals(0,x[1].getMin());
+                assertEquals(9,x[1].getMax());
+                assertEquals(2,x[2].getMin());
+                assertEquals(10,x[2].getMax());
+
+
+            } catch (InconsistencyException e) {
+                fail("should not fail");
+            }
+        } catch (NotImplementedException e) {
+            // pass
+        }
+    }
+
     @Test
     public void randomTest() {
         Random rand = new Random(67292);
 
-        for (int i = 0; i < 1000; i++) {
-            int[][] tuples1 = randomTuples(rand, 3, 100, 2, 8);
-            int[][] tuples2 = randomTuples(rand, 3, 100, 1, 7);
-            int[][] tuples3 = randomTuples(rand, 3, 100, 0, 6);
+        for (int i = 0; i < 100; i++) {
+            int[][] tuples1 = randomTuples(rand, 3, 50, 2, 8);
+            int[][] tuples2 = randomTuples(rand, 3, 50, 1, 7);
+            int[][] tuples3 = randomTuples(rand, 3, 50, 0, 6);
 
             for (BiFunction<IntVar[], int[][], Constraint> algo : getAlgos()) {
                 try {
@@ -68,6 +102,7 @@ public class TableTest {
             }
         }
     }
+
 
     public void testTable(BiFunction<IntVar[], int[][], Constraint> tc, int[][] t1, int[][] t2, int[][] t3) {
 

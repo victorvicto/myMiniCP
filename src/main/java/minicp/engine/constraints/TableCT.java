@@ -20,22 +20,19 @@ import minicp.engine.core.IntVar;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
 
+import static minicp.cp.Factory.*;
+
 import java.util.BitSet;
 
 public class TableCT extends Constraint {
     private IntVar[] x; //variables
-    private int[] xOffset; //offset of the variable. Init to x[i].getMin()
     private int[][] table; //the table
-    private BitSet[][] supportedByVarVal;   //supportedByVarVal[i][j] is the list of supported tuples by domain value j+xOffset[i] of variable x[i].
-
-    // Advanced implementation variables, use these only when the first implementation is working
-    /*
-    private ReversibleInt[] lastSize; // lastSize[i] == last size of variable x[i]
-    private ReversibleBitSet currentlySupported; // list of currently supported tuples
-    */
+    //supports[i][v] is the set of tuples supported by x[i]=v
+    private BitSet[][] supports;
 
     /**
-     * Table constraint. Assignment of x_0=v_0, x_1=v_1,... only valid if there exists a
+     * Table constraint.
+     * Assignment of x_0=v_0, x_1=v_1,... only valid if there exists a
      * row (v_0, v_1, ...) in the table.
      *
      * @param x     variables to constraint. x.length must be > 0.
@@ -43,38 +40,26 @@ public class TableCT extends Constraint {
      */
     public TableCT(IntVar[] x, int[][] table) {
         super(x[0].getSolver());
-        this.x = x;
+        this.x = new IntVar[x.length];
         this.table = table;
 
         // Allocate supportedByVarVal
-        supportedByVarVal = new BitSet[x.length][];
-        xOffset = new int[x.length];
+        supports = new BitSet[x.length][];
         for (int i = 0; i < x.length; i++) {
-            xOffset[i] = x[i].getMin();
-            supportedByVarVal[i] = new BitSet[x[i].getMax() - x[i].getMin() + 1];
-            for (int j = 0; j < supportedByVarVal[i].length; j++)
-                supportedByVarVal[i][j] = new BitSet();
+            this.x[i] = minus(x[i],x[i].getMin()); // map the variables domain to start at 0
+            supports[i] = new BitSet[x[i].getMax() - x[i].getMin() + 1];
+            for (int j = 0; j < supports[i].length; j++)
+                supports[i][j] = new BitSet();
         }
 
         // Set values in supportedByVarVal, which contains all the tuples supported by each var-val pair
-        for (int i = 0; i < table.length; i++) //i is the index of the tuple (in table)
-            for (int j = 0; j < x.length; j++) //j is the index of the current variable (in x)
-                if (table[i][j] - xOffset[j] >= 0 && table[i][j] - xOffset[j] < supportedByVarVal[j].length)
-                    supportedByVarVal[j][table[i][j] - xOffset[j]].set(i);
-
-        // Advanced implementation. Uncomment this once the first part of the implementation is done and working
-        /*
-        // Init currentlySupported. Before the first propagation, we can safely assume they are all valid
-        BitSet all1 = new BitSet(table.length);
-        all1.flip(0, table.length);
-        currentlySupported = new ReversibleBitSet(cp.getTrail(), table.length, all1);
-
-        // Add some watchers on the size of the variables domains. With this, we will know when a variable has been
-        // modified since the last propagation in this tree branch.
-        lastSize = new ReversibleInt[x.length];
-        for(int i = 0; i < x.length; i++)
-            lastSize[i] = new ReversibleInt(cp.getTrail(), -1);
-        */
+        for (int i = 0; i < table.length; i++) { //i is the index of the tuple (in table)
+            for (int j = 0; j < x.length; j++) { //j is the index of the current variable (in x)
+                if (x[j].contains(table[i][j])) {
+                    supports[j][table[i][j] - x[j].getMin()].set(i);
+                }
+            }
+        }
     }
 
     @Override
@@ -86,10 +71,30 @@ public class TableCT extends Constraint {
 
     @Override
     public void propagate() throws InconsistencyException {
-        // For each var, compute the tuples supported by the var
-        // Intersection of the tuples supported by each var is the list of supported tuples
-        // Then check if each var/val support a tuples. If not, remove the val.
-        // TODO
+
+
+        // Bit-set of tuple indices all set to 0
+        BitSet supportedTuples = new BitSet(table.length);
+        supportedTuples.flip(0,table.length);
+
+        // TODO 1: compute supportedTuples as
+        //       supportedTuples = (supports[0][x[0].getMin()] | ... | supports[0][x[0].getMax()] ) & ... &
+        //                         (supports[x.length][x[0].getMin()] | ... | supports[x.length][x[0].getMax()] )
+        // "|" is the bitwise "or" method on BitSet
+        // "&" is bitwise "and" method on BitSet
+
+
+
+        // TODO 2
+        for (int i = 0; i < x.length; i++) {
+            for (int v = x[i].getMin(); v <= x[i].getMax(); v++) {
+                if (x[i].contains(v)) {
+                    // TODO 2: the condition for removing the value v from x[i] is to check if
+                    //         there is no intersection between supportedTuples and the support[i][v]
+                }
+            }
+        }
+
         throw new NotImplementedException("TableCT");
     }
 }
