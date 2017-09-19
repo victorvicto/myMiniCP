@@ -27,6 +27,7 @@ import static minicp.cp.Factory.makeIntVar;
 import static minicp.cp.Factory.makeSolver;
 import static minicp.cp.Heuristics.firstFail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 
@@ -109,7 +110,7 @@ public class Element1DTest {
 
                 Solver cp = new Solver();
                 IntVar y = makeIntVar(cp, 0, 4);
-                IntVar z = makeIntVar(cp, 6, 9);
+                IntVar z = makeIntVar(cp, 5, 9);
 
 
                 int[] T = new int[]{9, 8, 7, 5, 6};
@@ -123,6 +124,34 @@ public class Element1DTest {
 
                 assertEquals(6, z.getMin());
                 assertEquals(8, z.getMax());
+            } catch (InconsistencyException e) {
+                fail("should not fail");
+            }
+        } catch (NotImplementedException e) {
+            e.print();
+        }
+    }
+
+    @Test
+    public void element1dTest4() {
+        try {
+            try {
+
+                Solver cp = new Solver();
+                IntVar y = makeIntVar(cp, 0, 4);
+                IntVar z = makeIntVar(cp, 5, 9);
+
+
+                int[] T = new int[]{9, 8, 7, 5, 6};
+
+                cp.post(new Element1D(T, y, z));
+
+                z.remove(9); //new max is 8
+                z.remove(5); //new min is 6
+                cp.fixPoint();
+
+                assertFalse(y.contains(0));
+                assertFalse(y.contains(3));
             } catch (InconsistencyException e) {
                 fail("should not fail");
             }
