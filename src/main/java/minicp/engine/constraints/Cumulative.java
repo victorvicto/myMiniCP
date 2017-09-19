@@ -70,8 +70,7 @@ public class Cumulative extends Constraint {
 
 
         Profile profile = buildProfile();
-        // TODO: check that the profile is not exceeding the capa
-        // TODO: otherwise throw an INCONSISTENCY
+        // TODO 2: check that the profile is not exceeding the capa otherwise throw an INCONSISTENCY
 
         for (int i = 0; i < profile.size(); i++) {
             // TODO: check
@@ -84,7 +83,7 @@ public class Cumulative extends Constraint {
             if (!start[i].isBound()) {
                 // j is the index of the profile rectangle overlapping t
                 int j = profile.rectangleIndex(start[i].getMin());
-                // TODO: push j to the right
+                // TODO 3: push j to the right
                 // hint:
                 // You need to check that at every-point on the interval
                 // [start[i].getMin() ... start[i].getMin()+duration[i]-1] there is enough space.
@@ -99,7 +98,7 @@ public class Cumulative extends Constraint {
     public Profile buildProfile() throws InconsistencyException {
         ArrayList<Rectangle> mandatoryParts = new ArrayList<Rectangle>();
         for (int i = 0; i < start.length; i++) {
-            // TODO: add mandatory part of activity i if any
+            // TODO 1: add mandatory part of activity i if any
         }
         return new Profile(mandatoryParts.toArray(new Profile.Rectangle[0]));
     }

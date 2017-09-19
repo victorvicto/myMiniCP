@@ -56,6 +56,23 @@ but is violated for
 Check that your implementation passes the tests `IsLessOrEqualTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/IsEqualTest.java?at=master>`_
 
 
+
+DFS Explicit Stack
+===================
+
+
+The search algorithm of mini-cp is *depth-first-search*.
+It is implemented using a recursive method in the class
+`DFSSearch.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/search/DFSearch.java?at=master>`_.
+To avoid any `stack-overflow` exception due to a deep recursion in Java
+you are ask to reimplement the depth-first-search with an explicit stack
+of `Alternative` objects.
+
+
+Check that your implementation passes the tests `DFSearchTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/search/DFSearchTest.java?at=master>`_
+
+
+
 Element constraint
 =================================
 
@@ -305,6 +322,34 @@ sure `overlaps` has the intended meaning.
 
 
 
+.. code-block:: java
+
+    public void post() throws InconsistencyException {
+
+        int min = Arrays.stream(start).map(s -> s.getMin()).min(Integer::compare).get();
+        int max = Arrays.stream(end).map(e -> e.getMax()).max(Integer::compare).get();
+
+        for (int t = min; t < max; t++) {
+
+            BoolVar[] overlaps = new BoolVar[start.length];
+            for (int i = 0; i < start.length; i++) {
+                overlaps[i] = makeBoolVar(cp);
+
+                // TODO
+                // post the constraints to enforce
+                // that overlaps[i] is true iff start[i] <= t && t < tart[i] + duration[i]
+                // hint: use IsLessOrEqual, introduce BoolVar, use views minus, plus, etc.
+                //       logical constraints (such as logical and can be modeled with sum)
+
+            }
+
+            IntVar[] overlapHeights = makeIntVarArray(cp, start.length, i -> mul(overlaps[i], demand[i]));
+            IntVar cumHeight = sum(overlapHeights);
+            cumHeight.removeAbove(capa);
+
+        }
+
+
 Check that your implementation passes the tests `CumulativeDecompTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/CumulativeDecompTest.java?at=master>`_.
 
 
@@ -318,16 +363,17 @@ is an efficient yet simple filtering for Cumulative.
 
 It is a two stage algorithm:
 
-1. Build an optimistic profile of the resource consumption.
+1. Build an optimistic profile of the resource consumption and check it does not exceed the capacity.
 2. Filter the earliest start of the activities such that they are not in conflict with the profile.
 
-Given a profile, consider the depicted activity that can be executed anywhere between
+Consider on next example the depicted activity that can be executed anywhere between
 the two brackets.
-Clearly it can not execute at its earliest start since this would
+It can not execute at its earliest start since this would
 violate the capacity of the resource.
-We need to push the activity up to 7, which is the earliest
-time it can start making it possible to executed
-over its entire duration without being in conflict with the profile and the capacity.
+We thus need to push the activity up until we find a time
+where it can execute over its entire duration
+without being in conflict with the profile and the capacity.
+The earliest time  is 7.
 
 
 .. image:: _static/timetable2.svg
@@ -341,46 +387,65 @@ over its entire duration without being in conflict with the profile and the capa
 
 We provide a class `Profile.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master>`_
 that is able to build efficiently a resource profile given an array of rectangles in input.
-A profile is nothing else than an array of rectangles.
-A rectangle has three attributes:
+A rectangle has three attributes: `start`, `end`, `height` as shown next:
 
-1. `start`
-2. `end`
-3. `height`
+.. image:: _static/rectangle.svg
+    :scale: 50
+    :width: 250
+    :alt: rectangle
 
-
-An visual example is given next, three input rectangles are given to the constructor
-of `Profile.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master>`_
-and the built profile consists in 7 contiguous rectangles.
+A profile is nothing else than a sequence of rectangles.
+An example of profile is given next built fro= three input rectangles provided to the constructor
+of `Profile.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master>`_.
+The profile consists in 7 contiguous rectangles.
 The first rectangle `R0` starts at `Integer.MIN_VALUE` with a height of zero
 and the last rectangle `R6` ends in `Integer.MAX_VALUE` also with a height of zero.
-These two `dummy` rectangles are convenient since they guarantee
-the property that any `int` time point falls on one rectangle of the profile.
+These two `dummy` rectangles are convenient because they guarantee
+the property that any time point falls on one rectangle of the profile.
 
 
 .. image:: _static/profile.svg
     :scale: 50
-    :width: 600
+    :width: 650
     :alt: profile
+
+
+Make sure you understand how to build and manipulate
+`Profile.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Profile.java?at=master>`_.
+
+Have a quick look at `ProfileTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/ProfileTest.java?at=master>`_
+for some examples of profile construction.
+
 
 **Filtering**
 
 
 
 Implement `Cumulative.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Cumulative.java?at=master>`_.
+You have three TODO tasks:
 
-One first *TODO* task in the class is to build the optimistic profile
-based on the mandatory parts of the activities.
+1. Build the optimistic profile from the mandatory parts.
+2. Check that the profile is not exceeding the capacity.
+3. Filter the earliest start of activities.
+
+*TODO 1* is to build the optimistic profile
+from the mandatory parts of the activities.
 As can be seen on the next visual example, a mandatory part of an activity
-is a part that is always executed whatever the start time of the activity.
+is a part that is always executed whatever will be the start time of the activity
+on its current domain.
 It is the rectangle starting at `start[i].getMax()` that ends in `start[i].getMin()+duration()`
 with a height equal to the demand of the activity.
-Be careful, not every activity has a mandatory part.
+Be careful because not every activity has a mandatory part.
 
 .. image:: _static/timetable1.svg
     :scale: 50
     :width: 600
     :alt: scheduling timetable1
+
+*TODO 2* is to check that the profile is not exceeding the capacity.
+You can check that each rectangle of the profile is not exceeding the capacity
+otherwise you throw `InconsitencyException`.
+
 
 .. code-block:: java
 
