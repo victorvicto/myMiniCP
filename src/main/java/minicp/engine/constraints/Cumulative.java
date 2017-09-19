@@ -88,7 +88,7 @@ public class Cumulative extends Constraint {
                 // You need to check that at every-point on the interval
                 // [start[i].getMin() ... start[i].getMin()+duration[i]-1] there is enough space.
                 // You may have to look-ahead on the next profile rectangle(s)
-                // Be careful that the activity you currently push may have contributed to the profile.
+                // Be careful that the activity you are currently pushing may have contributed to the profile.
 
             }
         }

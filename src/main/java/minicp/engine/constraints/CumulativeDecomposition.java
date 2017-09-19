@@ -58,7 +58,7 @@ public class CumulativeDecomposition extends Constraint {
                 throw new NotImplementedException("CumulativeDecomp");
                 // TODO
                 // post the constraints to enforce
-                // that overlaps[i] is true iff start[i] <= t && t < tart[i] + duration[i]
+                // that overlaps[i] is true iff start[i] <= t && t < start[i] + duration[i]
                 // hint: use IsLessOrEqual, introduce BoolVar, use views minus, plus, etc.
                 //       logical constraints (such as logical and can be modeled with sum)
 
