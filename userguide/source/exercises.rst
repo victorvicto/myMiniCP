@@ -123,7 +123,7 @@ All the successors must be different.
 but enforcing the `allDifferent` constraint is not enough.
 We must also guarantee it forms a proper circuit (without sub-tours).
 This can be done efficiently and incrementally by keeping track of the sub-chains
-in appearing the search.
+appearing during the search.
 The data-structure for the sub-chains should be a reversible.
 Our instance variables used to keep track of the sub-chains are:
 
@@ -138,7 +138,7 @@ Our instance variables used to keep track of the sub-chains are:
 
 * `dest[i]` is the furthest node we can reach from node `i` following the instantiated edges.
 * `orig[i]` is the furthest node we can reach from node `i` following instantiated edges in reverse direction.
-* `lengthToDest[i]` is the number of instantiated on the path from node `i` to `dest[i]`.
+* `lengthToDest[i]` is the number of instantiated edges on the path from node `i` to `dest[i]`.
 
 Consider the following example with instantiated edges colored in grey.
 
@@ -218,7 +218,7 @@ For instance you can select as a successor for `succi`
 the closest city in the domain.
 
 Hint: Since there is no iterator on the domain of a variable, you can
-iterate from the minimum value to the maximum one using
+iterate from the minimum value to the maximum one using a for loop
 and check if it is in the domain with the `contains` method.
 
 You can also implement a min-regret variable selection strategy.
