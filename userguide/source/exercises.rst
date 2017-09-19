@@ -250,7 +250,7 @@ It has the following signature:
 
     public Cumulative(IntVar[] start, int[] duration, int[] demand, int capa)
 
-where `capa` is the capacity of the resource and `start`, `duration`, and `demand` arrays are of the same size and represents
+where `capa` is the capacity of the resource and `start`, `duration`, and `demand` are arrays of the same size and represents
 properties of activities:
 
 * `start[i]` is the variable specifying the start time of activity `i`
@@ -267,8 +267,8 @@ at any time is below a given capacity:
 
 
 
-The next visual example depicts three activities and its corresponding
-consumption profile. As can be observed the profile never exceeds
+The next visual example depicts three activities and their corresponding
+consumption profile. As it can be observed, the profile never exceeds
 the capacity 4.
 
 
@@ -319,7 +319,7 @@ sure `overlaps` has the intended meaning.
 
                 // TODO
                 // post the constraints to enforce
-                // that overlaps[i] is true iff start[i] <= t && t < tart[i] + duration[i]
+                // that overlaps[i] is true iff start[i] <= t && t < start[i] + duration[i]
                 // hint: use IsLessOrEqual, introduce BoolVar, use views minus, plus, etc.
                 //       logical constraints (such as logical and can be modeled with sum)
 
