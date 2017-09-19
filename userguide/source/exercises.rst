@@ -201,7 +201,7 @@ For instance you can select as a successor for `succi`
 the closest city in the domain.
 
 Hint: Since there is no iterator on the domain of a variable, you can
-iterate from the minimum value to the maximum one using
+iterate from the minimum value to the maximum one using a for loop
 and check if it is in the domain with the `contains` method.
 
 You can also implement a min-regret variable selection strategy.
