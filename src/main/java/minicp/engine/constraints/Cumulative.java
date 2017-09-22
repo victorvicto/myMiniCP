@@ -74,9 +74,6 @@ public class Cumulative extends Constraint {
 
         for (int i = 0; i < profile.size(); i++) {
             // TODO: check
-            if (profile.get(i).height > capa) {
-                throw InconsistencyException.INCONSISTENCY;
-            }
         }
 
         for (int i = 0; i < start.length; i++) {
