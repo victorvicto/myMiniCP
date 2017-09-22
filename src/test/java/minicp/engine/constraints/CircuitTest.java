@@ -21,6 +21,7 @@ import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -79,7 +80,7 @@ public class CircuitTest {
                 fail("should not fail");
             }
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 
@@ -98,7 +99,7 @@ public class CircuitTest {
                 fail("should fail");
             } catch (InconsistencyException e) {}
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 
@@ -121,7 +122,7 @@ public class CircuitTest {
                 ).start();
             } catch (InconsistencyException e) { fail("should not fail");}
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 
@@ -148,7 +149,7 @@ public class CircuitTest {
 
             } catch (InconsistencyException e) { fail("should not fail");}
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 
@@ -164,7 +165,7 @@ public class CircuitTest {
                 cp.post(new Circuit(x));
             } catch (InconsistencyException e) { fail("should not fail");}
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 
@@ -184,7 +185,7 @@ public class CircuitTest {
                 assertEquals(9, x[2].getMax());
             } catch (InconsistencyException e) { fail("should not fail");}
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 }
