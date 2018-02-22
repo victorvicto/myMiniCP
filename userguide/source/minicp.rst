@@ -7,9 +7,21 @@ Learn Mini-CP
 
 
 The complete architecture of mini-cp is described this `document <_static/mini-cp.pdf>`_.
-Some `slides <http://tinyurl.com/y8n4knhx>`_ with animations about mini-cp internals .
 
-From a state and inference prospective, specific outcomes include:
+
+Slides 
+
+* `Tutorial <http://tinyurl.com/y8n4knhx>`_ given at CPAIOR17
+
+Slides from the course INGI2365 given by Pierre Schaus  @UCLouvain: 
+
+* `Tutorial <http://tinyurl.com/y8n4knhx>`_ given at CPAIOR17
+* `Variables, domains, trail and search <https://www.icloud.com/keynote/0QTIjJ1gIxzkr0Eig7pDlYvIA#02-variables-domains-trail-search>`_
+* more to come ...
+
+Learning outcomes by studying mini-cp:
+
+From a state and inference prospective, specific learning outcomes include:
 
 * Trailing and state reversion
 * Domain and variable implementation – Propagation queue

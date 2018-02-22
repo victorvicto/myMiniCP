@@ -17,6 +17,7 @@ package minicp.search;
 
 import minicp.reversible.Trail;
 import minicp.util.InconsistencyException;
+import minicp.util.NotImplementedException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
 public class DFSearch {
 
     private Choice choice;
-    private Trail state;
+    private Trail trail;
 
     private List<SolutionListener> solutionListeners = new LinkedList<SolutionListener>();
     private List<FailListener> failListeners = new LinkedList<FailListener>();
@@ -58,17 +59,21 @@ public class DFSearch {
     }
 
     public DFSearch(Trail state, Choice branching) {
-        this.state = state;
+        this.trail = state;
         this.choice = branching;
     }
 
     public SearchStatistics start(SearchLimit limit) {
         SearchStatistics statistics = new SearchStatistics();
-        int level = state.getLevel();
+        int level = trail.getLevel();
         try {
             dfs(statistics,limit);
-        } catch (StopSearchException e) {}
-        state.popUntil(level);
+        }
+        catch (StopSearchException e) {}
+        catch (StackOverflowError e) {
+            throw new NotImplementedException("dfs with explicit stack needed");
+        }
+        trail.popUntil(level);
         return statistics;
     }
 
@@ -86,7 +91,7 @@ public class DFSearch {
         }
         else {
             for (Alternative alt : alternatives) {
-                state.push();
+                trail.push();
                 try {
                     statistics.nNodes++;
                     alt.call();
@@ -95,7 +100,7 @@ public class DFSearch {
                     notifyFailure();
                     statistics.nFailures++;
                 }
-                state.pop();
+                trail.pop();
             }
         }
     }

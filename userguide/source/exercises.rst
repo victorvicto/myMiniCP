@@ -543,16 +543,16 @@ Example
 -------
 
 As an example, consider that variable `x[0]` has domain `{0, 1, 3}`. Here are some values for `supports`:
-`supportes[0][0] = {1, 2}`
-`supportes = {}`
-`supportes = {4, 5}`
+`supports[0][0] = {1, 2}`
+`supports[0][1] = {}`
+`supports[0][2] = {3}`
 
 We can infer two things from this example: first, value `1` does not support any tuples, so it can be removed safely
 from the domain of `x[0]`. Moreover, the tuples supported by `x[0]` is the union of the tuples supported by its values;
 we immediately see that tuple `3` is not supported by `x[0]` and can be discarded from further calculations.
 
-If we push the example further, and we say that variable `x[2]` has domain `{0, 1}`, we immediately see that tuples `0`
-and `1` are not supported by variable `x[2]`, and, as such, can be discarded. From this, we can infer that the value
+If we push the example further, and we say that variable `x[2]` has domain `{0, 1}`, we immediately see that tuples `1`
+and `2` are not supported by variable `x[2]`, and, as such, can be discarded. From this, we can infer that the value
 `0` can be removed from variable `x[0]` as they don't support any tuple anymore.
 
 
