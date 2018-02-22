@@ -33,6 +33,7 @@ public class QAPLNS {
         // ---- read the instance -----
 
         InputReader reader = new InputReader("data/qap.txt");
+        // InputReader reader = new InputReader("data/chr25a.txt");
 
         int n = reader.getInt();
         // Weights

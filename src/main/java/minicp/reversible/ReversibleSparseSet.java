@@ -86,7 +86,7 @@ public class ReversibleSparseSet {
 
     /**
      * set the first values of <code>dest</code> to the ones
-     * prsent in the set
+     * present in the set
      * @param dest, an array large enough dest.length >= getSize()
      * @return the size of the set
      */
