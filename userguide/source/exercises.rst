@@ -165,6 +165,8 @@ Implement the missing constructor in `IntVarImpl.java <https://bitbucket.org/psc
     }
 
 
+The easy way is to create a dense domain then remove the values not present in the set.
+
 Check that your implementation passes the tests `IntVarTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master>`_
 
 

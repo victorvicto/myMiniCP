@@ -10,7 +10,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with mini-cp. If not, see http://www.gnu.org/licenses/lgpl-3.0.en.html
  *
- * Copyright (c)  2017. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
+ * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
  */
 
 package minicp.engine.core;
@@ -19,11 +19,12 @@ import minicp.util.InconsistencyException;
 import org.junit.Test;
 
 import static minicp.cp.Factory.makeIntVar;
-import static minicp.cp.Factory.plus;
+import static minicp.cp.Factory.minus;
+import static minicp.cp.Factory.mul;
 import static org.junit.Assert.*;
 
 
-public class IntVarViewOffsetTest {
+public class IntVarViewOppositeTest {
 
     public boolean propagateCalled = false;
 
@@ -31,10 +32,10 @@ public class IntVarViewOffsetTest {
     public void testIntVar() {
         Solver cp  = new Solver();
 
-        IntVar x = plus(makeIntVar(cp,-3,4),3); // domain is {0,1,2,3,4,5,6,7}
+        IntVar x = minus(makeIntVar(cp,-3,4)); // domain is {-4..3}
 
-        assertEquals(0,x.getMin());
-        assertEquals(7,x.getMax());
+        assertEquals(-4,x.getMin());
+        assertEquals(3,x.getMax());
         assertEquals(8,x.getSize());
 
         cp.getTrail().push();
@@ -46,17 +47,17 @@ public class IntVarViewOffsetTest {
 
             x.remove(0);
             assertFalse(x.contains(0));
-            x.remove(3);
+            x.remove(2);
             assertTrue(x.contains(1));
-            assertTrue(x.contains(2));
+            assertTrue(x.contains(-4));
             assertEquals(6,x.getSize());
-            x.removeAbove(6);
-            assertEquals(6,x.getMax());
-            x.removeBelow(3);
-            assertEquals(4,x.getMin());
-            x.assign(5);
+            x.removeAbove(0);
+            assertEquals(-1,x.getMax());
+            x.removeBelow(-2);
+            assertEquals(-2,x.getMin());
+            x.assign(-1);
             assertTrue(x.isBound());
-            assertEquals(5,x.getMax());
+            assertEquals(-1,x.getMax());
 
 
 
@@ -66,17 +67,16 @@ public class IntVarViewOffsetTest {
         }
 
         try {
-            x.assign(4);
+            x.assign(8);
             fail( "should have failed" );
         } catch (InconsistencyException expectedException) {}
 
         cp.getTrail().pop();
 
         assertEquals(8,x.getSize());
-        assertFalse(x.contains(-1));
+        assertTrue(x.contains(-4));
 
     }
-
 
 
     @Test
@@ -84,8 +84,8 @@ public class IntVarViewOffsetTest {
         propagateCalled = false;
         Solver cp  = new Solver();
 
-        IntVar x = plus(makeIntVar(cp,10),1); // 1..11
-        IntVar y = plus(makeIntVar(cp,10),1); // 1..11
+        IntVar x = minus(makeIntVar(cp,10));
+        IntVar y = minus(makeIntVar(cp,10));
 
         Constraint cons = new Constraint(cp) {
 
@@ -101,14 +101,14 @@ public class IntVarViewOffsetTest {
             x.remove(9);
             cp.fixPoint();
             assertFalse(propagateCalled);
-            x.assign(5);
+            x.assign(-4);
             cp.fixPoint();
             assertTrue(propagateCalled);
             propagateCalled = false;
-            y.remove(11);
+            y.remove(9);
             cp.fixPoint();
             assertFalse(propagateCalled);
-            y.remove(10);
+            y.remove(-9);
             cp.fixPoint();
             assertTrue(propagateCalled);
 
@@ -120,10 +120,10 @@ public class IntVarViewOffsetTest {
 
     @Test
     public void onBoundChange() {
-
+        propagateCalled = false;
         Solver cp = new Solver();
 
-        IntVar x = plus(makeIntVar(cp, 10),2);
+        IntVar x = minus(makeIntVar(cp, 10));
 
         Constraint cons = new Constraint(cp) {
 
@@ -135,12 +135,18 @@ public class IntVarViewOffsetTest {
 
         try {
             cp.post(cons);
-            x.remove(9);
+            x.remove(-8);
             cp.fixPoint();
             assertFalse(propagateCalled);
-            x.remove(11);
+            x.remove(-9);
             cp.fixPoint();
             assertTrue(propagateCalled);
+
+            propagateCalled = false;
+            x.assign(-4);
+            cp.fixPoint();
+            assertTrue(propagateCalled);
+
 
         } catch (InconsistencyException inconsistency) {
             fail("should not fail");
