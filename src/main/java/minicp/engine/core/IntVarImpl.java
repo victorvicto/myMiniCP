@@ -88,7 +88,7 @@ public class IntVarImpl implements IntVar {
      * @param values
      */
     public IntVarImpl(Solver cp, Set<Integer> values) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("Implement arbitrary domain constructor");
     }
 
 
@@ -138,6 +138,11 @@ public class IntVarImpl implements IntVar {
 
     public int getSize() {
         return domain.getSize();
+    }
+
+    @Override
+    public int fillArray(int[] dest) {
+        throw new NotImplementedException("implement fillArray in IntVarImpl");
     }
 
     public boolean contains(int v) {

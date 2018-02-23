@@ -18,6 +18,7 @@ package minicp.engine.core;
 
 
 import minicp.util.InconsistencyException;
+import minicp.util.NotImplementedException;
 
 public class IntVarViewMul implements IntVar {
 
@@ -78,6 +79,11 @@ public class IntVarViewMul implements IntVar {
     @Override
     public int getSize() {
         return x.getSize();
+    }
+
+    @Override
+    public int fillArray(int[] dest) {
+        throw new NotImplementedException("implement fillArray in IntVarViewMul");
     }
 
     @Override

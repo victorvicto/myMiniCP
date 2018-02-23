@@ -18,6 +18,7 @@ package minicp.engine.core;
 
 
 import minicp.util.InconsistencyException;
+import minicp.util.NotImplementedException;
 
 public class IntVarViewOffset implements IntVar {
 
@@ -77,6 +78,11 @@ public class IntVarViewOffset implements IntVar {
     @Override
     public int getSize() {
         return x.getSize();
+    }
+
+    @Override
+    public int fillArray(int[] dest) {
+        throw new NotImplementedException("implement fillArray in IntVarViewOffset");
     }
 
     @Override

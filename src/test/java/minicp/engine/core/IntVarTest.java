@@ -19,6 +19,7 @@ import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
 import org.junit.Test;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -250,7 +251,7 @@ public class IntVarTest {
             @Override
             public void post() throws InconsistencyException {
                 x.whenBind(() -> propagateCalled  = true);
-                y.whenDomainChange(() -> propagateCalled = true);
+                y.whenBoundsChange(() -> propagateCalled = true);
             }
         };
 
@@ -273,7 +274,7 @@ public class IntVarTest {
             propagateCalled = false;
             y.remove(2);
             cp.fixPoint();
-            assertTrue(propagateCalled);
+            assertFalse(propagateCalled);
 
         } catch (InconsistencyException inconsistency) {
             fail("should not fail");
@@ -363,6 +364,31 @@ public class IntVarTest {
             } catch (InconsistencyException inconsistency) {
                 fail("should not fail");
             }
+
+        } catch (NotImplementedException e) {
+            e.print();
+        }
+    }
+
+    @Test
+    public void fillArray() {
+
+        try {
+            Solver cp = new Solver();
+
+            IntVar x = plus(mul(minus(makeIntVar(cp, 5)), 3), 5); // D(x)= {-7,-4,-1,2,5}
+            int[] values = new int[10];
+            int s = x.fillArray(values);
+            HashSet<Integer> dom = new HashSet<Integer>();
+            for (int i = 0; i < s; i++) {
+                dom.add(values[i]);
+            }
+            System.out.println(x);
+            System.out.println(dom);
+            System.out.println(s);
+            HashSet<Integer> expectedDom = new HashSet<Integer>();
+            Collections.addAll(expectedDom, -7, -4, -1, 2, 5);
+            assertEquals(expectedDom, dom);
 
         } catch (NotImplementedException e) {
             e.print();
