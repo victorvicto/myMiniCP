@@ -96,8 +96,9 @@ Who uses mini-cp
 
 If you use it for teaching or for research, please let-us know and we will add you in this list.
 
-* UCLouvain, `INGI2365 <https://uclouvain.be/cours-2017-LINGI2365>`_.
-* ACP, `Summer School <http://school.a4cp.org/summer2017/>`_ 2017, Porquerolles, France.
+* UCLouvain, `INGI2365 <https://uclouvain.be/cours-2017-LINGI2365>`_ Teacher: Pierre Schaus.
+* ACP, `Summer School <http://school.a4cp.org/summer2017/>`_ 2017, Porquerolles, France, Teacher: Pierre Schaus.
+* Université de Nice `Master in CS <http://unice.fr/formation/formation-initiale/sminf1212>`_  Teacher: Arnaud Malapert and Marie Pelleau 
 
 
 Citing mini-cp

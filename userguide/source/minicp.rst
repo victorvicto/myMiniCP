@@ -15,8 +15,8 @@ Slides
 
 Slides from the course INGI2365 given by Pierre Schaus  @UCLouvain: 
 
-* `Tutorial <http://tinyurl.com/y8n4knhx>`_ given at CPAIOR17
-* `Variables, domains, trail and search <https://www.icloud.com/keynote/0QTIjJ1gIxzkr0Eig7pDlYvIA#02-variables-domains-trail-search>`_
+* `Variables, Domains, Trail and search <https://www.icloud.com/keynote/0QTIjJ1gIxzkr0Eig7pDlYvIA#02-variables-domains-trail-search>`_
+* `Views, Optimization, Heuristics and Large Neighborhood Search <https://www.icloud.com/keynote/0ua695DWVE6DqpjPvqR-St7WQ#03-views-optimization-heuristics-lns-restarts>`_
 * more to come ...
 
 Learning outcomes by studying mini-cp:

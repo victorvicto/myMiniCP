@@ -192,24 +192,24 @@ allows to fill an array with all the values present in the sparse-set relying on
     
 The main advantage over the iterator mechanism is that not object is created (and thus garbage collected). 
 Indeed `dest` is typically a container array stored as an instance variable and reused many times.
-This is important for efficiency to avoid creating objects on the heap at each execution of a propagator because those 
-are often propagators million of times.
-This implementation avoids the `ConcurrentModificationException` discussion when implementing an Iterator: should we allow to modify a domain while iterating on it ?
-The answer is here very clear: you get a snapshot of the domain at the time of the call to `fillArray` and it is totally find to iterate over the filled dest array
-and modifying the domain at the same time.
+This is important for efficiency to avoid creating objects on the heap at each execution of a propagator.
+Never forget that a 'propagate()' method of 'Constraint' may be called thousands of times per second.
+This implementation using `fillArray` avoids the `ConcurrentModificationException` discussion 
+when implementing an Iterator: should we allow to modify a domain while iterating on it ?
+The answer here is very clear: you get a snapshot of the domain at the time of the call to `fillArray` and you can thus
+safely iterate over this `dest` array and modifying the domain at the same time.
 
 
-We ask you to:
+To do:
 
-* add a method `public int fillArray(int [] dest)` in `IntVar.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/core/IntVar.java?at=master>`_ As a consequence this method must be implemented in all the classes implementing this interface.
-* implement unit tests in `IntVarTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master>`_, `IntVarViewMulTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarViewMulTest.java?at=master>`_, `IntVarViewOppositeTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarViewOppositeTest.java?at=master>`_ to verify that your implementation is correct.
-
+* Add a method `public int fillArray(int [] dest)` in `IntVar.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/core/IntVar.java?at=master>`_ As a consequence this method must be implemented in all the classes implementing this interface.
+* Implement unit tests in `IntVarTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master>`_, `IntVarViewMulTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarViewMulTest.java?at=master>`_, `IntVarViewOppositeTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarViewOppositeTest.java?at=master>`_ to verify that your implementation is correct.
 
 
 Implement a Custom Search
 =================================
 
-Modify `QAP.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/QAP.java?at=master>`_
+Modify the Quadratic Assignment Model `QAP.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/QAP.java?at=master>`_
 to implement a custom search strategy. A skeleton for a custom search is the following one:
 
 
@@ -234,9 +234,9 @@ to implement a custom search strategy. A skeleton for a custom search is the fol
 Experiment and modify LNS
 =================================================================
 
-Experiment `QAPLNS.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/QAPLNS.java?at=master>`_
+Experiment the Quadratic Assignment Model with LNS `QAPLNS.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/QAPLNS.java?at=master>`_
 
-* Does it converge faster to good solutions than the standard DFS ?
+* Does it converge faster to good solutions than the standard DFS ? Use the larger instance with 25 facilities.
 * What is the impact of the percentage of variables relaxed (experiment with 5, 10 and 20%) ?
 * What is the impact of the failure limit (experiment with 50, 100 and 1000)?
 * Which parameter setting work best? How would you choose it?
@@ -244,7 +244,6 @@ Experiment `QAPLNS.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/
 
 
     
-
 Element constraint
 =================================
 
