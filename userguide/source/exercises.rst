@@ -165,7 +165,7 @@ Implement the missing constructor in `IntVarImpl.java <https://bitbucket.org/psc
     }
 
 
-The easy way is to create a dense domain then remove the values not present in the set.
+This exercise is straightforward: just create a dense domain then remove the values not present in the set.
 
 Check that your implementation passes the tests `IntVarTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master>`_
 
@@ -204,8 +204,8 @@ safely iterate over this `dest` array and modifying the domain at the same time.
 
 To do:
 
-* Add a method `public int fillArray(int [] dest)` in `IntVar.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/core/IntVar.java?at=master>`_ As a consequence this method must be implemented in all the classes implementing this interface.
-* Implement unit tests in `IntVarTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master>`_, `IntVarViewMulTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarViewMulTest.java?at=master>`_, `IntVarViewOppositeTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarViewOppositeTest.java?at=master>`_ to verify that your implementation is correct.
+* Implement `public int fillArray(int [] dest)` in `IntVar.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/core/IntVar.java?at=master>`_ As a consequence in all the classes implementing the interface. You may need to add implementations in other classes such as the domain implementation.
+* Check that your implementation passes the tests `IntVarTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/core/IntVarTest.java?at=master>`_ add also add more tests.
 
 
 Implement a Custom Search
@@ -230,7 +230,12 @@ to implement a custom search strategy. A skeleton for a custom search is the fol
                 
 
 * As a variable heuristic, select the unbound variable `x[i]` (a facility `i` not yet assigned to a location) that has a maximum weight `w[i][j]` with another facility `j` (`x[j]` may be bound or not).
-* As a value heuristic, on the left branch, place this facility to on the location which is the closest possible to another location possible for facility `j`. On the right branch remove this value.                   
+* As a value heuristic, on the left branch, place this facility to on the location which is the closest possible to another location possible for facility `j`. On the right branch remove this value. 
+* Hint: `selectMin` is a generic method parameterized by 'T'. To implement this heuristic, adding pairs `(i,j)` as a type for `T` is probably the easiest way to go.
+
+   .. code-block:: java
+
+           public static <T> Choice selectMin(T[] x, Filter<T> p, ValueFun<T> f, BranchOn<T> body)             
 
 
 Experiment and modify LNS
@@ -253,11 +258,6 @@ Element constraint
 Implement `Element1D.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Element1D.java?at=master>`_
 
 
-Two possibilities:
-
-1. extends `Element2D` and reformulate `Element1D` as an `Element2D` constraint in super call of the constructor.
-2. implement a dedicated algo (propagate, etc) for `Element1D` by taking inspiration from `Element2D`.
-
 An element constraint is to index an array `T` by an index variable `x` and link the result with a variable `z`.
 More exactly the relation `T[x]=z` must hold.
 
@@ -279,6 +279,13 @@ but is violated for
 
 Check that your implementation passes the tests `Element1DTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/Element1DTest.java?at=master>`_
 
+
+Two possibilities:
+
+1. extends `Element2D` and reformulate `Element1D` as an `Element2D` constraint in super call of the constructor.
+2. implement a dedicated algo (propagate, etc) for `Element1D` by taking inspiration from `Element2D`.
+
+Does your filtering achieve domain-consistency on D(Z)? Implement a domain-consistent version, write tests to make sure it is domain consistent.
 
 
 Circuit Constraint
