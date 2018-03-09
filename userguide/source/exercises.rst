@@ -468,7 +468,7 @@ Here is an example of a table, with five tuples and four variables:
 |           5 |    3 |    0 |    1 |    1 |
 +-------------+------+------+------+------+
 
-In this particular example, the assignment `X={1, 1, 4, 3}` is then valid, but not `X={4, 3, 3, 3}` as there are no
+In this particular example, the assignment `X={2, 1, 0, 3}` is then valid, but not `X={4, 3, 3, 3}` as there are no
 such line in the table.
 
 Many algorithms exists to filter table constraints.
@@ -522,8 +522,8 @@ and `2` are not supported by variable `x[2]`, and, as such, can be discarded. Fr
 Using bit sets
 --------------
 
-As you may have seen, we did not describe the type of `supportedByVarVal`. You may have assumed that is was
-`List<Integer>[][] supportedByVarVal`. This is not the solution used by CT.
+You may have assumed that the type of `supports` would have been `List<Integer>[][] supportedByVarVal`.
+This is not the solution used by CT.
 
 CT uses the concept of bit sets. A bit set is an array-like data structure that stores bits. Each bit is accessible by
 its index. A bitset is in fact composed of an array of `Long`, that we call in this context a *word*.
@@ -552,7 +552,7 @@ You "simply" have to compute, for each call to `propagate()`:
 * The tuples supported by each variable, which are the union of the tuples supported by the value in the domain of the
   variable
 * The intersection of the tuples supported by each variable is the set of globally supported tuples
-* You can now intersect the set of globally supported tuples with each variable/value pair in `supportedByVarVal`.
+* You can now intersect the set of globally supported tuples with each variable/value pair in `supports`.
   If the value supports no tuple (i.e. the intersection is empty) then it can be removed.
 
 Make sure you pass all the tests `TableTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/TableTest.java?at=master>`_.
