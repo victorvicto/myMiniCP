@@ -589,7 +589,7 @@ Eternity Problem
 Fill in all the gaps in order to solve the Eternity II problem.
 
 Your task is to terminate the implementation in
-`Eternity.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/exemples/Eternity.java?at=master>`_.
+`Eternity.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/Eternity.java?at=master>`_.
 
 * Create the table 
 * Model the problem using table constraints
