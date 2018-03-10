@@ -235,9 +235,9 @@ public class ReversibleSparseSetTest {
     @Test
     public void testRemoveAboveAll() {
         Trail trail = new Trail();
-        ReversibleSparseSet set1 = new ReversibleSparseSet(trail, -5, 5);
-        ReversibleSparseSet set2 = new ReversibleSparseSet(trail, -5, 5);
-        assertEquals(Integer.MIN_VALUE, set1.removeAbove(-5));
+        ReversibleSparseSet set1 = new ReversibleSparseSet(trail,5);
+        ReversibleSparseSet set2 = new ReversibleSparseSet(trail,5);
+        assertEquals(Integer.MIN_VALUE, set1.removeAbove(-1));
         assertEquals(Integer.MAX_VALUE, set2.removeBelow(5));
         assertTrue(set1.isEmpty());
         assertTrue(set2.isEmpty());
