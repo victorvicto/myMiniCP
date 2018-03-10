@@ -22,6 +22,7 @@ import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
+import org.junit.Assume;
 import org.junit.Test;
 
 
@@ -61,7 +62,7 @@ public class CumulativeTest {
                 assert (false);
             }
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
 
     }
@@ -86,7 +87,7 @@ public class CumulativeTest {
                 assert (false);
             }
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 
@@ -112,7 +113,7 @@ public class CumulativeTest {
                 assert (false);
             }
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 
@@ -154,7 +155,7 @@ public class CumulativeTest {
                 assert (false);
             }
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 
@@ -190,7 +191,7 @@ public class CumulativeTest {
                 assert (false);
             }
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
     }
 

@@ -16,14 +16,8 @@
 package minicp.engine.core;
 
 import minicp.util.InconsistencyException;
-import minicp.util.NotImplementedException;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import static minicp.cp.Factory.makeIntVar;
 import static minicp.cp.Factory.makeSolver;
 import static org.junit.Assert.*;
 

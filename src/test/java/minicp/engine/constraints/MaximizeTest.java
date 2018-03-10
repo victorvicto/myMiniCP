@@ -21,6 +21,7 @@ import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
+import org.junit.Assume;
 import org.junit.Test;
 
 import static minicp.cp.Factory.*;
@@ -52,7 +53,7 @@ public class MaximizeTest {
                 fail("should not fail");
             }
         } catch (NotImplementedException e) {
-            e.print();
+            Assume.assumeNoException(e);
         }
 
     }
