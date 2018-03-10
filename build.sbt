@@ -7,6 +7,7 @@ jacoco.settings
 
 jacoco.reportFormats in jacoco.Config := Seq(XMLReport("utf-8"), HTMLReport("utf-8"))
 
+jacoco.excludes in jacoco.Config := Seq("**/minicp/examples/**/*.class")
 
 lazy val root = (project in file(".")).settings(
     name := "minicp",
