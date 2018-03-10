@@ -508,7 +508,7 @@ Example
 As an example, consider that variable `x[0]` has domain `{0, 1, 3}`. Here are some values for `supports`:
 `supports[0][0] = {1, 2}`
 `supports[0][1] = {}`
-`supports[0][2] = {3}`
+`supports[0][3] = {4,5}`
 
 We can infer two things from this example: first, value `1` does not support any tuples, so it can be removed safely
 from the domain of `x[0]`. Moreover, the tuples supported by `x[0]` is the union of the tuples supported by its values;
