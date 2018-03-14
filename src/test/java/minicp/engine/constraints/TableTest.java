@@ -21,7 +21,7 @@ import minicp.engine.core.Solver;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
-import org.junit.Assume;
+import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -98,7 +98,7 @@ public class TableTest {
                 try {
                     testTable(algo, tuples1, tuples2, tuples3);
                 } catch (NotImplementedException e) {
-                    Assume.assumeNoException(e);
+                    NotImplementedExceptionAssume.fail(e);
                 }
             }
         }

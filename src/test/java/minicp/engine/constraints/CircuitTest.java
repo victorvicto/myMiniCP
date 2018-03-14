@@ -17,20 +17,16 @@ package minicp.engine.constraints;
 
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
-import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
-import org.junit.Assume;
+import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 import static minicp.cp.Factory.*;
-import static minicp.cp.Factory.notEqual;
 import static minicp.cp.Heuristics.firstFail;
-import static minicp.search.Selector.branch;
-import static minicp.search.Selector.selectMin;
 import static org.junit.Assert.*;
 
 
@@ -80,7 +76,7 @@ public class CircuitTest {
                 fail("should not fail");
             }
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
@@ -99,7 +95,7 @@ public class CircuitTest {
                 fail("should fail");
             } catch (InconsistencyException e) {}
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
@@ -122,7 +118,7 @@ public class CircuitTest {
                 ).start();
             } catch (InconsistencyException e) { fail("should not fail");}
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
@@ -149,7 +145,7 @@ public class CircuitTest {
 
             } catch (InconsistencyException e) { fail("should not fail");}
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
@@ -165,7 +161,7 @@ public class CircuitTest {
                 cp.post(new Circuit(x));
             } catch (InconsistencyException e) { fail("should not fail");}
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
@@ -185,7 +181,7 @@ public class CircuitTest {
                 assertEquals(9, x[2].getMax());
             } catch (InconsistencyException e) { fail("should not fail");}
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 }

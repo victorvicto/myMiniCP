@@ -17,7 +17,7 @@ package minicp.reversible;
 
 
 import minicp.util.NotImplementedException;
-import org.junit.Assume;
+import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 
 import java.util.Set;
@@ -146,7 +146,7 @@ public class ReversibleSparseSetTest {
             }
 
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
@@ -187,7 +187,7 @@ public class ReversibleSparseSetTest {
             }
 
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
@@ -228,7 +228,7 @@ public class ReversibleSparseSetTest {
             }
 
         } catch (NotImplementedException e) {
-            Assume.assumeNoException(e);
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 

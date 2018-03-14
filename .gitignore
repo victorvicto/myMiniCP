@@ -3,3 +3,8 @@
 .DS_Store
 project/
 target/
+.m2
+*.iml
+minicp.zip
+userguide/build/
+userguide/userguideenv/

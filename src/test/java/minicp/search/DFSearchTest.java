@@ -27,6 +27,7 @@ import minicp.reversible.Trail;
 import minicp.util.Counter;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
+import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 import static minicp.search.Selector.*;
 import static minicp.cp.Factory.*;
@@ -232,7 +233,7 @@ public class DFSearchTest {
             SearchStatistics stats = dfs.start(stat -> stat.nSolutions >= 1);
             assert(stats.nSolutions == 1);
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
         }
 
     }
