@@ -795,7 +795,7 @@ activity (if needed) to the earliest slot when it can be executed without violat
             if (!start[i].isBound()) {
                 // j is the index of the profile rectangle overlapping t
                 int j = profile.rectangleIndex(start[i].getMin());
-                // TODO 3: push j to the right
+                // TODO 3: push i to the right
                 // hint:
                 // You need to check that at every-point on the interval
                 // [start[i].getMin() ... start[i].getMin()+duration[i]-1] there is enough space.
