@@ -19,7 +19,10 @@ Slides from the course INGI2365 given by Pierre Schaus  @UCLouvain:
 * `Views, Optimization, Heuristics and Large Neighborhood Search <https://www.icloud.com/keynote/0ua695DWVE6DqpjPvqR-St7WQ#03-views-optimization-heuristics-lns-restarts>`_
 * `Domain and Bound Consistencies, Sum, Element(2D) and Circuit constraints, Incremental aspect of filtering algorithms <https://www.icloud.com/keynote/0-kSpTi0bzBdLi8kMJzLt4g2A#04-element-constraints>`_
 * `Table Constraints (STR2 and Compact Table), Regular and Application to Eternity Puzzle <https://www.icloud.com/keynote/0Nr2LcZGY2xQop312SgMGs37Q#05-table-constraints>`_
-* more to come ...
+* `Logical Constraints, Domain Consistent Element, Stable Mariage <todo>`_
+* Black Box Search and default heuristics, Discrepancy Search
+
+
 
 Learning outcomes by studying mini-cp:
 
@@ -42,6 +45,17 @@ While, from a search prospective, the outcomes include:
 * Variable and Value Heuristics implementation
 * Searching with phases
 * Large Neighborhood Search
+
+
+******************************
+Mini-CP XCSP3 Mini Solver
+******************************
+
+We provide under the form of a student project the possibility to participate to the XCSP3 MiniSolver Competition with Mini-CP.
+All the interfacing with XCSP3 tools and the parsing of XCSP3 format is done for you.
+You can focus on the only interesting part: make your solver as efficient as possible.
+
+* `XCSP3 Website <http://xcsp.org/competition>`_   
 
 
 
