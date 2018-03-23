@@ -14,7 +14,7 @@
  */
 
 package minicp.engine.constraints;
-//COUCOU
+
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.util.InconsistencyException;
