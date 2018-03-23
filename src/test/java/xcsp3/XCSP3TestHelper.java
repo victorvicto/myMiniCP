@@ -22,7 +22,7 @@ public abstract class XCSP3TestHelper {
         try {
             System.out.println(path);
             XCSP3 xcsp3 = new XCSP3(path);
-            String solution = xcsp3.solve();
+            String solution = xcsp3.solve(1,3);
 
             boolean shouldBeSat = !path.contains("unsat");
             if(shouldBeSat) {

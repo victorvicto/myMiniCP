@@ -13,6 +13,7 @@
  * Copyright (c)  2018. by Laurent Michel, Pierre Schaus, Pascal Van Hentenryck
  */
 
+
 package minicp.engine.constraints;
 
 import minicp.engine.core.Constraint;
@@ -20,30 +21,33 @@ import minicp.engine.core.IntVar;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
 
-public class Element1DVar extends Constraint {
+public class Maximum extends Constraint {
 
-    private final IntVar[] T;
+    private final IntVar[] x;
     private final IntVar y;
-    private final IntVar z;
 
-
-
-    public Element1DVar(IntVar[] T, IntVar y, IntVar z) {
-        super(y.getSolver());
-        this.T = T;
+    /**
+     * y = maximum(x[0],x[1],...,x[n])
+     * @param x
+     * @param y
+     */
+    public Maximum(IntVar[] x, IntVar y) {
+        super(x[0].getSolver());
+        assert (x.length > 0);
+        this.x = x;
         this.y = y;
-        this.z = z;
     }
+
 
     @Override
     public void post() throws InconsistencyException {
         // TODO
-        throw new NotImplementedException("Element1DVar");
+        throw new NotImplementedException("Maximum");
     }
 
     @Override
     public void propagate() throws InconsistencyException {
         // TODO
-        throw new NotImplementedException("Element1DVar");
+        throw new NotImplementedException("Maximum");
     }
 }

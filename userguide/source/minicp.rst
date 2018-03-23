@@ -19,10 +19,9 @@ Slides from the course INGI2365 given by Pierre Schaus  @UCLouvain:
 * `Views, Optimization, Heuristics and Large Neighborhood Search <https://www.icloud.com/keynote/0ua695DWVE6DqpjPvqR-St7WQ#03-views-optimization-heuristics-lns-restarts>`_
 * `Domain and Bound Consistencies, Sum, Element(2D) and Circuit constraints, Incremental aspect of filtering algorithms <https://www.icloud.com/keynote/0-kSpTi0bzBdLi8kMJzLt4g2A#04-element-constraints>`_
 * `Table Constraints (STR2 and Compact Table), Regular and Application to Eternity Puzzle <https://www.icloud.com/keynote/0Nr2LcZGY2xQop312SgMGs37Q#05-table-constraints>`_
-* `Logical Constraints, Domain Consistent Element, Stable Mariage <todo>`_
-* Black Box Search and default heuristics, Discrepancy Search
-
-
+* `Logical Constraints, Domain Consistent Element, Stable Mariage <https://www.icloud.com/keynote/0pRiKg20XCtBpT3prOIHuYVlw#06-stable-mariage-element-var>`_
+* `Table constraints with short-tuples and negative table constraints <https://www.icloud.com/keynote/0xQmFtdqhzCFK61lit0t2a1Zw#07-short-negative-table-constraints>`_
+* `Black-Box searches <https://www.icloud.com/keynote/0yqTbzWk8Qg7SJDNe9JLM8eug#08-black-box-search>`_
 
 Learning outcomes by studying mini-cp:
 
