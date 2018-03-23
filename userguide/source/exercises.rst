@@ -637,6 +637,49 @@ Again you will realize that several directions of implementation are possible
 
 Check that your implementation passes the tests `AbsoluteTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/AbsoluteTest.java?at=master>`_
 
+
+The maximum constraint
+==============================
+
+Implement `Maximum.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Maximum.java?at=master>`_
+
+
+Implement a bound-consistent filtering algorithm
+
+
+Check that your implementation passes the tests `MaximumTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/MaximumTest.java?at=master>`_
+
+
+Compact table algorithm for table constraints with short tuples
+==================================================================
+
+Implement `ShortTableCT.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/ShortTableCT.java?at=master>`_
+
+
+Of course you should get a strong inspiration from the 
+`TableCT.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/TableCT.java?at=master>`_
+implementation you did in a previous exercise.
+
+
+
+Check that your implementation passes the tests `ShortTableTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/ShortTableTest.java?at=master>`_
+
+
+Compact table algorithm for negative table constraints
+==================================================================
+
+Implement `NegTableCT.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/NegTableCT.java?at=master>`_
+
+
+Of course you should get a strong inspiration from the 
+`TableCT.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/TableCT.java?at=master>`_
+implementation you did in a previous exercise.
+
+Check that your implementation passes the tests `NegTableTest.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/NegTableTest.java?at=master>`_
+
+
+
+
 Cumulative Constraint: Decomposition
 ====================================
 
