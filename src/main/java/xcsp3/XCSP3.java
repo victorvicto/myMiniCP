@@ -4,21 +4,19 @@ import minicp.cp.Factory;
 import minicp.engine.constraints.*;
 import minicp.engine.core.BoolVar;
 import minicp.engine.core.IntVar;
-import minicp.engine.core.IntVarViewOpposite;
 import minicp.engine.core.Solver;
 
 import static minicp.cp.Heuristics.*;
 import static minicp.cp.Factory.*;
-import static org.xcsp.parser.XCallbacks.XCallbacksParameters.RECOGNIZING_BEFORE_CONVERTING;
 
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.Box;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
-import org.w3c.dom.Document;
 import org.xcsp.checker.SolutionChecker;
 import org.xcsp.common.Condition;
+import org.xcsp.common.Constants;
 import org.xcsp.common.Types;
 import org.xcsp.common.Utilities;
 import org.xcsp.common.predicates.XNodeParent;
@@ -41,6 +39,10 @@ public class XCSP3 implements XCallbacks2 {
     private final Map<XVarInteger, IntVar> mapVar = new HashMap<>();
     private final List<XVarInteger> xVars = new LinkedList<>();
     private final List<IntVar> minicpVars = new LinkedList<>();
+
+
+    private final Set<IntVar> decisionVars = new HashSet<>();
+
     public final Solver minicp = new Solver();
 
     private Optional<IntVar> objectiveMinimize = Optional.empty();
@@ -63,8 +65,8 @@ public class XCSP3 implements XCallbacks2 {
         implem.currParameters.put(XCallbacksParameters.RECOGNIZE_TERNARY_PRIMITIVES, new Object());
         //implem.currParameters.put(XCallbacksParameters.RECOGNIZE_NVALUES_CASES, new Object());
         implem.currParameters.put(XCallbacksParameters.RECOGNIZING_BEFORE_CONVERTING, Boolean.TRUE);
-        implem.currParameters.put(XCallbacksParameters.CONVERT_INTENSION_TO_EXTENSION_ARITY_LIMIT, 10); // included
-        implem.currParameters.put(XCallbacksParameters.CONVERT_INTENSION_TO_EXTENSION_SPACE_LIMIT, 10L); // included
+        implem.currParameters.put(XCallbacksParameters.CONVERT_INTENSION_TO_EXTENSION_ARITY_LIMIT, Integer.MAX_VALUE); // included
+        implem.currParameters.put(XCallbacksParameters.CONVERT_INTENSION_TO_EXTENSION_SPACE_LIMIT, Long.MAX_VALUE); // included
 
         loadInstance(fileName);
     }
@@ -114,11 +116,7 @@ public class XCSP3 implements XCallbacks2 {
         if(hasFailed)
             return;
 
-        if (flags.contains(Types.TypeFlag.STARRED_TUPLES)) {
-            // Can you manage short tables ? i.e., tables with tuples containing symbol * ?
-            // If not, throw an exception.
-            throw new IllegalArgumentException("short table not supported");
-        }
+
 
         /*if (flags.contains(Types.TypeFlag.UNCLEAN_TUPLES)) {
             // You have possibly to clean tuples here, in order to remove invalid tuples.
@@ -133,7 +131,8 @@ public class XCSP3 implements XCallbacks2 {
             }
             else {
                 if (flags.contains(Types.TypeFlag.STARRED_TUPLES)) {
-                    throw new IllegalArgumentException("start tuples not supported");
+                    minicp.fixPoint();
+                    minicp.post(new ShortTableCT(trVars(list), tuples, Constants.STAR_INT));
                 } else {
                     minicp.fixPoint();
                     minicp.post(new TableCT(trVars(list), tuples));
@@ -174,6 +173,7 @@ public class XCSP3 implements XCallbacks2 {
             }
             x.getSolver().fixPoint();
         } catch (InconsistencyException e) {
+            System.out.println("failed rel");
             hasFailed = true;
         }
     }
@@ -261,6 +261,7 @@ public class XCSP3 implements XCallbacks2 {
         IntVar z =  mapVar.get(value);
         try {
             minicp.post(new Element1D(list, idx, z));
+            decisionVars.add(idx);
         } catch (InconsistencyException e) {
             hasFailed = true;
         }
@@ -274,6 +275,7 @@ public class XCSP3 implements XCallbacks2 {
         if (rank != Types.TypeRank.ANY)
             throw new IllegalArgumentException("Element constraint only supports ANY as position for the index");
         IntVar idx = minus(mapVar.get(index),startIndex);
+        decisionVars.add(idx);
         IntVar z =  makeIntVar(minicp,value,value);
         try {
             minicp.post(new Element1DVar(Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new), idx, z));
@@ -290,6 +292,7 @@ public class XCSP3 implements XCallbacks2 {
         if (rank != Types.TypeRank.ANY)
             throw new IllegalArgumentException("Element constraint only supports ANY as position for the index");
         IntVar idx = minus(mapVar.get(index),startIndex);
+        decisionVars.add(idx);
         IntVar z =  mapVar.get(value);
         try {
             minicp.post(new Element1DVar(Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new), idx, z));
@@ -471,12 +474,16 @@ public class XCSP3 implements XCallbacks2 {
 
     @Override
     public void buildCtrAllDifferent(String id, XVarInteger[] list) {
+
         if(hasFailed)
             return;
-
         // Constraints
         try {
-            minicp.post(allDifferent(Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new)));
+            IntVar [] xs = Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new);
+            minicp.post(allDifferent(xs));
+            for (IntVar x: xs) {
+                decisionVars.add(x);
+            }
         } catch (InconsistencyException e) {
             hasFailed = true;
         }
@@ -549,7 +556,7 @@ public class XCSP3 implements XCallbacks2 {
             } else if (type == Types.TypeObjective.MINIMUM) {
                 IntVar[] xs = Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new);
                 objectiveMinimize = Optional.of(minus(minimum(xs)));
-            } else if (type != Types.TypeObjective.SUM) {
+            } else if (type == Types.TypeObjective.SUM) {
                 IntVar s = sum(Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new));
                 objectiveMinimize = Optional.of(minus(s));
             } else {
@@ -599,11 +606,21 @@ public class XCSP3 implements XCallbacks2 {
         }
     }
 
+    /**
+     *
+     * @param nSolution maximum number of solution (not taken into account if satisfiability problem, only first feasible one)
+     * @param timeOut
+     * @return
+     */
     public String solve(int nSolution, int timeOut) {
 
         IntVar[] vars = mapVar.entrySet().stream().sorted(new EntryComparator()).map(i -> i.getValue()).toArray(size -> new IntVar[size]);
-
-        DFSearch search = makeDfs(minicp, firstFail(vars));
+        DFSearch search;
+        if (decisionVars.isEmpty()) {
+            search = makeDfs(minicp, firstFail(vars));
+        } else {
+            search = makeDfs(minicp, and(firstFail(decisionVars.toArray(new IntVar[0])), firstFail(vars)));
+        }
 
         if (objectiveMinimize.isPresent()) {
             try {
@@ -611,16 +628,20 @@ public class XCSP3 implements XCallbacks2 {
             } catch (InconsistencyException e) {
                 hasFailed = true;
             }
+        } else {
+            nSolution = 1;
         }
 
-        if(hasFailed) {
+        if (hasFailed) {
             System.out.println("Model is inconsistent at first fixpoint");
             return "";
         }
 
+
+
         Box<String> lastSolution = new Box<String>("");
         search.onSolution(() -> {
-
+            System.out.println("solfound"+(objectiveMinimize.isPresent() ? objectiveMinimize.get(): "solution"));
             int i = 0;
             String sol = "<instantiation>\n\t<list>\n\t\t";
             //xcsp3.mapVar.entrySet().stream()
@@ -633,14 +654,12 @@ public class XCSP3 implements XCallbacks2 {
             }
             sol += "\n\t</values>\n</instantiation>";
             lastSolution.set(sol);
-            //solutions.add(sol);
-
         });
         Long t0 = System.currentTimeMillis();
 
-        SearchStatistics stats = search.start(limit -> (System.currentTimeMillis()-t0 >= timeOut*1000 || limit.nSolutions >= nSolution));
-        System.out.println(stats);
-        //SearchStatistics stats = objectiveMinimize.isPresent() ? search.start(limit -> (System.currentTimeMillis()-t0 >= timeOut*1000 && limit.nSolutions >= nSolution)) : search.start(limit -> limit.nSolutions >= nSolution && (System.currentTimeMillis()-t0 >= timeOut));
+        final int nSols = nSolution;
+
+        SearchStatistics stats = search.start(limit -> (System.currentTimeMillis()-t0 >= timeOut*1000 || limit.nSolutions >= nSols));
         System.out.println(stats);
         return lastSolution.get();
     }
@@ -648,9 +667,8 @@ public class XCSP3 implements XCallbacks2 {
 
     public static void main(String[] args) {
         try {
-            //XCSP3 xcsp3 = new XCSP3("data/xcsp3/TravellingSalesman-15-30-13.xml");
-            XCSP3 xcsp3 = new XCSP3("data/xcsp3/easy/Queens-0008-m1.xml");
-            String solution = xcsp3.solve(1,10);
+            XCSP3 xcsp3 = new XCSP3(args[0]);
+            String solution = xcsp3.solve(Integer.MAX_VALUE,100);
             List<String> violatedCtrs = xcsp3.getViolatedCtrs(solution);
             System.out.println(violatedCtrs);
         } catch (Exception e) {
