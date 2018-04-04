@@ -20,6 +20,7 @@ import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
 
 import java.security.InvalidParameterException;
+import java.util.Collections;
 import java.util.Set;
 
 public class IntVarImpl implements IntVar {
@@ -88,7 +89,24 @@ public class IntVarImpl implements IntVar {
      * @param values
      */
     public IntVarImpl(Solver cp, Set<Integer> values) {
-        throw new NotImplementedException("Implement arbitrary domain constructor");
+        //assertFalse(values.isEmpty());
+        Integer min = Collections.min(values);
+        Integer max = Collections.max(values);
+        this.cp = cp;
+        cp.registerVar(this);
+        domain = new SparseSetDomain(cp.getTrail(),min.intValue(),max.intValue());
+        onDomain = new ReversibleStack<>(cp.getTrail());
+        onBind  = new ReversibleStack<>(cp.getTrail());
+        onBounds = new ReversibleStack<>(cp.getTrail());
+        for(int i=min.intValue()+1;i<max.intValue();i++){
+            if (!values.contains(new Integer(i))) {
+                try {
+                    domain.remove(i, domListener);
+                } catch (InconsistencyException e) {
+                    min = max; // Shouldn't end up here
+                }
+            }
+        }
     }
 
 
@@ -140,9 +158,15 @@ public class IntVarImpl implements IntVar {
         return domain.getSize();
     }
 
+    public int[] getValues() {
+        return domain.getValues();
+    }
+
     @Override
     public int fillArray(int[] dest) {
-        throw new NotImplementedException("implement fillArray in IntVarImpl");
+        int s = domain.getSize();
+        System.arraycopy(domain.getValues(), 0, dest, 0, s);
+        return s;
     }
 
     public boolean contains(int v) {

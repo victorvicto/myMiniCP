@@ -80,9 +80,21 @@ public class IntVarViewOffset implements IntVar {
         return x.getSize();
     }
 
+    public int[] getValues() {
+        int s = x.getSize();
+        int[] d = x.getValues();
+        for(int i=0; i<s; i++){
+            d[i] += o;
+        }
+        return d;
+    }
+
     @Override
     public int fillArray(int[] dest) {
-        throw new NotImplementedException("implement fillArray in IntVarViewOffset");
+        int s = x.getSize();
+        int[] d = this.getValues();
+        System.arraycopy(d, 0, dest, 0, s);
+        return s;
     }
 
     @Override

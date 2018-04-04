@@ -26,6 +26,8 @@ public abstract class IntDomain {
 
     public abstract  int getSize();
 
+    public abstract  int[] getValues();
+
     public abstract  boolean contains(int v);
 
     public abstract  boolean isBound();

@@ -85,6 +85,8 @@ public interface IntVar {
      */
     int getSize();
 
+    int[] getValues();
+
     /**
      * Copy the values of the domain
      * @param dest, an array large enough dest.length >= getSize()
