@@ -44,7 +44,11 @@ public class SparseSetDomain extends IntDomain {
     }
 
     public int[] getValues() {
-        return domain.toArray();
+        int[] d = domain.toArray();
+        for(int i=0; i<d.length;i++){
+            d[i] += offset;
+        }
+        return d;
     }
 
     public boolean contains(int v) {
