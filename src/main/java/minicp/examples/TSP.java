@@ -86,7 +86,22 @@ public class TSP {
 
         IntVar totalDist = sum(distSucc);
 
-        DFSearch dfs = makeDfs(cp, firstFail(succ));
+        // DFSearch dfs = makeDfs(cp, firstFail(succ));
+        DFSearch dfs = makeDfs(cp,
+                selectMin(succ,
+                        succi -> succi.getSize() > 1, // filter
+                        succi -> succi.getSize(), // variable selector
+                        succi -> {
+                            int v = succi.getMin(); // value selector (TODO)
+                            for(int i=succi.getMin(); i<=succi.getMax(); i++){
+                                if (succi.contains(i)){
+                                    
+                                }
+                            }
+                            return branch(() -> equal(succi,v),
+                                    () -> notEqual(succi,v));
+                        }
+                ));
 
         cp.post(minimize(totalDist, dfs));
 
