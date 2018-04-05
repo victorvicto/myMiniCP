@@ -54,5 +54,21 @@ public class Selector {
         };
     }
 
+    public static <T> Choice selectMax(T[] x, Filter<T> p, ValueFun<T> f, BranchOn<T> body) {
+        return () -> {
+            T sel = null;
+            for (T xi : x) {
+                if (p.call(xi)) {
+                    sel = sel == null || (f.call(xi) > f.call(sel)) ? xi : sel;
+                }
+            }
+            if (sel == null) {
+                return TRUE;
+            } else {
+                return body.call(sel);
+            }
+        };
+    }
+
 
 }

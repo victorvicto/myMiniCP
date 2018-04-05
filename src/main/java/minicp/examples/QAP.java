@@ -22,10 +22,53 @@ import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.InputReader;
 
+import java.util.*;
+
 import static minicp.cp.Factory.*;
 import static minicp.cp.Heuristics.firstFail;
+import static minicp.search.Selector.branch;
+import static minicp.search.Selector.selectMax;
+import static minicp.search.Selector.selectMin;
 
 public class QAP {
+
+    public static class Pair {
+        public IntVar i;
+        IntVar j;
+        int [][] dist;
+        int weight;
+
+        public Pair(int [][] dist, IntVar i, IntVar j, int weight) {
+            this.i = i;
+            this.j = j;
+            this.dist = dist;
+            this.weight = weight;
+        }
+
+        public int getSize() {
+            return i.getSize();
+        }
+
+        public int getWeight() {
+            return  weight;
+        }
+
+        public int getMin() {
+            int [] ival = i.getValues();
+            int [] jval = j.getValues();
+            int min = 2147483647;
+            int minVal = ival[0];
+            for (int ii : ival) {
+                for (int jj : jval) {
+                    if(dist[ii][jj]<min) {
+                        min = dist[ii][jj];
+                        minVal = ii;
+                    }
+                }
+            }
+            return minVal;
+        }
+    }
 
     public static void main(String[] args) throws InconsistencyException {
 
@@ -56,7 +99,27 @@ public class QAP {
 
         cp.post(allDifferent(x));
 
-        DFSearch dfs = makeDfs(cp,firstFail(x));
+        List<Pair> listOfPairs = new ArrayList<Pair>();
+        for (int i = 0; i < n ; i++) {
+            for (int j = 0; j < n; j++) {
+                Pair p = new Pair(d,x[i],x[j],w[i][j]);
+                listOfPairs.add(p);
+            }
+        }
+
+        Pair [] pp = listOfPairs.toArray(new Pair[n*n]);
+
+        // DFSearch dfs = makeDfs(cp,firstFail(x));
+        DFSearch dfs = makeDfs(cp,
+                selectMax(pp,
+                        y -> y.getSize() > 1, // filter
+                        y -> y.getWeight(), // variable selector
+                        xi -> {
+                            int v = xi.getMin(); // value selector (TODO)
+                            return branch(() -> equal(xi.i,v),
+                                    () -> notEqual(xi.i,v));
+                        }
+                ));
 
 
         // build the objective function
