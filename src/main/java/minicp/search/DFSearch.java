@@ -21,6 +21,7 @@ import minicp.util.NotImplementedException;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 public class DFSearch {
 
@@ -82,7 +83,7 @@ public class DFSearch {
     }
 
 
-    private void dfs(SearchStatistics statistics, SearchLimit limit) {
+    /*private void dfs(SearchStatistics statistics, SearchLimit limit) {
         if (limit.stopSearch(statistics)) throw new StopSearchException();
         Alternative [] alternatives = choice.call();
         if (alternatives.length == 0) {
@@ -101,6 +102,45 @@ public class DFSearch {
                     statistics.nFailures++;
                 }
                 trail.pop();
+            }
+        }
+    }*/
+
+    private void dfs(SearchStatistics statistics, SearchLimit limit) {
+        Stack<Alternative> alternatives = new Stack<Alternative>();
+        expandNode(alternatives,statistics); // root expension
+        while (!alternatives.isEmpty()) {
+            if (limit.stopSearch(statistics)) throw new StopSearchException();
+            try {
+                alternatives.pop().call();
+            } catch (InconsistencyException e) {
+                notifyFailure();
+                statistics.nFailures++;
+            }
+        }
+    }
+    private void expandNode(Stack<Alternative> alternatives, SearchStatistics statistics) {
+        Alternative [] alternativesList = choice.call();
+        for(int i = 0; i < alternativesList.length / 2; i++)
+        {
+            Alternative temp = alternativesList[i];
+            alternativesList[i] = alternativesList[alternativesList.length - i - 1];
+            alternativesList[alternativesList.length - i - 1] = temp;
+        }
+        if (alternativesList.length == 0) {
+            statistics.nSolutions++;
+            notifySolutionFound();
+        } else {
+            for (Alternative alt : alternativesList) {
+                alternatives.push(() -> {
+                    trail.pop();
+                });
+                alternatives.push(() -> {
+                    trail.push();
+                    statistics.nNodes++;
+                    alt.call();
+                    expandNode(alternatives, statistics);
+                });
             }
         }
     }
