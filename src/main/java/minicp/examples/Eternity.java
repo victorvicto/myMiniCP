@@ -15,6 +15,7 @@
 
 package minicp.examples;
 
+import minicp.engine.constraints.Element2D;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.SearchStatistics;
@@ -64,6 +65,20 @@ public class Eternity {
         // Table with all pieces and for each their 4 possible rotations
 
         int [][] table = new int[4*n*m][5];
+
+        for (int i = 0; i < n*m; i++) {
+            int index = i*4;
+            table[index][0] = i;
+            table[index+1][0] = i;
+            table[index+2][0] = i;
+            table[index+3][0] = i;
+            for (int j = 0; j < 4; j++) {
+                table[index][j+1] = pieces[i][j];
+                table[index+1][(j+1)%4+1] = pieces[i][j];
+                table[index+2][(j+2)%4+1] = pieces[i][j];
+                table[index+3][(j+3)%4+1] = pieces[i][j];
+            }
+        }
 
         // TODO: create the table where each line correspond to one possible rotation of a piece
         // For instance if the line piece[6] = [2,3,5,1]
@@ -119,7 +134,35 @@ public class Eternity {
 
         // Constraint1: all the pieces placed are different
 
+        for (int j = 0; j < m; j++) {
+            for (int i = 0; i < n/2; i++) {
+                for (int jj = 0; jj < m; jj++) {
+                    for (int ii = 0; ii < n; ii++) {
+                        if(i!=ii || j!=jj)
+                            cp.post(notEqual(id[i][j],id[ii][jj]));
+                    }
+                }
+            }
+        }
+
         // Constraint2: all the pieces placed are valid ones i.e. one of the given mxn pieces possibly rotated
+
+        for(int i=0; i<n; i++){
+            for (int j = 0; j < m; j++) {
+                IntVar y1 = makeIntVar(cp,4);
+                y1.assign(1);
+                cp.post(new Element2D(table,id[i][j],y1,u[i][j]));
+                IntVar y2 = makeIntVar(cp,4);
+                y2.assign(2);
+                cp.post(new Element2D(table,id[i][j],y2,r[i][j]));
+                IntVar y3 = makeIntVar(cp,4);
+                y3.assign(3);
+                cp.post(new Element2D(table,id[i][j],y3,d[i][j]));
+                IntVar y4 = makeIntVar(cp,5);
+                y4.assign(4);
+                cp.post(new Element2D(table,id[i][j],y4,l[i][j]));
+            }
+        }
 
         // Constraint3: place "0" one all external side of the border (gray color)
 
