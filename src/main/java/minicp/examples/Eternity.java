@@ -132,7 +132,7 @@ public class Eternity {
 
         // TODO: State the constraints of the problem
 
-        // Constraint1: all the pieces placed are different
+        // Constraint1: all the pieces placed are different t
 
         for (int j = 0; j < m; j++) {
             for (int i = 0; i < n/2; i++) {
