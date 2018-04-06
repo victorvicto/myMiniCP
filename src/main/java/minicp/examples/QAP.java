@@ -108,6 +108,7 @@ public class QAP {
         Pair [] pp = listOfPairs.toArray(new Pair[n*n]);
 
         // DFSearch dfs = makeDfs(cp,firstFail(x));
+        //*
         DFSearch dfs = makeDfs(cp,
                 selectMax(pp,
                         y -> y.getSize() > 1, // filter
@@ -130,7 +131,7 @@ public class QAP {
                                     () -> notEqual(xi.i,v));
                         }
                 ));
-
+        //*/
 
         // build the objective function
         IntVar[] weightedDist = new IntVar[n*n];
