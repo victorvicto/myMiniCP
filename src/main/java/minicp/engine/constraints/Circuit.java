@@ -52,13 +52,43 @@ public class Circuit extends Constraint {
     @Override
     public void post() throws InconsistencyException {
         cp.post(allDifferent(x));
-        throw new NotImplementedException("Circuit");
-        // TODO
-        // Hint: use x[i].whenBind(...) to call the bind
+
+        for(int i = 0; i < x.length; i++) {
+            if (x[i].isBound()) {
+                bind(i);
+            }
+        }
+
+        for (int i = 0; i < x.length; i++) {
+
+            if (lengthToDest[orig[i].getValue()].getValue() < x.length) {
+                int[] vals = x[i].getValues();
+                for(int j = 0; j < vals.length; j++) {
+                    if (dest[vals[j]] == dest[i]){
+                        x[i].remove(vals[j]);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < x.length; i++) {
+            int finalI = i;
+            x[i].whenBind( () ->{
+                bind(finalI);
+            });
+        }
     }
 
 
     private void bind(int i) throws InconsistencyException {
-        throw new NotImplementedException("Circuit");
+        for (int j = 0; j < x.length; j++){
+            if (dest[j].getValue() == i) {
+                dest[j] = dest[x[i].getMin()];
+                lengthToDest[j].setValue( lengthToDest[j].getValue() + 1 + lengthToDest[x[i].getMin()].getValue());
+            }
+            if (orig[j].getValue() == x[i].getMin()) {
+                orig[j] = orig[i];
+            }
+        }
     }
 }

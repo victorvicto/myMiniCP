@@ -31,6 +31,17 @@ import static minicp.search.Selector.branch;
 import static minicp.search.Selector.selectMin;
 
 public class TSP {
+
+    public static class IndexedIntVar {
+        public IntVar x;
+        public int index;
+
+        public IndexedIntVar(IntVar x, int i){
+            this.x = x;
+            this.index = i;
+        }
+    }
+
     public static void main(String[] args) throws InconsistencyException {
         /*
 
@@ -77,29 +88,36 @@ public class TSP {
         Solver cp = makeSolver();
         IntVar[] succ = makeIntVarArray(cp, n, n);
         IntVar[] distSucc = makeIntVarArray(cp, n, 1000);
+        IndexedIntVar[] succTab = new IndexedIntVar[n];
 
         cp.post(new Circuit(succ));
 
         for (int i = 0; i < n; i++) {
             cp.post(new Element1D(distanceMatrix[i], succ[i], distSucc[i]));
+            succTab[i] = new IndexedIntVar(succ[i], i);
         }
 
         IntVar totalDist = sum(distSucc);
 
         // DFSearch dfs = makeDfs(cp, firstFail(succ));
         DFSearch dfs = makeDfs(cp,
-                selectMin(succ,
-                        succi -> succi.getSize() > 1, // filter
-                        succi -> succi.getSize(), // variable selector
+                selectMin(succTab,
+                        succi -> succi.x.getSize() > 1, // filter
+                        succi -> succi.x.getSize(), // variable selector
                         succi -> {
-                            int v = succi.getMin(); // value selector (TODO)
-                            for(int i=succi.getMin(); i<=succi.getMax(); i++){
-                                if (succi.contains(i)){
-                                    
+                            int maxDist = -1;
+                            int v = -1;
+                            for(int i=succi.x.getMin(); i<=succi.x.getMax(); i++){
+                                if (succi.x.contains(i)){
+                                    if(maxDist<distanceMatrix[succi.index][i]){
+                                        maxDist = distanceMatrix[succi.index][i];
+                                        v = i;
+                                    }
                                 }
                             }
-                            return branch(() -> equal(succi,v),
-                                    () -> notEqual(succi,v));
+                            int finalV = v;
+                            return branch(() -> equal(succi.x,finalV),
+                                    () -> notEqual(succi.x,finalV));
                         }
                 ));
 
