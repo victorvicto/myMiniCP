@@ -16,6 +16,7 @@
 package minicp.examples;
 
 import minicp.engine.constraints.Element2D;
+import minicp.engine.constraints.TableCT;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.SearchStatistics;
@@ -159,7 +160,7 @@ public class Eternity {
 
         // Constraint2: all the pieces placed are valid ones i.e. one of the given mxn pieces possibly rotated
 
-        int [][] tableu = new int[n*m][4];
+        /*int [][] tableu = new int[n*m][4];
         int [][] tabler = new int[n*m][4];
         int [][] tabled = new int[n*m][4];
         int [][] tablel = new int[n*m][4];
@@ -184,11 +185,24 @@ public class Eternity {
                 cp.post(new Element2D(tabled,id[i][j],y1,d[i][j]));
                 cp.post(new Element2D(tablel,id[i][j],y1,l[i][j]));
             }
+        }*/
+
+        for(int i=0; i<n; i++){
+            for (int j = 0; j < m; j++) {
+                IntVar[] yy = new IntVar[5];
+                yy[0] = id[i][j];
+                yy[1] = u[i][j];
+                yy[2] = r[i][j];
+                yy[3] = d[i][j];
+                yy[4] = l[i][j];
+                cp.post(new TableCT(yy,table));
+            }
         }
+
 
         // Constraint3: place "0" one all external side of the border (gray color)
 
-        /*for(int i=0; i<n; i++){
+        for(int i=0; i<n; i++){
             l[i][0].assign(0);
             r[i][m-1].assign(0);
         }
@@ -196,7 +210,7 @@ public class Eternity {
         for(int j=0; j<m; j++){
             u[0][j].assign(0);
             d[n-1][j].assign(0);
-        }*/
+        }
         //l[0][0].assign(0);
         //u[0][0].assign(0);
 
@@ -204,7 +218,10 @@ public class Eternity {
 
         SearchStatistics stats = makeDfs(cp,
                 and(firstFail(flatten(id)),
-                        firstFail(flatten(y))
+                        firstFail(flatten(u)),
+                        firstFail(flatten(r)),
+                        firstFail(flatten(d)),
+                        firstFail(flatten(l))
                         /* TODO: continue, are you branching on all the variables ? */
                 )
         ).onSolution(() -> {

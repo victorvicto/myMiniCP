@@ -89,7 +89,8 @@ public class TableCT extends Constraint {
         for (int i = 0; i < x.length; i++) {
             curSupport.set(0,table.length, false);
             for (int j = x[i].getMin(); j <= x[i].getMax() ; j++) {
-                curSupport.or(supports[i][j]);
+                if(x[i].contains(j))
+                    curSupport.or(supports[i][j]);
             }
                 supportedTuples.and(curSupport);
         }
