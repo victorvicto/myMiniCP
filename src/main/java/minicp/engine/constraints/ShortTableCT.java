@@ -29,6 +29,7 @@ public class ShortTableCT extends Constraint {
     private int[][] table; //the table
     //supports[i][v] is the set of tuples supported by x[i]=v
     private BitSet[][] supports;
+    int star;
 
     /**
      * Table constraint. Assignment of x_0=v_0, x_1=v_1,... only valid if there exists a
@@ -43,6 +44,7 @@ public class ShortTableCT extends Constraint {
         this.x = x;
         this.x = new IntVar[x.length];
         this.table = table;
+        this.star = star;
 
         // Allocate supports
         supports = new BitSet[x.length][];
@@ -55,7 +57,18 @@ public class ShortTableCT extends Constraint {
 
         // Set values in supportedByVarVal, which contains all the tuples supported by each var-val pair
         // TODO: compute the supports (be careful, take into account the star value)
-        throw new NotImplementedException("ShortTableCT");
+        for (int i = 0; i < table.length; i++) { //i is the index of the tuple (in table)
+            for (int j = 0; j < x.length; j++) { //j is the index of the current variable (in x)
+                if (x[j].contains(table[i][j])) {
+                    supports[j][table[i][j] - x[j].getMin()].set(i);
+                }
+                if (table[i][j]==star) {
+                    for (int k = x[j].getMin(); k <= x[j].getMax(); k++) {
+                        supports[j][k - x[j].getMin()].set(i);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -68,6 +81,39 @@ public class ShortTableCT extends Constraint {
     @Override
     public void propagate() throws InconsistencyException {
         // TODO: implement the filtering
-        throw new NotImplementedException("ShortTableCT");
+
+        // Bit-set of tuple indices all set to 0
+        BitSet supportedTuples = new BitSet(table.length);
+        //Set all bits to 1
+        supportedTuples.flip(0,table.length);
+
+        // compute supportedTuples as
+        //       supportedTuples = (supports[0][x[0].getMin()] | ... | supports[0][x[0].getMax()] ) & ... &
+        //                         (supports[x.length][x[0].getMin()] | ... | supports[x.length][x[0].getMax()] )
+        // "|" is the bitwise "or" method on BitSet
+        // "&" is bitwise "and" method on BitSet
+
+        BitSet curSupport = new BitSet(table.length);
+
+        for (int i = 0; i < x.length; i++) {
+            curSupport.set(0,table.length, false);
+            for (int j = x[i].getMin(); j <= x[i].getMax() ; j++) {
+                if(x[i].contains(j))
+                    curSupport.or(supports[i][j]);
+            }
+            supportedTuples.and(curSupport);
+        }
+
+        for (int i = 0; i < x.length; i++) {
+            for (int v = x[i].getMin(); v <= x[i].getMax(); v++) {
+                if (x[i].contains(v)) {
+                    // The condition for removing the value v from x[i] is to check if
+                    //         there is no intersection between supportedTuples and the support[i][v]
+                    if (!(supportedTuples.intersects(supports[i][v]))) {
+                        x[i].remove(v);
+                    }
+                }
+            }
+        }
     }
 }
