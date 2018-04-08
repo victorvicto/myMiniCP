@@ -55,14 +55,14 @@ public class Element1DVar extends Constraint {
         }
 
         yVals = y.getValues();
-        for(int i=0; i<yVals.length; i++) {
+        /*for(int i=0; i<yVals.length; i++) {
             int[] Tvals = T[yVals[i]].getValues();
             for(int j=0; j<Tvals.length; j++) {
                 if(!z.contains(Tvals[j])){
                     T[yVals[i]].remove(Tvals[j]);
                 }
             }
-        }
+        }*/
         int[] zVals = z.getValues();
         for(int i=0; i<zVals.length; i++) {
             boolean existsInT = false;
@@ -103,11 +103,11 @@ public class Element1DVar extends Constraint {
             }
         }
 
-        yVals = y.getValues();
+        /*yVals = y.getValues();
         for(int i=0; i<yVals.length; i++) {
             T[yVals[i]].removeBelow(z.getMin());
             T[yVals[i]].removeAbove(z.getMax());
-        }
+        }*/
 
         yVals = y.getValues();
         int newsmallestTvar = 2147483647;

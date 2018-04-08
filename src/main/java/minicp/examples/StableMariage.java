@@ -105,15 +105,20 @@ public class StableMariage {
         // husbandPref[w] is the preference for the man chosen for woman w
         IntVar [] husbandPref = makeIntVarArray(cp,n,n+1);
 
-
+        cp.post(allDifferent(wife));
+        cp.post(allDifferent(husband));
 
         for (int m = 0; m < n; m++) {
             // the husband of the wife of man m is m
             // TODO: model this with Element1DVar
+            IntVar mm = makeIntVar(cp,m+1);
+            mm.assign(m);
+            cp.post(new Element1DVar(husband,wife[m],mm));
 
 
-            // rankWomen[m][wife[m]] == wifeFref[m]
+            // rankWomen[m][wife[m]] == wifePref[m]
             // TODO: model this with Element1D
+            cp.post(new Element1D(rankWomen[m],wife[m],wifePref[m]));
 
 
         }
@@ -121,9 +126,13 @@ public class StableMariage {
         for (int w = 0; w < n; w++) {
             // the wife of the husband of woman w is w
             // TODO: model this with Element1DVar
+            IntVar ww = makeIntVar(cp,w+1);
+            ww.assign(w);
+            cp.post(new Element1DVar(wife,husband[w],ww));
 
             // rankMen[w][husband[w]] == husbandPref[w]
             // TODO: model this with Element1D
+            cp.post(new Element1D(rankMen[w],husband[w],husbandPref[w]));
         }
 
         for (int m = 0; m < n; m++) {
@@ -139,6 +148,9 @@ public class StableMariage {
                 // (husbandPref[w] > rankMen[w][m]) => (wifePref[m] < rankWomen[m][w])
                 // TODO: model this constraint
 
+                BoolVar wPrefersM = isLarger(husbandPref[w],rankMen[w][m]);
+                BoolVar mDont = isLess(wifePref[m],rankWomen[m][w]);
+                cp.post(implies(wPrefersM,mDont));
             }
         }
 
