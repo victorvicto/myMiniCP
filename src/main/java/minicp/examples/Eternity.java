@@ -64,6 +64,15 @@ public class Eternity {
 
         // Table with all pieces and for each their 4 possible rotations
 
+
+        // TODO: create the table where each line correspond to one possible rotation of a piece
+        // For instance if the line piece[6] = [2,3,5,1]
+        // the four lines created in the table are
+        // [6,2,3,5,1] // rotation of 0°
+        // [6,3,5,1,2] // rotation of 90°
+        // [6,5,1,2,3] // rotation of 180°
+        // [6,1,2,3,5] // rotation of 270°
+
         int [][] table = new int[4*n*m][5];
 
         for (int i = 0; i < n*m; i++) {
@@ -80,14 +89,14 @@ public class Eternity {
             }
         }
 
-        // TODO: create the table where each line correspond to one possible rotation of a piece
-        // For instance if the line piece[6] = [2,3,5,1]
-        // the four lines created in the table are
-        // [6,2,3,5,1] // rotation of 0°
-        // [6,3,5,1,2] // rotation of 90°
-        // [6,5,1,2,3] // rotation of 180°
-        // [6,1,2,3,5] // rotation of 270°
-
+        /*for(int i=0; i<n*m*4; i++){
+            String p = "";
+            for(int j=0; j<5; j++){
+                p += Integer.toString(table[i][j]);
+                p += " ";
+            }
+            System.out.println(p);
+        }*/
 
         Solver cp = makeSolver();
 
@@ -135,8 +144,11 @@ public class Eternity {
         // Constraint1: all the pieces placed are different t
 
         for (int j = 0; j < m; j++) {
-            for (int i = 0; i < n/2; i++) {
-                for (int jj = 0; jj < m; jj++) {
+            for (int i = 0; i < n; i++) {
+                for (int ii = i+1; ii < n; ii++) {
+                    cp.post(notEqual(id[i][j],id[ii][j]));
+                }
+                for (int jj = j+1; jj < m; jj++) {
                     for (int ii = 0; ii < n; ii++) {
                         if(i!=ii || j!=jj)
                             cp.post(notEqual(id[i][j],id[ii][jj]));
@@ -147,31 +159,52 @@ public class Eternity {
 
         // Constraint2: all the pieces placed are valid ones i.e. one of the given mxn pieces possibly rotated
 
+        int [][] tableu = new int[n*m][4];
+        int [][] tabler = new int[n*m][4];
+        int [][] tabled = new int[n*m][4];
+        int [][] tablel = new int[n*m][4];
+
+        for(int i=0; i<n*m; i++) {
+            for(int j=0; j<4; j++) {
+                tableu[i][j] = table[i * 4 + j][1];
+                tabler[i][j] = table[i * 4 + j][2];
+                tabled[i][j] = table[i * 4 + j][3];
+                tablel[i][j] = table[i * 4 + j][4];
+            }
+        }
+
+        IntVar[][] y = new IntVar[n][m];
+
         for(int i=0; i<n; i++){
             for (int j = 0; j < m; j++) {
                 IntVar y1 = makeIntVar(cp,4);
-                y1.assign(1);
-                cp.post(new Element2D(table,id[i][j],y1,u[i][j]));
-                IntVar y2 = makeIntVar(cp,4);
-                y2.assign(2);
-                cp.post(new Element2D(table,id[i][j],y2,r[i][j]));
-                IntVar y3 = makeIntVar(cp,4);
-                y3.assign(3);
-                cp.post(new Element2D(table,id[i][j],y3,d[i][j]));
-                IntVar y4 = makeIntVar(cp,5);
-                y4.assign(4);
-                cp.post(new Element2D(table,id[i][j],y4,l[i][j]));
+                y[i][j] = y1;
+                cp.post(new Element2D(tableu,id[i][j],y1,u[i][j]));
+                cp.post(new Element2D(tabler,id[i][j],y1,r[i][j]));
+                cp.post(new Element2D(tabled,id[i][j],y1,d[i][j]));
+                cp.post(new Element2D(tablel,id[i][j],y1,l[i][j]));
             }
         }
 
         // Constraint3: place "0" one all external side of the border (gray color)
 
+        /*for(int i=0; i<n; i++){
+            l[i][0].assign(0);
+            r[i][m-1].assign(0);
+        }
+
+        for(int j=0; j<m; j++){
+            u[0][j].assign(0);
+            d[n-1][j].assign(0);
+        }*/
+        //l[0][0].assign(0);
+        //u[0][0].assign(0);
 
         // The search using the and combinator
 
         SearchStatistics stats = makeDfs(cp,
-                and(firstFail(flatten((id))),
-                        firstFail(flatten(u))
+                and(firstFail(flatten(id)),
+                        firstFail(flatten(y))
                         /* TODO: continue, are you branching on all the variables ? */
                 )
         ).onSolution(() -> {

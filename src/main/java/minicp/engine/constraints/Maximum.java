@@ -41,13 +41,61 @@ public class Maximum extends Constraint {
 
     @Override
     public void post() throws InconsistencyException {
-        // TODO
-        throw new NotImplementedException("Maximum");
+        int maxminx = -2147483647;
+        int maxx = -2147483647;
+        int m = 0;
+        int maxy = y.getMax();
+        int miny = y.getMin();
+        int numIntersect = 0;
+        IntVar lastIntersecting = null;
+        for(IntVar xi : x) {
+            xi.removeAbove(maxy);
+            m = xi.getMin();
+            if (m > maxminx)
+                maxminx = m;
+            m = xi.getMax();
+            if (m >= miny) {
+                numIntersect++;
+                lastIntersecting = xi;
+            }
+            if (m > maxx)
+                maxx = m;
+            xi.propagateOnDomainChange(this);
+        }
+        y.removeBelow(maxminx);
+        y.removeAbove(maxx);
+        miny = y.getMin();
+        if(numIntersect==1)
+            lastIntersecting.removeBelow(miny);
+        y.propagateOnDomainChange(this);
     }
 
     @Override
     public void propagate() throws InconsistencyException {
-        // TODO
-        throw new NotImplementedException("Maximum");
+        int maxminx = -2147483647;
+        int maxx = -2147483647;
+        int m = 0;
+        int maxy = y.getMax();
+        int miny = y.getMin();
+        int numIntersect = 0;
+        IntVar lastIntersecting = null;
+        for(IntVar xi : x) {
+            xi.removeAbove(maxy);
+            m = xi.getMin();
+            if (m > maxminx)
+                maxminx = m;
+            m = xi.getMax();
+            if (m >= miny) {
+                numIntersect++;
+                lastIntersecting = xi;
+            }
+            if (m > maxx)
+                maxx = m;
+        }
+        y.removeBelow(maxminx);
+        y.removeAbove(maxx);
+        miny = y.getMin();
+        if(numIntersect==1)
+            lastIntersecting.removeBelow(miny);
     }
 }

@@ -39,14 +39,52 @@ public class Absolute extends Constraint {
 
     @Override
     public void post() throws InconsistencyException {
-        // TODO
-        throw new NotImplementedException();
+        y.removeBelow(0);
+        int[] vary = y.getValues();
+        for(int v: vary) {
+            if(!x.contains(v)) {
+                if (!x.contains(-v)) {
+                    y.remove(v);
+                }
+            }
+        }
+
+        int[] varx = x.getValues();
+        for(int v: varx) {
+            if(v<0){
+                if(!y.contains(-v))
+                    x.remove(v);
+            } else {
+                if(!y.contains(v))
+                    x.remove(v);
+            }
+        }
+
+        x.propagateOnDomainChange(this);
+        y.propagateOnDomainChange(this);
     }
 
     @Override
     public void propagate() throws InconsistencyException {
-        // TODO
-        throw new NotImplementedException();
+        int[] vary = y.getValues();
+        for(int v: vary) {
+            if(!x.contains(v)) {
+                if (!x.contains(-v)) {
+                    y.remove(v);
+                }
+            }
+        }
+
+        int[] varx = x.getValues();
+        for(int v: varx) {
+            if(v<0){
+                if(!y.contains(-v))
+                    x.remove(v);
+            } else {
+                if(!y.contains(v))
+                    x.remove(v);
+            }
+        }
     }
 
 }
