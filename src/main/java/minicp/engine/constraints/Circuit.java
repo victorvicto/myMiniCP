@@ -19,6 +19,7 @@ package minicp.engine.constraints;
 import static minicp.cp.Factory.*;
 import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
+import minicp.engine.core.IntVarImpl;
 import minicp.reversible.ReversibleInt;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
@@ -53,42 +54,44 @@ public class Circuit extends Constraint {
     public void post() throws InconsistencyException {
         cp.post(allDifferent(x));
 
-        for(int i = 0; i < x.length; i++) {
-            if (x[i].isBound()) {
-                bind(i);
+        if (x.length > 1) {
+            for (int i = 0; i < x.length; i++) {
+                x[i].remove(i);
+                x[i].removeBelow(0);
+                x[i].removeAbove(x.length-1);
+                if (x[i].isBound()) bind(i);
             }
+        } else {
+            x[0].removeBelow(0);
+            x[0].removeAbove(0);
         }
 
-        for (int i = 0; i < x.length; i++) {
-
-            if (lengthToDest[orig[i].getValue()].getValue() < x.length) {
-                int[] vals = x[i].getValues();
-                for(int j = 0; j < vals.length; j++) {
-                    if (dest[vals[j]] == dest[i]){
-                        x[i].remove(vals[j]);
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < x.length; i++) {
-            int finalI = i;
-            x[i].whenBind( () ->{
-                bind(finalI);
+        for (int i = 0; i < x.length; i++){
+            int fina = i;
+            x[i].whenBind(() -> {
+                bind(fina);
             });
         }
+
     }
 
 
+
+
     private void bind(int i) throws InconsistencyException {
-        for (int j = 0; j < x.length; j++){
+
+        for (int j=0; j<x.length; j++){
+
             if (dest[j].getValue() == i) {
-                dest[j] = dest[x[i].getMin()];
-                lengthToDest[j].setValue( lengthToDest[j].getValue() + 1 + lengthToDest[x[i].getMin()].getValue());
+                dest[j].setValue(dest[x[i].getMin()].getValue());
+                lengthToDest[j].setValue(lengthToDest[j].getValue()+1+lengthToDest[x[i].getMax()].getValue());
             }
-            if (orig[j].getValue() == x[i].getMin()) {
-                orig[j] = orig[i];
-            }
+
+            if (orig[j].getValue() == x[i].getMax()) orig[j].setValue(orig[i].getValue());
+        }
+
+        if (lengthToDest[orig[i].getValue()].getValue() < x.length - 1){
+            x[dest[i].getValue()].remove(orig[i].getValue());
         }
     }
 }

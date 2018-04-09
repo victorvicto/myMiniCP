@@ -86,11 +86,51 @@ public class NegTableCT extends Constraint {
 
     @Override
     public void post() throws InconsistencyException {
-        throw new NotImplementedException("NegTableCT");
+        for (int i = 0; i < x.length; i++) {
+            for (int v = x[i].getMin(); v <= x[i].getMax(); v++) {
+                if (x[i].contains(v)) {
+                    // The condition for removing the value v from x[i] is to check if
+                    //         there is no intersection between supportedTuples and the support[i][v]
+                    if (conflicts[i][v].nextClearBit(0) >= table.length)
+                        x[i].remove(v);
+                }
+            }
+        }
     }
 
     @Override
     public void propagate() throws InconsistencyException {
-        throw new NotImplementedException("NegTableCT");
+        // Bit-set of tuple indices all set to 0
+        BitSet supportedTuples = new BitSet(table.length);
+        //Set all bits to 1
+        supportedTuples.flip(0,table.length);
+
+        // compute supportedTuples as
+        //       supportedTuples = (supports[0][x[0].getMin()] | ... | supports[0][x[0].getMax()] ) & ... &
+        //                         (supports[x.length][x[0].getMin()] | ... | supports[x.length][x[0].getMax()] )
+        // "|" is the bitwise "or" method on BitSet
+        // "&" is bitwise "and" method on BitSet
+
+        BitSet curSupport = new BitSet(table.length);
+
+        for (int i = 0; i < x.length; i++) {
+            curSupport.set(0,table.length, false);
+            for (int j = x[i].getMin(); j <= x[i].getMax() ; j++) {
+                if(x[i].contains(j))
+                    curSupport.or(conflicts[i][j]);
+            }
+            supportedTuples.or(curSupport);
+        }
+
+        for (int i = 0; i < x.length; i++) {
+            for (int v = x[i].getMin(); v <= x[i].getMax(); v++) {
+                if (x[i].contains(v)) {
+                    // The condition for removing the value v from x[i] is to check if
+                    //         there is no intersection between supportedTuples and the support[i][v]
+                    if (conflicts[i][v].nextClearBit(0) >= table.length)
+                        x[i].remove(v);
+                }
+            }
+        }
     }
 }
