@@ -98,7 +98,7 @@ public class TableCT extends Constraint {
         for (int i = 0; i < x.length; i++) {
             for (int v = x[i].getMin(); v <= x[i].getMax(); v++) {
                 if (x[i].contains(v)) {
-                    // The condition for removing the value v from x[i] is to check if
+                    // The condition for removing the value v from x[di] is to check if
                     //         there is no intersection between supportedTuples and the support[i][v]
                     if (!(supportedTuples.intersects(supports[i][v]))) {
                         x[i].remove(v);

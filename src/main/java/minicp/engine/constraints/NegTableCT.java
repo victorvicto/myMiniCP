@@ -86,48 +86,40 @@ public class NegTableCT extends Constraint {
 
     @Override
     public void post() throws InconsistencyException {
-        for (int i = 0; i < x.length; i++) {
-            for (int v = x[i].getMin(); v <= x[i].getMax(); v++) {
-                if (x[i].contains(v)) {
-                    // The condition for removing the value v from x[i] is to check if
-                    //         there is no intersection between supportedTuples and the support[i][v]
-                    if (conflicts[i][v].nextClearBit(0) >= table.length)
-                        x[i].remove(v);
-                }
-            }
-        }
+        for (IntVar var : x)
+            var.propagateOnDomainChange(this);
+        propagate();
     }
 
     @Override
     public void propagate() throws InconsistencyException {
         // Bit-set of tuple indices all set to 0
-        BitSet supportedTuples = new BitSet(table.length);
+        BitSet menacingTuples = new BitSet(table.length);
         //Set all bits to 1
-        supportedTuples.flip(0,table.length);
+        menacingTuples.flip(0,table.length);
 
-        // compute supportedTuples as
-        //       supportedTuples = (supports[0][x[0].getMin()] | ... | supports[0][x[0].getMax()] ) & ... &
-        //                         (supports[x.length][x[0].getMin()] | ... | supports[x.length][x[0].getMax()] )
-        // "|" is the bitwise "or" method on BitSet
-        // "&" is bitwise "and" method on BitSet
-
-        BitSet curSupport = new BitSet(table.length);
+        BitSet curMenace = new BitSet(table.length);
 
         for (int i = 0; i < x.length; i++) {
-            curSupport.set(0,table.length, false);
+            curMenace.set(0,table.length, false);
             for (int j = x[i].getMin(); j <= x[i].getMax() ; j++) {
                 if(x[i].contains(j))
-                    curSupport.or(conflicts[i][j]);
+                    curMenace.or(conflicts[i][j]);
             }
-            supportedTuples.or(curSupport);
+            menacingTuples.and(curMenace);
+        }
+
+        int totalCombinaisons = 1;
+        for (IntVar xi : x){
+            totalCombinaisons *= xi.getSize();
         }
 
         for (int i = 0; i < x.length; i++) {
             for (int v = x[i].getMin(); v <= x[i].getMax(); v++) {
                 if (x[i].contains(v)) {
-                    // The condition for removing the value v from x[i] is to check if
-                    //         there is no intersection between supportedTuples and the support[i][v]
-                    if (conflicts[i][v].nextClearBit(0) >= table.length)
+                    BitSet mt = (BitSet) menacingTuples.clone();
+                    mt.and(conflicts[i][v]);
+                    if (mt.cardinality()==totalCombinaisons/x[i].getSize())
                         x[i].remove(v);
                 }
             }
