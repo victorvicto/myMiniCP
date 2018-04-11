@@ -68,8 +68,9 @@ public class DFSearch {
         int level = trail.getLevel();
         try {
             dfs(statistics,limit);
+            statistics.completed = true;
         }
-        catch (StopSearchException e) {}
+        catch (StopSearchException ignored) {}
         catch (StackOverflowError e) {
             throw new NotImplementedException("dfs with explicit stack needed");
         }
