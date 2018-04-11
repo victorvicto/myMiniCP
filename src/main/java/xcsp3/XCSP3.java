@@ -18,18 +18,17 @@ import org.xcsp.checker.SolutionChecker;
 import org.xcsp.common.Condition;
 import org.xcsp.common.Constants;
 import org.xcsp.common.Types;
-import org.xcsp.common.Utilities;
 import org.xcsp.common.predicates.XNodeParent;
-import org.xcsp.parser.XCallbacks;
 import org.xcsp.parser.XCallbacks2;
-import org.xcsp.parser.XParser;
-import org.xcsp.parser.entries.XVariables;
 import org.xcsp.parser.entries.XVariables.*;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Array;
 import java.security.InvalidParameterException;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class XCSP3 implements XCallbacks2 {
 
@@ -69,6 +68,10 @@ public class XCSP3 implements XCallbacks2 {
         implem.currParameters.put(XCallbacksParameters.CONVERT_INTENSION_TO_EXTENSION_SPACE_LIMIT, Long.MAX_VALUE); // included
 
         loadInstance(fileName);
+    }
+
+    public boolean isCOP() {
+        return objectiveMinimize.isPresent();
     }
 
     public List<String> getViolatedCtrs(String solution) throws Exception {
@@ -606,15 +609,30 @@ public class XCSP3 implements XCallbacks2 {
         }
     }
 
-    /**
-     *
-     * @param nSolution maximum number of solution (not taken into account if satisfiability problem, only first feasible one)
-     * @param timeOut
-     * @return
-     */
-    public String solve(int nSolution, int timeOut) {
+    public String solve(int nSolution, int timeOut) throws InconsistencyException {
+        Box<String> lastSolution = new Box<String>("");
+        Long t0 = System.currentTimeMillis();
 
-        IntVar[] vars = mapVar.entrySet().stream().sorted(new EntryComparator()).map(i -> i.getValue()).toArray(size -> new IntVar[size]);
+        solve((solution, value) -> {
+            System.out.println("solfound "+(value == Integer.MAX_VALUE ? value: "solution"));
+            lastSolution.set(solution);
+        }, ss -> {
+            int nSols = isCOP() ? nSolution : 1;
+            return (System.currentTimeMillis()-t0 >= timeOut*1000 || ss.nSolutions >= nSols);
+        });
+
+        return lastSolution.get();
+    }
+
+    /**
+     * @param onSolution: void onSolution(solution, obj). If not a COP, obj = Integer.MAXVALUE
+     * @param shouldStop: boolean shouldStop(stats, isCOP).
+     * @return Stats
+     */
+    public SearchStatistics solve(BiConsumer<String, Integer> onSolution, Function<SearchStatistics, Boolean> shouldStop)
+            throws InconsistencyException {
+
+        IntVar[] vars = mapVar.entrySet().stream().sorted(new EntryComparator()).map(Map.Entry::getValue).toArray(IntVar[]::new);
         DFSearch search;
         if (decisionVars.isEmpty()) {
             search = makeDfs(minicp, firstFail(vars));
@@ -628,40 +646,25 @@ public class XCSP3 implements XCallbacks2 {
             } catch (InconsistencyException e) {
                 hasFailed = true;
             }
-        } else {
-            nSolution = 1;
         }
 
         if (hasFailed) {
-            System.out.println("Model is inconsistent at first fixpoint");
-            return "";
+            throw InconsistencyException.INCONSISTENCY;
         }
 
 
-
-        Box<String> lastSolution = new Box<String>("");
         search.onSolution(() -> {
-            System.out.println("solfound"+(objectiveMinimize.isPresent() ? objectiveMinimize.get(): "solution"));
-            int i = 0;
-            String sol = "<instantiation>\n\t<list>\n\t\t";
-            //xcsp3.mapVar.entrySet().stream()
-            for (XVarInteger x : xVars) {
-                sol += x.id() + " ";
-            }
-            sol += "\n\t</list>\n\t<values>\n\t\t";
-            for (IntVar x : minicpVars) {
-                sol += x.getMin() + " ";
-            }
-            sol += "\n\t</values>\n</instantiation>";
-            lastSolution.set(sol);
+            StringBuilder sol = new StringBuilder("<instantiation>\n\t<list>\n\t\t");
+            for (XVarInteger x : xVars)
+                sol.append(x.id()).append(" ");
+            sol.append("\n\t</list>\n\t<values>\n\t\t");
+            for (IntVar x : minicpVars)
+                sol.append(x.getMin()).append(" ");
+            sol.append("\n\t</values>\n</instantiation>");
+            onSolution.accept(sol.toString(), objectiveMinimize.map(IntVar::getMin).orElse(Integer.MAX_VALUE));
         });
-        Long t0 = System.currentTimeMillis();
 
-        final int nSols = nSolution;
-
-        SearchStatistics stats = search.start(limit -> (System.currentTimeMillis()-t0 >= timeOut*1000 || limit.nSolutions >= nSols));
-        System.out.println(stats);
-        return lastSolution.get();
+        return search.start(shouldStop::apply);
     }
 
 
@@ -671,10 +674,8 @@ public class XCSP3 implements XCallbacks2 {
             String solution = xcsp3.solve(Integer.MAX_VALUE,100);
             List<String> violatedCtrs = xcsp3.getViolatedCtrs(solution);
             System.out.println(violatedCtrs);
-        } catch (Exception e) {
+        } catch (InconsistencyException | Exception e) {
             e.printStackTrace();
         }
-
-
     }
 }

@@ -54,7 +54,7 @@ We provide under the form of a student project the possibility to participate to
 All the interfacing with XCSP3 tools and the parsing of XCSP3 format is done for you.
 You can focus on the only interesting part: make your solver as efficient as possible.
 
-* `XCSP3 Website <http://xcsp.org/competition>`_   
+* `XCSP3 Website <http://xcsp3.org/competition>`_
 
 
 
