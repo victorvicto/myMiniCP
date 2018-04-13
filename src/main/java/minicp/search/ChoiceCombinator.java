@@ -16,6 +16,9 @@
 package minicp.search;
 
 
+import minicp.util.InconsistencyException;
+import minicp.util.NotImplementedException;
+
 public class ChoiceCombinator implements Choice {
 
     private minicp.search.Choice [] choices;
