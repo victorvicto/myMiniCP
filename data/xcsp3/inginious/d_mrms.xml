@@ -1,0 +1,185 @@
+<instance format="XCSP3" type="COP">
+<variables>
+<array id="square" note="value of the square" size="[6][6]"> 1..36 </array>
+<array id="waterLevel" note="Water Level in the square. Amount of water is waterLevel[i][j] - square[i][j]" size="[6][6]"> 1..36 </array>
+<array id="localMinimum" note="Minimum water level in the four squares around i, j" size="[6][6]"> 1..36 </array>
+</variables>
+<constraints>
+<allDifferent> square[][] </allDifferent>
+<group>
+<sum>
+<list> %... </list>
+<condition> (eq,111) </condition>
+</sum>
+<args> square[0][] </args>
+<args> square[][0] </args>
+<args> square[1][] </args>
+<args> square[][1] </args>
+<args> square[2][] </args>
+<args> square[][2] </args>
+<args> square[3][] </args>
+<args> square[][3] </args>
+<args> square[4][] </args>
+<args> square[][4] </args>
+<args> square[5][] </args>
+<args> square[][5] </args>
+</group>
+<group>
+<intension> eq(%0,%1) </intension>
+<args> waterLevel[0][0] square[0][0] </args>
+<args> waterLevel[5][0] square[5][0] </args>
+<args> waterLevel[0][1] square[0][1] </args>
+<args> waterLevel[5][1] square[5][1] </args>
+<args> waterLevel[1][0] square[1][0] </args>
+<args> waterLevel[1][5] square[1][5] </args>
+<args> waterLevel[0][2] square[0][2] </args>
+<args> waterLevel[5][2] square[5][2] </args>
+<args> waterLevel[2][0] square[2][0] </args>
+<args> waterLevel[2][5] square[2][5] </args>
+<args> waterLevel[0][3] square[0][3] </args>
+<args> waterLevel[5][3] square[5][3] </args>
+<args> waterLevel[3][0] square[3][0] </args>
+<args> waterLevel[3][5] square[3][5] </args>
+<args> waterLevel[0][4] square[0][4] </args>
+<args> waterLevel[5][4] square[5][4] </args>
+<args> waterLevel[4][0] square[4][0] </args>
+<args> waterLevel[4][5] square[4][5] </args>
+<args> waterLevel[0][5] square[0][5] </args>
+<args> waterLevel[5][5] square[5][5] </args>
+</group>
+<minimum>
+<list> waterLevel[1][0] waterLevel[1][2] waterLevel[0][1] waterLevel[2][1] </list>
+<condition> (eq,localMinimum[1][1]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[1][1] waterLevel[1][3] waterLevel[0][2] waterLevel[2][2] </list>
+<condition> (eq,localMinimum[1][2]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[1][2] waterLevel[1][4] waterLevel[0][3] waterLevel[2][3] </list>
+<condition> (eq,localMinimum[1][3]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[1][3] waterLevel[1][5] waterLevel[0][4] waterLevel[2][4] </list>
+<condition> (eq,localMinimum[1][4]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[2][0] waterLevel[2][2] waterLevel[1][1] waterLevel[3][1] </list>
+<condition> (eq,localMinimum[2][1]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[2][1] waterLevel[2][3] waterLevel[1][2] waterLevel[3][2] </list>
+<condition> (eq,localMinimum[2][2]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[2][2] waterLevel[2][4] waterLevel[1][3] waterLevel[3][3] </list>
+<condition> (eq,localMinimum[2][3]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[2][3] waterLevel[2][5] waterLevel[1][4] waterLevel[3][4] </list>
+<condition> (eq,localMinimum[2][4]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[3][0] waterLevel[3][2] waterLevel[2][1] waterLevel[4][1] </list>
+<condition> (eq,localMinimum[3][1]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[3][1] waterLevel[3][3] waterLevel[2][2] waterLevel[4][2] </list>
+<condition> (eq,localMinimum[3][2]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[3][2] waterLevel[3][4] waterLevel[2][3] waterLevel[4][3] </list>
+<condition> (eq,localMinimum[3][3]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[3][3] waterLevel[3][5] waterLevel[2][4] waterLevel[4][4] </list>
+<condition> (eq,localMinimum[3][4]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[4][0] waterLevel[4][2] waterLevel[3][1] waterLevel[5][1] </list>
+<condition> (eq,localMinimum[4][1]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[4][1] waterLevel[4][3] waterLevel[3][2] waterLevel[5][2] </list>
+<condition> (eq,localMinimum[4][2]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[4][2] waterLevel[4][4] waterLevel[3][3] waterLevel[5][3] </list>
+<condition> (eq,localMinimum[4][3]) </condition>
+</minimum>
+<minimum>
+<list> waterLevel[4][3] waterLevel[4][5] waterLevel[3][4] waterLevel[5][4] </list>
+<condition> (eq,localMinimum[4][4]) </condition>
+</minimum>
+<maximum>
+<list> square[1][1] localMinimum[1][1] </list>
+<condition> (eq,waterLevel[1][1]) </condition>
+</maximum>
+<maximum>
+<list> square[1][2] localMinimum[1][2] </list>
+<condition> (eq,waterLevel[1][2]) </condition>
+</maximum>
+<maximum>
+<list> square[1][3] localMinimum[1][3] </list>
+<condition> (eq,waterLevel[1][3]) </condition>
+</maximum>
+<maximum>
+<list> square[1][4] localMinimum[1][4] </list>
+<condition> (eq,waterLevel[1][4]) </condition>
+</maximum>
+<maximum>
+<list> square[2][1] localMinimum[2][1] </list>
+<condition> (eq,waterLevel[2][1]) </condition>
+</maximum>
+<maximum>
+<list> square[2][2] localMinimum[2][2] </list>
+<condition> (eq,waterLevel[2][2]) </condition>
+</maximum>
+<maximum>
+<list> square[2][3] localMinimum[2][3] </list>
+<condition> (eq,waterLevel[2][3]) </condition>
+</maximum>
+<maximum>
+<list> square[2][4] localMinimum[2][4] </list>
+<condition> (eq,waterLevel[2][4]) </condition>
+</maximum>
+<maximum>
+<list> square[3][1] localMinimum[3][1] </list>
+<condition> (eq,waterLevel[3][1]) </condition>
+</maximum>
+<maximum>
+<list> square[3][2] localMinimum[3][2] </list>
+<condition> (eq,waterLevel[3][2]) </condition>
+</maximum>
+<maximum>
+<list> square[3][3] localMinimum[3][3] </list>
+<condition> (eq,waterLevel[3][3]) </condition>
+</maximum>
+<maximum>
+<list> square[3][4] localMinimum[3][4] </list>
+<condition> (eq,waterLevel[3][4]) </condition>
+</maximum>
+<maximum>
+<list> square[4][1] localMinimum[4][1] </list>
+<condition> (eq,waterLevel[4][1]) </condition>
+</maximum>
+<maximum>
+<list> square[4][2] localMinimum[4][2] </list>
+<condition> (eq,waterLevel[4][2]) </condition>
+</maximum>
+<maximum>
+<list> square[4][3] localMinimum[4][3] </list>
+<condition> (eq,waterLevel[4][3]) </condition>
+</maximum>
+<maximum>
+<list> square[4][4] localMinimum[4][4] </list>
+<condition> (eq,waterLevel[4][4]) </condition>
+</maximum>
+</constraints>
+<objectives>
+<maximize type="sum"> waterLevel[][] </maximize>
+</objectives>
+<annotations>
+<decision> square[0][] square[1][] square[2][] square[3][] square[4][] square[5][] waterLevel[0][] waterLevel[1][] waterLevel[2][] waterLevel[3][] waterLevel[4][] waterLevel[5][] </decision>
+</annotations>
+</instance>

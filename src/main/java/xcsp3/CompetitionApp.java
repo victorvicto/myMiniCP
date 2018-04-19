@@ -170,7 +170,7 @@ public class CompetitionApp {
     }
 
     private static String mkString(List<String> list, String delimiter) {
-       return mkString(list, x -> x, delimiter);
+        return mkString(list, x -> x, delimiter);
     }
 
     private static String mkString(String[] list, String delimiter) {
