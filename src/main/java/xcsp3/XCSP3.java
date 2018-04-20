@@ -40,11 +40,13 @@ public class XCSP3 implements XCallbacks2 {
     private final List<IntVar> minicpVars = new LinkedList<>();
 
 
-    private final Set<IntVar> decisionVars = new HashSet<>();
+    private final Set<IntVar> decisionVars = new LinkedHashSet<>();
 
     public final Solver minicp = new Solver();
 
     private Optional<IntVar> objectiveMinimize = Optional.empty();
+    private Optional<IntVar> realObjective = Optional.empty();
+
     private boolean hasFailed;
 
 
@@ -490,12 +492,20 @@ public class XCSP3 implements XCallbacks2 {
         }
     }
 
+    private void setObj(IntVar obj, boolean minimization) {
+        IntVar minobj = minimization ? obj : minus(obj);
+
+
+        objectiveMinimize = Optional.of(minobj);
+        realObjective = Optional.of(obj);
+    }
+
     @Override
     public void buildObjToMinimize(String id, XVarInteger x) {
         if(hasFailed)
             return;
 
-        objectiveMinimize = Optional.of(mapVar.get(x));
+        setObj(mapVar.get(x), true);
     }
 
     @Override
@@ -505,13 +515,13 @@ public class XCSP3 implements XCallbacks2 {
         try {
             if (type == Types.TypeObjective.MAXIMUM) {
                 IntVar[] xs = Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new);
-                objectiveMinimize = Optional.of(maximum(xs));
+                setObj(maximum(xs), true);
             } else if (type == Types.TypeObjective.MINIMUM) {
                 IntVar[] xs = Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new);
-                objectiveMinimize = Optional.of(minimum(xs));
+                setObj(minimum(xs), true);
             } else if (type == Types.TypeObjective.SUM) {
                 IntVar s = sum(Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new));
-                objectiveMinimize = Optional.of(s);
+                setObj(s, true);
             } else {
                 throw new NotImplementedException();
             }
@@ -531,7 +541,7 @@ public class XCSP3 implements XCallbacks2 {
         }
         try {
             IntVar s = sum(wx);
-            objectiveMinimize = Optional.of(s);
+            setObj(s, true);
         } catch (InconsistencyException e) {
             hasFailed = true;
         }
@@ -542,7 +552,7 @@ public class XCSP3 implements XCallbacks2 {
         if(hasFailed)
             return;
 
-        objectiveMinimize = Optional.of(minus(mapVar.get(x)));
+        setObj(mapVar.get(x), false);
     }
 
     @Override
@@ -553,13 +563,13 @@ public class XCSP3 implements XCallbacks2 {
         try {
             if (type == Types.TypeObjective.MAXIMUM) {
                 IntVar[] xs = Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new);
-                objectiveMinimize = Optional.of(minus(maximum(xs)));
+                setObj(maximum(xs), false);
             } else if (type == Types.TypeObjective.MINIMUM) {
                 IntVar[] xs = Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new);
-                objectiveMinimize = Optional.of(minus(minimum(xs)));
+                setObj(minimum(xs), false);
             } else if (type == Types.TypeObjective.SUM) {
                 IntVar s = sum(Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new));
-                objectiveMinimize = Optional.of(minus(s));
+                setObj(s, false);
             } else {
                 throw new NotImplementedException();
             }
@@ -579,7 +589,7 @@ public class XCSP3 implements XCallbacks2 {
         }
         try {
             IntVar s = sum(wx);
-            objectiveMinimize = Optional.of(minus(s));
+            setObj(s, false);
         } catch (InconsistencyException e) {
             hasFailed = true;
         }
@@ -598,6 +608,35 @@ public class XCSP3 implements XCallbacks2 {
             return;
         //Not needed
         throw new NotImplementedException();
+    }
+
+    @Override
+    public void buildCtrMaximum(String id, XVarInteger[] list, Condition condition) {
+        if(hasFailed)
+            return;
+        // Constraints
+        try {
+            IntVar [] xs = Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new);
+            IntVar s = Factory.maximum(xs);
+            _buildCrtWithCondition(id, s, condition);
+        } catch (InconsistencyException e) {
+            hasFailed = true;
+        }
+    }
+
+
+    @Override
+    public void buildCtrMinimum(String id, XVarInteger[] list, Condition condition) {
+        if(hasFailed)
+            return;
+        // Constraints
+        try {
+            IntVar [] xs = Arrays.stream(list).map(mapVar::get).toArray(IntVar[]::new);
+            IntVar s = Factory.minimum(xs);
+            _buildCrtWithCondition(id, s, condition);
+        } catch (InconsistencyException e) {
+            hasFailed = true;
+        }
     }
 
     class EntryComparator implements Comparator<Map.Entry<XVarInteger, IntVar>> {
@@ -620,6 +659,11 @@ public class XCSP3 implements XCallbacks2 {
         });
 
         return lastSolution.get();
+    }
+
+    public void buildAnnotationDecision(XVarInteger[] list) {
+        decisionVars.clear();
+        Arrays.stream(list).map(mapVar::get).forEach(decisionVars::add);
     }
 
     /**
@@ -659,7 +703,7 @@ public class XCSP3 implements XCallbacks2 {
             for (IntVar x : minicpVars)
                 sol.append(x.getMin()).append(" ");
             sol.append("\n\t</values>\n</instantiation>");
-            onSolution.accept(sol.toString(), objectiveMinimize.map(IntVar::getMin).orElse(Integer.MAX_VALUE));
+            onSolution.accept(sol.toString(), realObjective.map(IntVar::getMin).orElse(Integer.MAX_VALUE));
         });
 
         return search.start(shouldStop::apply);

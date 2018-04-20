@@ -1,0 +1,126 @@
+<instance format="XCSP3" type="COP">
+<variables>
+<array id="x" size="[14]"> 0..392 </array>
+<array id="dists" size="[91]"> 0..392 </array>
+</variables>
+<constraints>
+<group>
+<intension> eq(%0,dist(%1,%2)) </intension>
+<args> dists[0] x[0] x[1] </args>
+<args> dists[1] x[0] x[2] </args>
+<args> dists[2] x[0] x[3] </args>
+<args> dists[3] x[0] x[4] </args>
+<args> dists[4] x[0] x[5] </args>
+<args> dists[5] x[0] x[6] </args>
+<args> dists[6] x[0] x[7] </args>
+<args> dists[7] x[0] x[8] </args>
+<args> dists[8] x[0] x[9] </args>
+<args> dists[9] x[0] x[10] </args>
+<args> dists[10] x[0] x[11] </args>
+<args> dists[11] x[0] x[12] </args>
+<args> dists[12] x[0] x[13] </args>
+<args> dists[13] x[1] x[2] </args>
+<args> dists[14] x[1] x[3] </args>
+<args> dists[15] x[1] x[4] </args>
+<args> dists[16] x[1] x[5] </args>
+<args> dists[17] x[1] x[6] </args>
+<args> dists[18] x[1] x[7] </args>
+<args> dists[19] x[1] x[8] </args>
+<args> dists[20] x[1] x[9] </args>
+<args> dists[21] x[1] x[10] </args>
+<args> dists[22] x[1] x[11] </args>
+<args> dists[23] x[1] x[12] </args>
+<args> dists[24] x[1] x[13] </args>
+<args> dists[25] x[2] x[3] </args>
+<args> dists[26] x[2] x[4] </args>
+<args> dists[27] x[2] x[5] </args>
+<args> dists[28] x[2] x[6] </args>
+<args> dists[29] x[2] x[7] </args>
+<args> dists[30] x[2] x[8] </args>
+<args> dists[31] x[2] x[9] </args>
+<args> dists[32] x[2] x[10] </args>
+<args> dists[33] x[2] x[11] </args>
+<args> dists[34] x[2] x[12] </args>
+<args> dists[35] x[2] x[13] </args>
+<args> dists[36] x[3] x[4] </args>
+<args> dists[37] x[3] x[5] </args>
+<args> dists[38] x[3] x[6] </args>
+<args> dists[39] x[3] x[7] </args>
+<args> dists[40] x[3] x[8] </args>
+<args> dists[41] x[3] x[9] </args>
+<args> dists[42] x[3] x[10] </args>
+<args> dists[43] x[3] x[11] </args>
+<args> dists[44] x[3] x[12] </args>
+<args> dists[45] x[3] x[13] </args>
+<args> dists[46] x[4] x[5] </args>
+<args> dists[47] x[4] x[6] </args>
+<args> dists[48] x[4] x[7] </args>
+<args> dists[49] x[4] x[8] </args>
+<args> dists[50] x[4] x[9] </args>
+<args> dists[51] x[4] x[10] </args>
+<args> dists[52] x[4] x[11] </args>
+<args> dists[53] x[4] x[12] </args>
+<args> dists[54] x[4] x[13] </args>
+<args> dists[55] x[5] x[6] </args>
+<args> dists[56] x[5] x[7] </args>
+<args> dists[57] x[5] x[8] </args>
+<args> dists[58] x[5] x[9] </args>
+<args> dists[59] x[5] x[10] </args>
+<args> dists[60] x[5] x[11] </args>
+<args> dists[61] x[5] x[12] </args>
+<args> dists[62] x[5] x[13] </args>
+<args> dists[63] x[6] x[7] </args>
+<args> dists[64] x[6] x[8] </args>
+<args> dists[65] x[6] x[9] </args>
+<args> dists[66] x[6] x[10] </args>
+<args> dists[67] x[6] x[11] </args>
+<args> dists[68] x[6] x[12] </args>
+<args> dists[69] x[6] x[13] </args>
+<args> dists[70] x[7] x[8] </args>
+<args> dists[71] x[7] x[9] </args>
+<args> dists[72] x[7] x[10] </args>
+<args> dists[73] x[7] x[11] </args>
+<args> dists[74] x[7] x[12] </args>
+<args> dists[75] x[7] x[13] </args>
+<args> dists[76] x[8] x[9] </args>
+<args> dists[77] x[8] x[10] </args>
+<args> dists[78] x[8] x[11] </args>
+<args> dists[79] x[8] x[12] </args>
+<args> dists[80] x[8] x[13] </args>
+<args> dists[81] x[9] x[10] </args>
+<args> dists[82] x[9] x[11] </args>
+<args> dists[83] x[9] x[12] </args>
+<args> dists[84] x[9] x[13] </args>
+<args> dists[85] x[10] x[11] </args>
+<args> dists[86] x[10] x[12] </args>
+<args> dists[87] x[10] x[13] </args>
+<args> dists[88] x[11] x[12] </args>
+<args> dists[89] x[11] x[13] </args>
+<args> dists[90] x[12] x[13] </args>
+</group>
+<allDifferent> dists[] </allDifferent>
+<intension> eq(x[0],0) </intension>
+<group>
+<intension> lt(%0,%1) </intension>
+<args> x[0] x[1] </args>
+<args> x[1] x[2] </args>
+<args> x[2] x[3] </args>
+<args> x[3] x[4] </args>
+<args> x[4] x[5] </args>
+<args> x[5] x[6] </args>
+<args> x[6] x[7] </args>
+<args> x[7] x[8] </args>
+<args> x[8] x[9] </args>
+<args> x[9] x[10] </args>
+<args> x[10] x[11] </args>
+<args> x[11] x[12] </args>
+<args> x[12] x[13] </args>
+</group>
+</constraints>
+<objectives>
+<minimize> x[13] </minimize>
+</objectives>
+<annotations>
+<decision> x[] </decision>
+</annotations>
+</instance>

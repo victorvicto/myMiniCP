@@ -21,6 +21,7 @@ import minicp.search.DFSearch;
 import minicp.util.InconsistencyException;
 import minicp.util.InputReader;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import static minicp.cp.Factory.*;
@@ -101,13 +102,22 @@ public class QAPLNS {
             // Record the state such that the fragment constraints can be cancelled
             cp.push();
 
-            // Assign the fragment 5% of the variables randomly chosen
-            for (int j = 0; j < n; j++) {
-                if (rand.nextInt(100) < 5) {
-                    equal(x[j],xBest[j]);
+            try {
+
+                // Assign the fragment 50% of the variables randomly chosen
+                for (int j = 0; j < n; j++) {
+                    if (rand.nextInt(100) < 50) {
+                        equal(x[j],xBest[j]);
+                    }
                 }
-            }
-            dfs.start(statistics -> statistics.nFailures >= failureLimit);
+                System.out.println(Arrays.toString(xBest));
+                System.out.println(Arrays.toString(x));
+
+
+                dfs.start(statistics -> statistics.nFailures >= failureLimit);
+
+            } catch (InconsistencyException e) {}
+
 
             // cancel all the fragment constraints
             cp.pop();
