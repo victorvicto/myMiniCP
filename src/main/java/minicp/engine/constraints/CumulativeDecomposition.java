@@ -53,9 +53,20 @@ public class CumulativeDecomposition extends Constraint {
         for (int t = min; t < max; t++) {
 
             BoolVar[] overlaps = new BoolVar[start.length];
+            BoolVar[] firstB = new BoolVar[start.length];
+            BoolVar[] seconB = new BoolVar[start.length];
             for (int i = 0; i < start.length; i++) {
                 overlaps[i] = makeBoolVar(cp);
-                throw new NotImplementedException("CumulativeDecomp");
+
+                // start[i] <= t
+                firstB[i] = isLessOrEqual(start[i], t);
+
+                // t < start[i] + duration[i]
+                // duration[i] - t > -start[i]
+                seconB[i] = isLarger(start[i], t-duration[i]);
+
+                IntVar somme = sum(firstB[i], seconB[i]);
+                overlaps[i] = isEqual(somme, 2);
                 // TODO
                 // post the constraints to enforce
                 // that overlaps[i] is true iff start[i] <= t && t < start[i] + duration[i]

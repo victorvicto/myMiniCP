@@ -74,12 +74,36 @@ public class Cumulative extends Constraint {
 
         for (int i = 0; i < profile.size(); i++) {
             // TODO: check
+            if (profile.profileRectangles[i].height > capa) {
+                throw new InconsistencyException();
+            }
         }
 
         for (int i = 0; i < start.length; i++) {
             if (!start[i].isBound()) {
                 // j is the index of the profile rectangle overlapping t
                 int j = profile.rectangleIndex(start[i].getMin());
+
+
+                for (int t = start[i].getMin(); t < start[i].getMin()+duration[i]; t++){
+
+                    // if not in the mandatory part
+                    if (!(t >= start[i].getMax() && t < start[i].getMin() + duration[i])){
+
+                        // check if j is still the right index
+                        if (profile.profileRectangles[j].end <= t) {
+                            j = profile.rectangleIndex(t);
+                        }
+
+                        // check if not enough space
+                        if (capa < profile.profileRectangles[j].height + demand[i]){
+                            start[i].remove(start[i].getMin());
+                            t = start[i].getMin()+duration[i];
+                        }
+                    }
+                }
+
+
                 // TODO 3: push i to the right
                 // hint:
                 // You need to check that at every-point on the interval
@@ -89,12 +113,18 @@ public class Cumulative extends Constraint {
 
             }
         }
-        throw new NotImplementedException("Cumulative");
+        //throw new NotImplementedException("Cumulative");
     }
 
     public Profile buildProfile() throws InconsistencyException {
         ArrayList<Rectangle> mandatoryParts = new ArrayList<Rectangle>();
         for (int i = 0; i < start.length; i++) {
+
+            // if there is a mandatory part
+            if (start[i].getMax() < start[i].getMin() + duration[i]) {
+                // add part
+                mandatoryParts.add(new Profile.Rectangle(start[i].getMax(), start[i].getMin()+duration[i], demand[i]));
+            }
             // TODO 1: add mandatory part of activity i if any
         }
         return new Profile(mandatoryParts.toArray(new Profile.Rectangle[0]));

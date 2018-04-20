@@ -188,9 +188,7 @@ public class XCSP3 implements XCallbacks2 {
         try {
             switch (operator) {
                 case EQ:
-                    // TODO: implement equal
-                    minicp.post(new LessOrEqual(x, y));
-                    minicp.post(new LessOrEqual(y,x));
+                    minicp.post(new Equal(x, y));
                     break;
                 case GE:
                     minicp.post(new LessOrEqual(y,x));
