@@ -62,7 +62,7 @@ public class CompetitionApp {
         try {
             XCSP3 xcsp3 = new XCSP3(benchname);
             SearchStatistics ss = xcsp3.solve((solution, value) -> updateSol(solution, value, value != Integer.MAX_VALUE),
-                    (ss2) -> (!xcsp3.isCOP() && ss2.nSolutions >= 1) || (timeLimit != -1 && threadMXBean.getCurrentThreadCpuTime() - t0 >= timeLimit * 1000000));
+                    (ss2) -> (!xcsp3.isCOP() && ss2.nSolutions >= 1) || (timeLimit != -1 && threadMXBean.getCurrentThreadCpuTime() - t0 >= timeLimit * 1000000000));
 
 
             if(!currentSol.isEmpty()) {
