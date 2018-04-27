@@ -3,6 +3,8 @@ import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -10,7 +12,7 @@ import java.util.function.Function;
 
 public class CompetitionApp {
     public static long randomSeed = 1811631;
-    public static int timeLimit = -1;
+    public static long timeLimit = -1;
     public static int memLimit = -1;
     public static int nbcore = -1;
     public static String tmpdir = "";
@@ -19,7 +21,10 @@ public class CompetitionApp {
     public static boolean statusPrinted = false;
     public static String status = "UNKNOWN";
     public static String currentSol = "";
-    public static Long t0 = System.currentTimeMillis();
+
+    // Time management
+    public static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+    public static Long t0 = threadMXBean.getCurrentThreadCpuTime();
 
     public static void main(String[] args) {
         parseArgs(args, 0);
@@ -57,7 +62,7 @@ public class CompetitionApp {
         try {
             XCSP3 xcsp3 = new XCSP3(benchname);
             SearchStatistics ss = xcsp3.solve((solution, value) -> updateSol(solution, value, value != Integer.MAX_VALUE),
-                    (ss2) -> (!xcsp3.isCOP() && ss2.nSolutions >= 1) || (timeLimit != -1 && System.currentTimeMillis() - t0 >= timeLimit * 1000));
+                    (ss2) -> (!xcsp3.isCOP() && ss2.nSolutions >= 1) || (timeLimit != -1 && threadMXBean.getCurrentThreadCpuTime() - t0 >= timeLimit * 1000000000));
 
 
             if(!currentSol.isEmpty()) {
