@@ -22,6 +22,9 @@ Slides from the course INGI2365 given by Pierre Schaus  @UCLouvain:
 * `Logical Constraints, Domain Consistent Element, Stable Mariage <https://www.icloud.com/keynote/0pRiKg20XCtBpT3prOIHuYVlw#06-stable-mariage-element-var>`_
 * `Table constraints with short-tuples and negative table constraints <https://www.icloud.com/keynote/0xQmFtdqhzCFK61lit0t2a1Zw#07-short-negative-table-constraints>`_
 * `Black-Box searches <https://www.icloud.com/keynote/0yqTbzWk8Qg7SJDNe9JLM8eug#08-black-box-search>`_
+* `Scheduling and Cumulative Constraint <https://www.icloud.com/keynote/0I01PANBy68haEqhFDRIcvK0Q#09-cumulative-scheduling>`_
+* `Scheduling and Disjunctive Constraint <https://www.icloud.com/keynote/0jR5krj0fNao6euSqBNODWPmQ#10-disjunctive-scheduling>`_
+
 
 Learning outcomes by studying mini-cp:
 
@@ -32,11 +35,11 @@ From a state and inference prospective, specific learning outcomes include:
 * Arithmetic Constraints
 * Logical Constraints
 * Reified Constraints
-* Global Constraints
+* Global Constraints (including for scheduling)
 * Views
 
 
-While, from a search prospective, the outcomes include:
+From a search prospective, the outcomes include:
 
 * Backtracking algorithms and depth first search
 * Branch and Bound for Constraint Optimization
@@ -44,6 +47,14 @@ While, from a search prospective, the outcomes include:
 * Variable and Value Heuristics implementation
 * Searching with phases
 * Large Neighborhood Search
+
+While, from a modeling perspective, the outcomes include:
+
+* Redundant constraints
+* Bad smells and good smells: model preferably with element constraints instead of 0/1 variables
+* Breaking symmetries
+* Scheduling: producer consumer problems, etc.
+* Design problem specific heuristics and search
 
 
 ******************************

@@ -899,29 +899,39 @@ Check that your implementation passes the tests `CumulativeTest.java <https://bi
 
 
 
+The Resource-Constrained Project Scheduling Problem (RCPSP)
+=======================================================
 
-..
-.. A reversible implementation
-.. ---------------------------
-
-.. Recomputing the set of supported tuples at each call to propagate is useless; we can simply store the set of currently
-supported ones and update it each time a variable is modified.
-
-.. In order to do that, we provide a class called `ReversibleBitSet`, that can store a bit set and reverse it when
-the solver goes back in the search tree.
-
-.. A simple method to detect that a variable has changed is to check the size of its domain. We will use an array
-of `ReversibleInt`, called `ReversibleInt[] lastSize`, which contains the last seen size of each variable
-in this branch of the search tree.
-
-.. Uncomment the part marked as `advanced` in TableCT and modify the part of the code computing supported tuples to
-make it uses only variables that were modified.
+A set of activities must be executed on a set of resources.
 
 
-.. [CT2016] Demeulenaere, J., Hartert, R., Lecoutre, C., Perez, G., Perron, L., Régin, J. C., & Schaus, P. (2016, September). Compact-table: Efficiently filtering table constraints with reversible sparse bit-sets. In International Conference on Principles and Practice of Constraint Programming (pp. 207-223). Springer.
+Fill in all the gaps in order to solve the RCPSP problem.
+
+Your task is to terminate the implementation in
+`RCPSP.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/RCPSP.java?at=master>`_.
+
+* Create the cumulative constraint
+* Post the precedence constraint
+* Add instructions to minimize the makespan
+* Minimize the makespan
+
+Several instance of increasing sizes are available with 30,60,90 and 120 activities.
+In order to test your model, the instance ``j30_1_1.rcp`` should have a minimum makespan of 43.
+Don't expect to prove optimality for large size instances but you should reach it easily for 30 activities.
 
 
-Conflict based search strategy (optional)
+
+The JobShop Problem
+=======================================================
+
+Your task is to make the disjunctive constraint more efficient than using the cumulative constraint with unary capacity.
+
+* Implement the constraint `IsLessOrEqualVar.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/IsLessOrEqualVar.java?at=master>`_ for the reification `b iff x <= y`. This one will be useful implementing the decomposition for the disjunctive constraint.
+
+* Implement the decompostion with reified constraint for the `Disjunctive.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Disjunctive.java?at=master>`_ and test if it is more efficient than using the TimeTable filtering for the cumulative constraint.
+
+
+Conflict based search strategy
 =================================================================
 
 
