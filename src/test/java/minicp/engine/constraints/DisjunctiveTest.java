@@ -23,6 +23,7 @@ import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
 import minicp.util.NotImplementedExceptionAssume;
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -107,6 +108,48 @@ public class DisjunctiveTest {
 
         } catch (InconsistencyException e) {
             assert (false);
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+
+    @Test
+    public void testBinaryDecomposition() {
+        Solver cp = makeSolver();
+        IntVar s1 = makeIntVar(cp,0,10);
+        int d1 = 10;
+        IntVar s2 = makeIntVar(cp,6,15);
+        int d2 = 6;
+
+        try {
+            cp.post(new Disjunctive(new IntVar[]{s1,s2},new int[] {d1,d2}));
+            assertEquals(10,s2.getMin());
+        } catch (InconsistencyException e) {
+            assert (false);
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+
+
+    @Test
+    public void testOverloadChecker() {
+        Solver cp = makeSolver();
+        IntVar sA = makeIntVar(cp,0,9);
+        int d1 = 5;
+        IntVar sB = makeIntVar(cp,1,10);
+        int d2 = 5;
+        IntVar sC = makeIntVar(cp,3,7);
+        int d3 = 6;
+
+        try {
+            cp.post(new Disjunctive(new IntVar[]{sA,sB,sC},new int[] {d1,d2,d3}));
+            assert (false);
+            Assume.assumeTrue(false);
+        } catch (InconsistencyException e) {
+            assert (true);
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
