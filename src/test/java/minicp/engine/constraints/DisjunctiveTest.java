@@ -146,10 +146,51 @@ public class DisjunctiveTest {
 
         try {
             cp.post(new Disjunctive(new IntVar[]{sA,sB,sC},new int[] {d1,d2,d3}));
-            assert (false);
-            Assume.assumeTrue(false);
+            Assume.assumeTrue("overload checker should detect inconsistency", false);
         } catch (InconsistencyException e) {
             assert (true);
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+
+
+    @Test
+    public void testDetectablePrecedence() {
+        Solver cp = makeSolver();
+        IntVar sA = makeIntVar(cp,0,9);
+        int d1 = 5;
+        IntVar sB = makeIntVar(cp,1,10);
+        int d2 = 5;
+        IntVar sC = makeIntVar(cp,8,15);
+        int d3 = 3;
+
+        try {
+            cp.post(new Disjunctive(new IntVar[]{sA,sB,sC},new int[] {d1,d2,d3}));
+            Assume.assumeTrue("not last should set est(C)=10",sC.getMin() == 10);
+        } catch (InconsistencyException e) {
+            assert (false);
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @Test
+    public void testNotLast() {
+        Solver cp = makeSolver();
+        IntVar sA = makeIntVar(cp,0,9);
+        int d1 = 5;
+        IntVar sB = makeIntVar(cp,1,10);
+        int d2 = 5;
+        IntVar sC = makeIntVar(cp,3,9);
+        int d3 = 4;
+
+        try {
+            cp.post(new Disjunctive(new IntVar[]{sA,sB,sC},new int[] {d1,d2,d3}));
+            Assume.assumeTrue("not last should set lst(C)=6",sC.getMax() == 6);
+        } catch (InconsistencyException e) {
+            assert (false);
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
