@@ -48,7 +48,7 @@ public class Disjunctive extends Constraint {
         cp.post(new Cumulative(start,duration,demands,1));
 
 
-        // TODO 1: replace by  posting  binary decomposition using IsLessOrEqualVar
+        // TODO 1: replace the cumulative by  posting  binary decomposition using IsLessOrEqualVar
 
 
         for (int i = 0; i < start.length; i++) {
@@ -57,7 +57,17 @@ public class Disjunctive extends Constraint {
             }
         }
 
-        // TODO 2: replace by adding propagation OverLoadCheck, NotFirst-NotLast, Detectable Precedences, Edge Finding ...
+        // TODO 3: add the mirror filtering as done in the Cumulative Constraint
+
+        // HINT: for the TODO 1-4 you'll need the ThetaTree data-structure
+
+        // TODO 4: add the OverLoadCheck algorithms
+
+        // TODO 5: add the Detectable Precedences algorithm
+
+        // TODO 6: add the Not-Last algorithm
+
+        // TODO 7 (optional, for a bonus): implement the Lambda-Theta tree and implement the Edge-Finding
     }
 
 }

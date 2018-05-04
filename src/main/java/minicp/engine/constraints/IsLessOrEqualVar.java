@@ -19,6 +19,9 @@ import minicp.engine.core.BoolVar;
 import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
 import minicp.util.InconsistencyException;
+import minicp.util.NotImplementedException;
+
+import static minicp.cp.Factory.*;
 
 public class IsLessOrEqualVar extends Constraint { // b <=> x <= y
 
@@ -35,6 +38,7 @@ public class IsLessOrEqualVar extends Constraint { // b <=> x <= y
 
     @Override
     public void post() throws InconsistencyException {
+        throw new NotImplementedException("IsLessOrEqualVar");
         // TODO
     }
 
