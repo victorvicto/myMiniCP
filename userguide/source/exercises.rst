@@ -933,7 +933,7 @@ Your task is to make the disjunctive constraint more efficient than using the cu
 * Implement the decompostion with reified constraint for the `Disjunctive.java. <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/Disjunctive.java?at=master>`_ `
 * Test if (as expected) this decomposition prunes more than the formulation with the TimeTable filtering for the cumulative constraint.
   Observe on the `JobShop.java <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/examples/JobShop.java?at=master>`_ problem if the number of backtracks is reduced with the decomposition instead of the formulation with the cumulative.
-  Test for instance on the small instance `data/jobshop/sascha/jobshop-4-4-0` with 4 jobs, 4 machines, 16 activities.
+  Test for instance on the small instance `data/jobshop/sascha/jobshop-4-4-2` with 4 jobs, 4 machines, 16 activities.
 * Read and make sure you understand the implementation  `ThetaTree.java. <https://bitbucket.org/pschaus/minicp/src/HEAD/src/main/java/minicp/engine/constraints/ThetaTree.java?at=master>`_
   Some unit-tests are implemented in `ThetaTreeTest.java. <https://bitbucket.org/pschaus/minicp/src/HEAD/src/test/java/minicp/engine/constraints/ThetaTreeTest.java?at=master>`_
   To make sure you understand it, add a unit-test with 4 activities and compare the results with a manual computation.
