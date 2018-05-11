@@ -45,16 +45,7 @@ public class ReversibleSparseSet {
             indexes[i] = i;
         }
     }
-
-    /**
-     * Creates a ReversibleSparseSet containing the elements {min,...,max}.
-     * @param rs
-     * @param min
-     * @param max >= min
-     */
-    public ReversibleSparseSet(Trail rs, int min, int max) {
-        throw new NotImplementedException();
-    }
+    
 
     private void exchangePositions(int val1, int val2) {
         assert(checkVal(val1));

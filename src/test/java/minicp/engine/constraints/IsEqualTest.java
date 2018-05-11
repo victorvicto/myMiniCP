@@ -34,27 +34,24 @@ public class IsEqualTest {
 
     @Test
     public void test1() {
+
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar x = makeIntVar(cp, -4, 7);
+            Solver cp = new Solver();
+            IntVar x = makeIntVar(cp, -4, 7);
 
-                BoolVar b = isEqual(x, -2);
+            BoolVar b = isEqual(x, -2);
 
-                DFSearch search = new DFSearch(cp.getTrail(), firstFail(x));
+            DFSearch search = new DFSearch(cp.getTrail(), firstFail(x));
 
-                SearchStatistics stats = search.start();
+            SearchStatistics stats = search.start();
 
-                search.onSolution(() ->
-                        assertEquals(-2 == x.getMin(), b.isTrue())
-                );
+            search.onSolution(() ->
+                    assertEquals(-2 == x.getMin(), b.isTrue())
+            );
 
-                assertEquals(12, stats.nSolutions);
+            assertEquals(12, stats.nSolutions);
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
