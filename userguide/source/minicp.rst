@@ -24,6 +24,7 @@ Slides from the course INGI2365 given by Pierre Schaus  @UCLouvain:
 * `Black-Box searches <https://www.icloud.com/keynote/0yqTbzWk8Qg7SJDNe9JLM8eug#08-black-box-search>`_
 * `Scheduling and Cumulative Constraint <https://www.icloud.com/keynote/0I01PANBy68haEqhFDRIcvK0Q#09-cumulative-scheduling>`_
 * `Scheduling and Disjunctive Constraint <https://www.icloud.com/keynote/0jR5krj0fNao6euSqBNODWPmQ#10-disjunctive-scheduling>`_
+* `Modeling, Redundant Constraint, Symmetry Breaking <https://www.icloud.com/keynote/0bduxg7nHWOfdqcedJH7dNTdA#11-modeling-bin-packing>`_
 
 
 Learning outcomes by studying mini-cp:
