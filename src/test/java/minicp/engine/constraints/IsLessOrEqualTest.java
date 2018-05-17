@@ -180,4 +180,48 @@ public class IsLessOrEqualTest {
             NotImplementedExceptionAssume.fail(e);
         }
     }
+
+    @Test
+    public void testMin() {
+        try {
+            try {
+
+                Solver cp = new Solver();
+                IntVar x = makeIntVar(cp, 6, 7);
+
+                BoolVar b = makeBoolVar(cp);
+
+                cp.post(new IsLessOrEqual(b, x, 3));
+
+                assertTrue(b.isFalse());
+
+            } catch (InconsistencyException e) {
+                fail("should not fail");
+            }
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
+
+    @Test
+    public void testMax() {
+        try {
+            try {
+
+                Solver cp = new Solver();
+                IntVar x = makeIntVar(cp, 6, 7);
+
+                BoolVar b = makeBoolVar(cp);
+
+                cp.post(new IsLessOrEqual(b, x, 10));
+
+                assertTrue(b.isTrue());
+
+            } catch (InconsistencyException e) {
+                fail("should not fail");
+            }
+        } catch (NotImplementedException e) {
+            NotImplementedExceptionAssume.fail(e);
+        }
+    }
 }
