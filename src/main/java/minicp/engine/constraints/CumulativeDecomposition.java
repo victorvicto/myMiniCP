@@ -67,11 +67,6 @@ public class CumulativeDecomposition extends Constraint {
 
                 IntVar somme = sum(firstB[i], seconB[i]);
                 overlaps[i] = isEqual(somme, 2);
-                // TODO
-                // post the constraints to enforce
-                // that overlaps[i] is true iff start[i] <= t && t < start[i] + duration[i]
-                // hint: use IsLessOrEqual, introduce BoolVar, use views minus, plus, etc.
-                //       logical constraints (such as logical and can be modeled with sum)
 
             }
 

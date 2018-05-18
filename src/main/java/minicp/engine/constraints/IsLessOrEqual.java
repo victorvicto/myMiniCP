@@ -62,9 +62,5 @@ public class IsLessOrEqual extends Constraint { // b <=> x <= c
             b.assign(true);
         else if (x.getMin()>c)
             b.assign(false);
-        else {
-            x.propagateOnBoundChange(this);
-            b.propagateOnBind(this);
-        }
     }
 }

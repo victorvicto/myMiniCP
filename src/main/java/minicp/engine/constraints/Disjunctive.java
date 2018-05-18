@@ -16,6 +16,7 @@
 
 package minicp.engine.constraints;
 
+import minicp.engine.core.BoolVar;
 import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
 import minicp.util.InconsistencyException;
@@ -45,15 +46,18 @@ public class Disjunctive extends Constraint {
         for (int i = 0; i < start.length; i++) {
             demands[i] = 1;
         }
-        cp.post(new Cumulative(start,duration,demands,1));
+        //cp.post(new CumulativeDecomposition(start,duration,demands,1));
 
+        BoolVar[][] bij = new BoolVar[start.length][start.length];
+        BoolVar[][] bji = new BoolVar[start.length][start.length];
 
         // TODO 1: replace the cumulative by  posting  binary decomposition using IsLessOrEqualVar
 
 
         for (int i = 0; i < start.length; i++) {
             for (int j = i+1; j < start.length; j++) {
-                // TODO i before j or j before i
+                cp.post(new IsLessOrEqualVar(bij[i][j], end[i], start[j]));
+                cp.post(new IsLessOrEqualVar(bji[i][j], end[j], start[i]));
             }
         }
 

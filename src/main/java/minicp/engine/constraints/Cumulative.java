@@ -70,10 +70,8 @@ public class Cumulative extends Constraint {
 
 
         Profile profile = buildProfile();
-        // TODO 2: check that the profile is not exceeding the capa otherwise throw an INCONSISTENCY
 
         for (int i = 0; i < profile.size(); i++) {
-            // TODO: check
             if (profile.profileRectangles[i].height > capa) {
                 throw new InconsistencyException();
             }
@@ -103,17 +101,8 @@ public class Cumulative extends Constraint {
                     }
                 }
 
-
-                // TODO 3: push i to the right
-                // hint:
-                // You need to check that at every-point on the interval
-                // [start[i].getMin() ... start[i].getMin()+duration[i]-1] there is enough space.
-                // You may have to look-ahead on the next profile rectangle(s)
-                // Be careful that the activity you are currently pushing may have contributed to the profile.
-
             }
         }
-        //throw new NotImplementedException("Cumulative");
     }
 
     public Profile buildProfile() throws InconsistencyException {
@@ -125,7 +114,6 @@ public class Cumulative extends Constraint {
                 // add part
                 mandatoryParts.add(new Profile.Rectangle(start[i].getMax(), start[i].getMin()+duration[i], demand[i]));
             }
-            // TODO 1: add mandatory part of activity i if any
         }
         return new Profile(mandatoryParts.toArray(new Profile.Rectangle[0]));
     }

@@ -45,7 +45,7 @@ public class JobShop {
         // Reading the data
 
         try {
-            FileInputStream istream = new FileInputStream("data/jobshop/sascha/jobshop-4-4-0");
+            FileInputStream istream = new FileInputStream("data/jobshop/sascha/jobshop-6-6-0");
             BufferedReader in = new BufferedReader(new InputStreamReader(istream));
             in.readLine();
             in.readLine();

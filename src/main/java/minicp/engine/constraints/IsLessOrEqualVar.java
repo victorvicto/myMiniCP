@@ -38,12 +38,32 @@ public class IsLessOrEqualVar extends Constraint { // b <=> x <= y
 
     @Override
     public void post() throws InconsistencyException {
-        throw new NotImplementedException("IsLessOrEqualVar");
-        // TODO
+        if (b.isBound()) {
+            if (b.isTrue())
+                x.removeAbove(y.getMax());
+            else
+                x.removeBelow(y.getMin()+1);
+        } else if (x.getMax()<=y.getMin())
+            b.assign(true);
+        else if (x.getMin()>y.getMax())
+            b.assign(false);
+        else {
+            x.propagateOnBoundChange(this);
+            y.propagateOnBoundChange(this);
+            b.propagateOnBind(this);
+        }
     }
 
     @Override
     public void propagate() throws InconsistencyException {
-        // TODO
+        if (b.isBound()) {
+            if (b.isTrue())
+                x.removeAbove(y.getMax());
+            else
+                x.removeBelow(y.getMin()+1);
+        } else if (x.getMax()<=y.getMin())
+            b.assign(true);
+        else if (x.getMin()>y.getMax())
+            b.assign(false);
     }
 }
