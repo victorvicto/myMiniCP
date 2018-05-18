@@ -33,7 +33,7 @@ import java.util.Arrays;
 public class AllDifferentAC extends Constraint {
 
     private IntVar[] x;
-    
+
     public AllDifferentAC(IntVar... x) {
         super(x[0].getSolver());
         this.x = x;

@@ -61,23 +61,10 @@ Using maven_ command line you can do you can do:
     $mvn test
 
 
-Using sbt_ (simple build tool) command line you can do you can do:
-
-
-.. code-block:: none
-
-    $sbt
-    > compile
-    > test
-    > test-only
-    > run
-    > run-main
-
 
 .. _bitbucket: https://bitbucket.org/pschaus/minicp
 .. _IntelliJ: https://www.jetbrains.com/idea/
 .. _Eclipse: https://www.eclipse.org
-.. _sbt: http://www.scala-sbt.org
 .. _maven: https://maven.apache.org
 
 

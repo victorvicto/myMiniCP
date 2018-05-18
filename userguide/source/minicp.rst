@@ -1,13 +1,16 @@
 .. _minicp:
 
 
-******************************
+************************************************************
 Learn Mini-CP
-******************************
+************************************************************
 
-
+Technical Report
+=================================
 The complete architecture of mini-cp is described this `document <_static/mini-cp.pdf>`_.
 
+Slides and teaching material
+=================================
 
 Slides 
 
@@ -25,7 +28,7 @@ Slides from the course INGI2365 given by Pierre Schaus  @UCLouvain:
 * `Scheduling and Cumulative Constraint <https://www.icloud.com/keynote/0I01PANBy68haEqhFDRIcvK0Q#09-cumulative-scheduling>`_
 * `Scheduling and Disjunctive Constraint <https://www.icloud.com/keynote/0jR5krj0fNao6euSqBNODWPmQ#10-disjunctive-scheduling>`_
 * `Modeling, Redundant Constraint, Symmetry Breaking <https://www.icloud.com/keynote/0bduxg7nHWOfdqcedJH7dNTdA#11-modeling-bin-packing>`_
-
+* `Régin's Algorithms: Flow-based Domain Consistency for the AllDifferent <https://www.icloud.com/keynote/0hAlR-h7MWDv4LzVtrctvkBpQ#12-flow-based-constraints>`_
 
 Learning outcomes by studying mini-cp:
 
