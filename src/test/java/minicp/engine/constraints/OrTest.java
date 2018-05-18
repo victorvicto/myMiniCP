@@ -20,6 +20,7 @@ import minicp.engine.core.Solver;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
+import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 
 import static minicp.cp.Factory.*;
@@ -31,27 +32,26 @@ public class OrTest {
 
     @Test
     public void or1() {
+
         try {
-            try {
 
-                Solver cp = new Solver();
-                BoolVar[] x = new BoolVar[] {makeBoolVar(cp),makeBoolVar(cp),makeBoolVar(cp),makeBoolVar(cp)};
-                cp.post(new Or(x));
+            Solver cp = new Solver();
+            BoolVar[] x = new BoolVar[]{makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp)};
+            cp.post(new Or(x));
 
-                for (BoolVar xi : x) {
-                    assertTrue(!xi.isBound());
-                }
-
-                equal(x[1],0);
-                equal(x[2],0);
-                equal(x[3],0);
-                assertTrue(x[0].isTrue());
-
-            } catch (InconsistencyException e) {
-                fail("should not fail");
+            for (BoolVar xi : x) {
+                assertTrue(!xi.isBound());
             }
+
+            equal(x[1], 0);
+            equal(x[2], 0);
+            equal(x[3], 0);
+            assertTrue(x[0].isTrue());
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
         }
 
     }
@@ -59,35 +59,29 @@ public class OrTest {
     @Test
     public void or2() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                BoolVar[] x = new BoolVar[] {makeBoolVar(cp),makeBoolVar(cp),makeBoolVar(cp),makeBoolVar(cp)};
-                cp.post(new Or(x));
+            Solver cp = new Solver();
+            BoolVar[] x = new BoolVar[]{makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp)};
+            cp.post(new Or(x));
 
-                SearchStatistics stats = makeDfs(cp,firstFail(x)).onSolution(() -> {
-                            int nTrue = 0;
-                            for (BoolVar xi: x) {
-                                if (xi.isTrue()) nTrue++;
-                            }
-                            assertTrue(nTrue > 0);
-
+            SearchStatistics stats = makeDfs(cp, firstFail(x)).onSolution(() -> {
+                        int nTrue = 0;
+                        for (BoolVar xi : x) {
+                            if (xi.isTrue()) nTrue++;
                         }
-                ).start();
-                assertEquals(15,stats.nSolutions);
+                        assertTrue(nTrue > 0);
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+                    }
+            ).start();
+            assertEquals(15, stats.nSolutions);
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
         }
 
     }
-
-
-
-
 
 
 }

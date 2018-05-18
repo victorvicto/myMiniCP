@@ -45,7 +45,7 @@ public class ReversibleSparseSet {
             indexes[i] = i;
         }
     }
-    
+
 
     private void exchangePositions(int val1, int val2) {
         assert(checkVal(val1));

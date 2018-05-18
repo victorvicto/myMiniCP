@@ -35,8 +35,6 @@ public class IsEqualTest {
     @Test
     public void test1() {
 
-        try {
-
             Solver cp = new Solver();
             IntVar x = makeIntVar(cp, -4, 7);
 
@@ -51,101 +49,81 @@ public class IsEqualTest {
             );
 
             assertEquals(12, stats.nSolutions);
-
-        } catch (NotImplementedException e) {
-            NotImplementedExceptionAssume.fail(e);
-        }
     }
 
     @Test
     public void test2() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar x = makeIntVar(cp, -4, 7);
+            Solver cp = new Solver();
+            IntVar x = makeIntVar(cp, -4, 7);
 
-                BoolVar b = isEqual(x, -2);
+            BoolVar b = isEqual(x, -2);
 
-                cp.push();
-                equal(b, 1);
-                assertEquals(-2, x.getMin());
-                cp.pop();
+            cp.push();
+            equal(b, 1);
+            assertEquals(-2, x.getMin());
+            cp.pop();
 
-                cp.push();
-                equal(b, 0);
-                assertFalse(x.contains(-2));
-                cp.pop();
+            cp.push();
+            equal(b, 0);
+            assertFalse(x.contains(-2));
+            cp.pop();
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
-        } catch (NotImplementedException e) {
-            NotImplementedExceptionAssume.fail(e);
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         }
     }
 
     @Test
     public void test3() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar x = makeIntVar(cp, -4, 7);
-                equal(x, -2);
+            Solver cp = new Solver();
+            IntVar x = makeIntVar(cp, -4, 7);
+            equal(x, -2);
 
-                {
-                    BoolVar b = makeBoolVar(cp);
-                    cp.post(new IsEqual(b, x, -2));
-                    assertTrue(b.isTrue());
-                }
-                {
-                    BoolVar b = makeBoolVar(cp);
-                    cp.post(new IsEqual(b, x, -3));
-                    assertTrue(b.isFalse());
-                }
-
-            } catch (InconsistencyException e) {
-                fail("should not fail");
+            {
+                BoolVar b = makeBoolVar(cp);
+                cp.post(new IsEqual(b, x, -2));
+                assertTrue(b.isTrue());
             }
-        } catch (NotImplementedException e) {
-            NotImplementedExceptionAssume.fail(e);
+            {
+                BoolVar b = makeBoolVar(cp);
+                cp.post(new IsEqual(b, x, -3));
+                assertTrue(b.isFalse());
+            }
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         }
     }
 
     @Test
     public void test4() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar x = makeIntVar(cp, -4, 7);
-                BoolVar b = makeBoolVar(cp);
+            Solver cp = new Solver();
+            IntVar x = makeIntVar(cp, -4, 7);
+            BoolVar b = makeBoolVar(cp);
 
-                cp.push();
-                equal(b, 1);
-                cp.post(new IsEqual(b, x, -2));
-                assertEquals(-2, x.getMin());
-                cp.pop();
+            cp.push();
+            equal(b, 1);
+            cp.post(new IsEqual(b, x, -2));
+            assertEquals(-2, x.getMin());
+            cp.pop();
 
-                cp.push();
-                equal(b, 0);
-                cp.post(new IsEqual(b, x, -2));
-                assertFalse(x.contains(-2));
-                cp.pop();
+            cp.push();
+            equal(b, 0);
+            cp.post(new IsEqual(b, x, -2));
+            assertFalse(x.contains(-2));
+            cp.pop();
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
-        } catch (NotImplementedException e) {
-            NotImplementedExceptionAssume.fail(e);
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         }
     }
-
-
-
-
 
 
 }

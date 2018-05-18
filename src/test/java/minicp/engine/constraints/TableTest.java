@@ -56,30 +56,28 @@ public class TableTest {
     @Test
     public void simpleTest1() {
         try {
-            try {
-                Solver cp = makeSolver();
-                IntVar[] x = makeIntVarArray(cp, 3, 12);
-                int[][] table = new int[][]{{0, 0, 2},
-                                            {3, 5, 7},
-                                            {6, 9, 10},
-                                            {1, 2, 3}};
-                cp.post(new TableCT(x, table));
+            Solver cp = makeSolver();
+            IntVar[] x = makeIntVarArray(cp, 3, 12);
+            int[][] table = new int[][]{{0, 0, 2},
+                    {3, 5, 7},
+                    {6, 9, 10},
+                    {1, 2, 3}};
+            cp.post(new TableCT(x, table));
 
-                assertEquals(4, x[0].getSize());
-                assertEquals(4, x[1].getSize());
-                assertEquals(4, x[2].getSize());
+            assertEquals(4, x[0].getSize());
+            assertEquals(4, x[1].getSize());
+            assertEquals(4, x[2].getSize());
 
-                assertEquals(0,x[0].getMin());
-                assertEquals(6,x[0].getMax());
-                assertEquals(0,x[1].getMin());
-                assertEquals(9,x[1].getMax());
-                assertEquals(2,x[2].getMin());
-                assertEquals(10,x[2].getMax());
+            assertEquals(0, x[0].getMin());
+            assertEquals(6, x[0].getMax());
+            assertEquals(0, x[1].getMin());
+            assertEquals(9, x[1].getMax());
+            assertEquals(2, x[2].getMin());
+            assertEquals(10, x[2].getMax());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             // pass
         }

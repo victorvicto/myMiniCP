@@ -38,45 +38,43 @@ public class MaximumTest {
     @Test
     public void maximumTest1() {
         try {
-            try {
 
-                Solver cp = makeSolver();
-                IntVar[] x = makeIntVarArray(cp, 3, 10);
-                IntVar y = makeIntVar(cp, -5, 20);
-                cp.post(new Maximum(x, y));
+            Solver cp = makeSolver();
+            IntVar[] x = makeIntVarArray(cp, 3, 10);
+            IntVar y = makeIntVar(cp, -5, 20);
+            cp.post(new Maximum(x, y));
 
-                assertEquals(9, y.getMax());
-                assertEquals(0, y.getMin());
+            assertEquals(9, y.getMax());
+            assertEquals(0, y.getMin());
 
-                y.removeAbove(8);
-                cp.fixPoint();
+            y.removeAbove(8);
+            cp.fixPoint();
 
-                assertEquals(8, x[0].getMax());
-                assertEquals(8, x[1].getMax());
-                assertEquals(8, x[2].getMax());
+            assertEquals(8, x[0].getMax());
+            assertEquals(8, x[1].getMax());
+            assertEquals(8, x[2].getMax());
 
-                y.removeBelow(5);
-                x[0].removeAbove(2);
-                x[1].removeBelow(6);
-                x[2].removeBelow(6);
-                cp.fixPoint();
+            y.removeBelow(5);
+            x[0].removeAbove(2);
+            x[1].removeBelow(6);
+            x[2].removeBelow(6);
+            cp.fixPoint();
 
-                assertEquals(8, y.getMax());
-                assertEquals(6, y.getMin());
+            assertEquals(8, y.getMax());
+            assertEquals(6, y.getMin());
 
-                y.removeBelow(7);
-                x[1].removeAbove(6);
-                cp.fixPoint();
-                // x0 = 0..2
-                // x1 = 6
-                // x2 = 6..8
-                // y = 7..8
-                assertEquals(7, x[2].getMin());
+            y.removeBelow(7);
+            x[1].removeAbove(6);
+            cp.fixPoint();
+            // x0 = 0..2
+            // x1 = 6
+            // x2 = 6..8
+            // y = 7..8
+            assertEquals(7, x[2].getMin());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -85,21 +83,19 @@ public class MaximumTest {
     @Test
     public void maximumTest2() {
         try {
-            try {
 
-                Solver cp = makeSolver();
-                IntVar x1 = makeIntVar(cp, 0, 0);
-                IntVar x2 = makeIntVar(cp, 1, 1);
-                IntVar x3 = makeIntVar(cp, 2, 2);
-                IntVar y = maximum(x1, x2, x3);
-
-
-                assertEquals(2, y.getMax());
+            Solver cp = makeSolver();
+            IntVar x1 = makeIntVar(cp, 0, 0);
+            IntVar x2 = makeIntVar(cp, 1, 1);
+            IntVar x3 = makeIntVar(cp, 2, 2);
+            IntVar y = maximum(x1, x2, x3);
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+            assertEquals(2, y.getMax());
+
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -108,25 +104,23 @@ public class MaximumTest {
     @Test
     public void maximumTest3() {
         try {
-            try {
 
-                Solver cp = makeSolver();
-                IntVar x1 = makeIntVar(cp, 0, 10);
-                IntVar x2 = makeIntVar(cp, 0, 10);
-                IntVar x3 = makeIntVar(cp, -5, 50);
-                IntVar y = maximum(x1, x2, x3);
+            Solver cp = makeSolver();
+            IntVar x1 = makeIntVar(cp, 0, 10);
+            IntVar x2 = makeIntVar(cp, 0, 10);
+            IntVar x3 = makeIntVar(cp, -5, 50);
+            IntVar y = maximum(x1, x2, x3);
 
-                y.removeAbove(5);
-                cp.fixPoint();
+            y.removeAbove(5);
+            cp.fixPoint();
 
-                assertEquals(5, x1.getMax());
-                assertEquals(5, x2.getMax());
-                assertEquals(5, x3.getMax());
+            assertEquals(5, x1.getMax());
+            assertEquals(5, x2.getMax());
+            assertEquals(5, x3.getMax());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -136,29 +130,27 @@ public class MaximumTest {
     @Test
     public void maximumTest4() {
         try {
-            try {
-                Solver cp = makeSolver();
-                IntVar[] x = makeIntVarArray(cp, 4, 5);
-                IntVar y = makeIntVar(cp, -5, 20);
+            Solver cp = makeSolver();
+            IntVar[] x = makeIntVarArray(cp, 4, 5);
+            IntVar y = makeIntVar(cp, -5, 20);
 
-                DFSearch dfs = makeDfs(cp, and(firstFail(x), firstFail(y)));
+            DFSearch dfs = makeDfs(cp, and(firstFail(x), firstFail(y)));
 
-                cp.post(new Maximum(x, y));
-                // 5*5*5*5 // 625
+            cp.post(new Maximum(x, y));
+            // 5*5*5*5 // 625
 
-                SearchStatistics stats = dfs.start();
+            SearchStatistics stats = dfs.start();
 
-                dfs.onSolution(() -> {
-                    int max = Arrays.stream(x).mapToInt(xi -> xi.getMax()).max().getAsInt();
-                    assertEquals(y.getMin(), max);
-                    assertEquals(y.getMax(), max);
-                });
+            dfs.onSolution(() -> {
+                int max = Arrays.stream(x).mapToInt(xi -> xi.getMax()).max().getAsInt();
+                assertEquals(y.getMin(), max);
+                assertEquals(y.getMax(), max);
+            });
 
-                assertEquals(625, stats.nSolutions);
+            assertEquals(625, stats.nSolutions);
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }

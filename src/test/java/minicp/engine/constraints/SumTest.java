@@ -28,8 +28,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static minicp.cp.Heuristics.*;
 import static minicp.cp.Factory.*;
-import minicp.util.InconsistencyException;
 
+import minicp.util.InconsistencyException;
 
 
 public class SumTest {
@@ -37,19 +37,17 @@ public class SumTest {
     @Test
     public void sum1() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar y = makeIntVar(cp, -100, 100);
-                IntVar[] x = new IntVar[]{makeIntVar(cp, 0, 5), makeIntVar(cp, 1, 5), makeIntVar(cp, 0, 5)};
-                cp.post(new Sum(x, y));
+            Solver cp = new Solver();
+            IntVar y = makeIntVar(cp, -100, 100);
+            IntVar[] x = new IntVar[]{makeIntVar(cp, 0, 5), makeIntVar(cp, 1, 5), makeIntVar(cp, 0, 5)};
+            cp.post(new Sum(x, y));
 
-                assertEquals(1, y.getMin());
-                assertEquals(15, y.getMax());
+            assertEquals(1, y.getMin());
+            assertEquals(15, y.getMax());
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -59,20 +57,18 @@ public class SumTest {
     @Test
     public void sum2() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
-                IntVar y = makeIntVar(cp, 0, 100);
-                cp.post(new Sum(x, y));
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
+            IntVar y = makeIntVar(cp, 0, 100);
+            cp.post(new Sum(x, y));
 
-                assertEquals(-3, x[0].getMin());
-                assertEquals(0, y.getMin());
-                assertEquals(8, y.getMax());
+            assertEquals(-3, x[0].getMin());
+            assertEquals(0, y.getMin());
+            assertEquals(8, y.getMax());
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -81,28 +77,26 @@ public class SumTest {
     @Test
     public void sum3() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
-                IntVar y = makeIntVar(cp, 5, 5);
-                cp.post(new Sum(x, y));
+            Solver cp = new Solver();
+            IntVar[] x = new IntVar[]{makeIntVar(cp, -5, 5), makeIntVar(cp, 1, 2), makeIntVar(cp, 0, 1)};
+            IntVar y = makeIntVar(cp, 5, 5);
+            cp.post(new Sum(x, y));
 
-                x[0].removeBelow(1);
-                // 1-5 + 1-2 + 0-1 = 5
-                x[1].assign(1);
-                // 1-5 + 1 + 0-1 = 5
-                cp.fixPoint();
+            x[0].removeBelow(1);
+            // 1-5 + 1-2 + 0-1 = 5
+            x[1].assign(1);
+            // 1-5 + 1 + 0-1 = 5
+            cp.fixPoint();
 
-                assertEquals(4,x[0].getMax());
-                assertEquals(3,x[0].getMin());
-                assertEquals(1,x[2].getMax());
-                assertEquals(0,x[2].getMin());
+            assertEquals(4, x[0].getMax());
+            assertEquals(3, x[0].getMin());
+            assertEquals(1, x[2].getMax());
+            assertEquals(0, x[2].getMin());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -215,11 +209,11 @@ public class SumTest {
             IntVar[] x = new IntVar[]{makeIntVar(cp, -3, 3), makeIntVar(cp, -3, 3), makeIntVar(cp, -3, 3)};
             cp.post(new Sum(x, 0));
 
-            DFSearch search = new DFSearch(cp.getTrail(),firstFail(x));
+            DFSearch search = new DFSearch(cp.getTrail(), firstFail(x));
 
             SearchStatistics stats = search.start();
 
-            assertEquals(37,stats.nSolutions);
+            assertEquals(37, stats.nSolutions);
 
 
         } catch (InconsistencyException e) {
@@ -255,8 +249,6 @@ public class SumTest {
         }
         assertTrue(failed);
     }
-
-
 
 
 }

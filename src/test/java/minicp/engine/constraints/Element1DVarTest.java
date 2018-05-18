@@ -36,39 +36,37 @@ public class Element1DVarTest {
     @Test
     public void element1dVarTest1() {
         try {
-            try {
 
-                Solver cp = makeSolver();
-                IntVar y = makeIntVar(cp, -3, 10);
-                IntVar z = makeIntVar(cp, 2, 40);
+            Solver cp = makeSolver();
+            IntVar y = makeIntVar(cp, -3, 10);
+            IntVar z = makeIntVar(cp, 2, 40);
 
-                IntVar[] T = new IntVar[]{makeIntVar(cp, 9, 9), makeIntVar(cp, 8, 8), makeIntVar(cp, 7, 7), makeIntVar(cp, 5, 5), makeIntVar(cp, 6, 6)};
+            IntVar[] T = new IntVar[]{makeIntVar(cp, 9, 9), makeIntVar(cp, 8, 8), makeIntVar(cp, 7, 7), makeIntVar(cp, 5, 5), makeIntVar(cp, 6, 6)};
 
-                cp.post(new Element1DVar(T, y, z));
+            cp.post(new Element1DVar(T, y, z));
 
-                assertEquals(0, y.getMin());
-                assertEquals(4, y.getMax());
-
-
-                assertEquals(5, z.getMin());
-                assertEquals(9, z.getMax());
-
-                z.removeAbove(7);
-                cp.fixPoint();
-
-                assertEquals(2, y.getMin());
+            assertEquals(0, y.getMin());
+            assertEquals(4, y.getMax());
 
 
-                y.remove(3);
-                cp.fixPoint();
+            assertEquals(5, z.getMin());
+            assertEquals(9, z.getMax());
 
-                assertEquals(7, z.getMax());
-                assertEquals(6, z.getMin());
+            z.removeAbove(7);
+            cp.fixPoint();
+
+            assertEquals(2, y.getMin());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+            y.remove(3);
+            cp.fixPoint();
+
+            assertEquals(7, z.getMax());
+            assertEquals(6, z.getMin());
+
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -77,42 +75,40 @@ public class Element1DVarTest {
     @Test
     public void element1dVarTest2() {
         try {
-            try {
 
-                Solver cp = makeSolver();
-                IntVar y = makeIntVar(cp, -3, 10);
-                IntVar z = makeIntVar(cp, -4, 40);
+            Solver cp = makeSolver();
+            IntVar y = makeIntVar(cp, -3, 10);
+            IntVar z = makeIntVar(cp, -4, 40);
 
-                IntVar[] T = new IntVar[]{makeIntVar(cp, 1, 2),
-                        makeIntVar(cp, 3, 4),
-                        makeIntVar(cp, 5, 6),
-                        makeIntVar(cp, 7, 8),
-                        makeIntVar(cp, 9, 10)};
+            IntVar[] T = new IntVar[]{makeIntVar(cp, 1, 2),
+                    makeIntVar(cp, 3, 4),
+                    makeIntVar(cp, 5, 6),
+                    makeIntVar(cp, 7, 8),
+                    makeIntVar(cp, 9, 10)};
 
-                cp.post(new Element1DVar(T, y, z));
+            cp.post(new Element1DVar(T, y, z));
 
-                assertEquals(0, y.getMin());
-                assertEquals(4, y.getMax());
+            assertEquals(0, y.getMin());
+            assertEquals(4, y.getMax());
 
-                System.out.println(z);
-                assertEquals(1, z.getMin());
-                assertEquals(10, z.getMax());
+            System.out.println(z);
+            assertEquals(1, z.getMin());
+            assertEquals(10, z.getMax());
 
-                y.removeAbove(2);
-                cp.fixPoint();
+            y.removeAbove(2);
+            cp.fixPoint();
 
-                assertEquals(6, z.getMax());
+            assertEquals(6, z.getMax());
 
-                y.assign(2);
-                cp.fixPoint();
+            y.assign(2);
+            cp.fixPoint();
 
-                assertEquals(5, z.getMin());
-                assertEquals(6, z.getMax());
+            assertEquals(5, z.getMin());
+            assertEquals(6, z.getMax());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -122,28 +118,26 @@ public class Element1DVarTest {
     @Test
     public void element1dVarTest3() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar y = makeIntVar(cp, -3, 10);
-                IntVar z = makeIntVar(cp, -20, 40);
+            Solver cp = new Solver();
+            IntVar y = makeIntVar(cp, -3, 10);
+            IntVar z = makeIntVar(cp, -20, 40);
 
-                IntVar[] T = new IntVar[]{makeIntVar(cp, 9, 9), makeIntVar(cp, 8, 8), makeIntVar(cp, 7, 7), makeIntVar(cp, 5, 5), makeIntVar(cp, 6, 6)};
+            IntVar[] T = new IntVar[]{makeIntVar(cp, 9, 9), makeIntVar(cp, 8, 8), makeIntVar(cp, 7, 7), makeIntVar(cp, 5, 5), makeIntVar(cp, 6, 6)};
 
-                cp.post(new Element1DVar(T, y, z));
+            cp.post(new Element1DVar(T, y, z));
 
-                DFSearch dfs = new DFSearch(cp.getTrail(), firstFail(y, z));
-                dfs.onSolution(() ->
-                        assertEquals(T[y.getMin()].getMin(), z.getMin())
-                );
-                SearchStatistics stats = dfs.start();
+            DFSearch dfs = new DFSearch(cp.getTrail(), firstFail(y, z));
+            dfs.onSolution(() ->
+                    assertEquals(T[y.getMin()].getMin(), z.getMin())
+            );
+            SearchStatistics stats = dfs.start();
 
-                assertEquals(5, stats.nSolutions);
+            assertEquals(5, stats.nSolutions);
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }

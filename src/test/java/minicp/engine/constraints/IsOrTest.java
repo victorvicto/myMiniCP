@@ -20,6 +20,7 @@ import minicp.engine.core.Solver;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
+import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 
 import static minicp.cp.Factory.*;
@@ -32,57 +33,55 @@ public class IsOrTest {
     @Test
     public void isOr1() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                BoolVar[] x = new BoolVar[] {makeBoolVar(cp),makeBoolVar(cp),makeBoolVar(cp),makeBoolVar(cp)};
-                BoolVar b = makeBoolVar(cp);
-                cp.post(new IsOr(b,x));
+            Solver cp = new Solver();
+            BoolVar[] x = new BoolVar[]{makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp)};
+            BoolVar b = makeBoolVar(cp);
+            cp.post(new IsOr(b, x));
 
-                for (BoolVar xi : x) {
-                    assertTrue(!xi.isBound());
-                }
-
-                cp.push();
-                equal(x[1],0);
-                equal(x[2],0);
-                equal(x[3],0);
-                assertTrue(!b.isBound());
-                equal(x[0],0);
-                assertTrue(b.isFalse());
-                cp.pop();
-
-                cp.push();
-                equal(x[1],0);
-                equal(x[2],1);
-                assertTrue(b.isTrue());
-                cp.pop();
-
-                cp.push();
-                equal(b,1);
-                equal(x[1],0);
-                equal(x[2],0);
-                assertTrue(!x[0].isBound());
-                equal(x[3],0);
-                assertTrue(x[0].isTrue());
-                cp.pop();
-
-
-                cp.push();
-                equal(b,0);
-                assertTrue(x[0].isFalse());
-                assertTrue(x[1].isFalse());
-                assertTrue(x[2].isFalse());
-                assertTrue(x[3].isFalse());
-                cp.pop();
-
-
-
-            } catch (InconsistencyException e) {
-                fail("should not fail");
+            for (BoolVar xi : x) {
+                assertTrue(!xi.isBound());
             }
+
+            cp.push();
+            equal(x[1], 0);
+            equal(x[2], 0);
+            equal(x[3], 0);
+            assertTrue(!b.isBound());
+            equal(x[0], 0);
+            assertTrue(b.isFalse());
+            cp.pop();
+
+            cp.push();
+            equal(x[1], 0);
+            equal(x[2], 1);
+            assertTrue(b.isTrue());
+            cp.pop();
+
+            cp.push();
+            equal(b, 1);
+            equal(x[1], 0);
+            equal(x[2], 0);
+            assertTrue(!x[0].isBound());
+            equal(x[3], 0);
+            assertTrue(x[0].isTrue());
+            cp.pop();
+
+
+            cp.push();
+            equal(b, 0);
+            assertTrue(x[0].isFalse());
+            assertTrue(x[1].isFalse());
+            assertTrue(x[2].isFalse());
+            assertTrue(x[3].isFalse());
+            cp.pop();
+
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
+
         }
 
     }
@@ -90,37 +89,31 @@ public class IsOrTest {
     @Test
     public void isOr2() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                BoolVar[] x = new BoolVar[] {makeBoolVar(cp),makeBoolVar(cp),makeBoolVar(cp),makeBoolVar(cp)};
-                BoolVar b = makeBoolVar(cp);
-                cp.post(new IsOr(b,x));
+            Solver cp = new Solver();
+            BoolVar[] x = new BoolVar[]{makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp), makeBoolVar(cp)};
+            BoolVar b = makeBoolVar(cp);
+            cp.post(new IsOr(b, x));
 
-                SearchStatistics stats = makeDfs(cp,firstFail(x)).onSolution(() -> {
-                            int nTrue = 0;
-                            for (BoolVar xi: x) {
-                                if (xi.isTrue()) nTrue++;
-                            }
-
-                            assertTrue((nTrue > 0 && b.isTrue()) || (nTrue == 0 && b.isFalse()));
-
+            SearchStatistics stats = makeDfs(cp, firstFail(x)).onSolution(() -> {
+                        int nTrue = 0;
+                        for (BoolVar xi : x) {
+                            if (xi.isTrue()) nTrue++;
                         }
-                ).start();
-                assertEquals(16,stats.nSolutions);
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+                        assertTrue((nTrue > 0 && b.isTrue()) || (nTrue == 0 && b.isFalse()));
+
+                    }
+            ).start();
+            assertEquals(16, stats.nSolutions);
+
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
         }
 
     }
-
-
-
-
 
 
 }
