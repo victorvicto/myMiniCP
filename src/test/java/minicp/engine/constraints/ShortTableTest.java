@@ -32,7 +32,6 @@ import static org.junit.Assert.*;
 public class ShortTableTest {
 
 
-
     private int[][] randomTuples(Random rand, int arity, int nTuples, int minvalue, int maxvalue) {
         int[][] r = new int[nTuples][arity];
         for (int i = 0; i < nTuples; i++)
@@ -44,49 +43,44 @@ public class ShortTableTest {
     @Test
     public void simpleTest0() {
         try {
-            try {
-                Solver cp = makeSolver();
-                IntVar[] x = makeIntVarArray(cp, 2, 1);
-                int[][] table = new int[][]{{0, 0}};
-                cp.post(new ShortTableCT(x, table,-1));
+            Solver cp = makeSolver();
+            IntVar[] x = makeIntVarArray(cp, 2, 1);
+            int[][] table = new int[][]{{0, 0}};
+            cp.post(new ShortTableCT(x, table, -1));
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             Assume.assumeNoException(e);
         }
     }
 
 
-
     @Test
     public void simpleTest3() {
         try {
-            try {
-                Solver cp = makeSolver();
-                IntVar[] x = makeIntVarArray(cp, 3, 12);
-                int[][] table = new int[][]{{0, 0, 2},
-                                            {3, 5, 7},
-                                            {6, 9, 10},
-                                            {1, 2, 3}};
-                cp.post(new ShortTableCT(x, table,0));
+            Solver cp = makeSolver();
+            IntVar[] x = makeIntVarArray(cp, 3, 12);
+            int[][] table = new int[][]{{0, 0, 2},
+                    {3, 5, 7},
+                    {6, 9, 10},
+                    {1, 2, 3}};
+            cp.post(new ShortTableCT(x, table, 0));
 
-                assertEquals(12, x[0].getSize());
-                assertEquals(12, x[1].getSize());
-                assertEquals(4, x[2].getSize());
+            assertEquals(12, x[0].getSize());
+            assertEquals(12, x[1].getSize());
+            assertEquals(4, x[2].getSize());
 
-                assertEquals(0,x[0].getMin());
-                assertEquals(11,x[0].getMax());
-                assertEquals(0,x[1].getMin());
-                assertEquals(11,x[1].getMax());
-                assertEquals(2,x[2].getMin());
-                assertEquals(10,x[2].getMax());
+            assertEquals(0, x[0].getMin());
+            assertEquals(11, x[0].getMax());
+            assertEquals(0, x[1].getMin());
+            assertEquals(11, x[1].getMax());
+            assertEquals(2, x[2].getMin());
+            assertEquals(10, x[2].getMax());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
             Assume.assumeNoException(e);
         }

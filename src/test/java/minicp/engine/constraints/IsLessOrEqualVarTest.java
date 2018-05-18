@@ -22,6 +22,7 @@ import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
 import minicp.util.InconsistencyException;
 import minicp.util.NotImplementedException;
+import minicp.util.NotImplementedExceptionAssume;
 import org.junit.Test;
 
 import static minicp.cp.Factory.*;
@@ -34,116 +35,108 @@ public class IsLessOrEqualVarTest {
     @Test
     public void test1() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar x = makeIntVar(cp, 0, 5);
-                IntVar y = makeIntVar(cp, 0, 5);
+            Solver cp = new Solver();
+            IntVar x = makeIntVar(cp, 0, 5);
+            IntVar y = makeIntVar(cp, 0, 5);
 
-                BoolVar b = makeBoolVar(cp);
+            BoolVar b = makeBoolVar(cp);
 
-                cp.post(new IsLessOrEqualVar(b,x,y));
+            cp.post(new IsLessOrEqualVar(b, x, y));
 
-                DFSearch search = new DFSearch(cp.getTrail(), firstFail(x,y));
+            DFSearch search = new DFSearch(cp.getTrail(), firstFail(x, y));
 
-                SearchStatistics stats = search.start();
+            SearchStatistics stats = search.start();
 
-                search.onSolution(() ->
-                        assertTrue(x.getMin() <= y.getMin() && b.isTrue() || x.getMin() > y.getMin() && b.isFalse())
-                );
+            search.onSolution(() ->
+                    assertTrue(x.getMin() <= y.getMin() && b.isTrue() || x.getMin() > y.getMin() && b.isFalse())
+            );
 
-                assertEquals(36, stats.nSolutions);
+            assertEquals(36, stats.nSolutions);
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
     @Test
     public void test2() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar x = makeIntVar(cp, -8, 7);
-                IntVar y = makeIntVar(cp, -4, 3);
+            Solver cp = new Solver();
+            IntVar x = makeIntVar(cp, -8, 7);
+            IntVar y = makeIntVar(cp, -4, 3);
 
-                BoolVar b = makeBoolVar(cp);
+            BoolVar b = makeBoolVar(cp);
 
-                cp.post(new IsLessOrEqualVar(b,x,y));
+            cp.post(new IsLessOrEqualVar(b, x, y));
 
-                cp.push();
-                equal(b, 1);
-                assertEquals(3, x.getMax());
-                cp.pop();
+            cp.push();
+            equal(b, 1);
+            assertEquals(3, x.getMax());
+            cp.pop();
 
-                cp.push();
-                equal(b, 0);
-                assertEquals(-3,x.getMin());
-                cp.pop();
+            cp.push();
+            equal(b, 0);
+            assertEquals(-3, x.getMin());
+            cp.pop();
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
     @Test
     public void test3() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar x = makeIntVar(cp, -4, 7);
-                IntVar y = makeIntVar(cp, 0, 7);
-                equal(x, -2);
+            Solver cp = new Solver();
+            IntVar x = makeIntVar(cp, -4, 7);
+            IntVar y = makeIntVar(cp, 0, 7);
+            equal(x, -2);
 
-                BoolVar b = makeBoolVar(cp);
-                cp.post(new IsLessOrEqualVar(b, x, y));
-                assertTrue(b.isTrue());
+            BoolVar b = makeBoolVar(cp);
+            cp.post(new IsLessOrEqualVar(b, x, y));
+            assertTrue(b.isTrue());
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 
     @Test
     public void test4() {
         try {
-            try {
 
-                Solver cp = new Solver();
-                IntVar x = makeIntVar(cp, -4, 7);
-                BoolVar b = makeBoolVar(cp);
+            Solver cp = new Solver();
+            IntVar x = makeIntVar(cp, -4, 7);
+            BoolVar b = makeBoolVar(cp);
 
-                cp.push();
-                equal(b, 1);
-                cp.post(new IsLessOrEqual(b,x,-2));
-                assertEquals(-2, x.getMax());
-                cp.pop();
+            cp.push();
+            equal(b, 1);
+            cp.post(new IsLessOrEqual(b, x, -2));
+            assertEquals(-2, x.getMax());
+            cp.pop();
 
-                cp.push();
-                equal(b, 0);
-                cp.post(new IsLessOrEqual(b,x,-2));
-                assertEquals(-1, x.getMin());
+            cp.push();
+            equal(b, 0);
+            cp.post(new IsLessOrEqual(b, x, -2));
+            assertEquals(-1, x.getMin());
 
-                cp.pop();
+            cp.pop();
 
 
-            } catch (InconsistencyException e) {
-                fail("should not fail");
-            }
+        } catch (InconsistencyException e) {
+            fail("should not fail");
         } catch (NotImplementedException e) {
-            e.print();
+            NotImplementedExceptionAssume.fail(e);
         }
     }
 

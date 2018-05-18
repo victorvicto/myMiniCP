@@ -39,25 +39,24 @@ public class CumulativeDecompTest {
 
     @Test
     public void testAllDiffWithCumulative() {
+
         try {
-            try {
 
-                Solver cp = makeSolver();
+            Solver cp = makeSolver();
 
-                IntVar[] s = makeIntVarArray(cp, 5, 5);
-                int[] d = new int[5];
-                Arrays.fill(d, 1);
-                int[] r = new int[5];
-                Arrays.fill(r, 100);
+            IntVar[] s = makeIntVarArray(cp, 5, 5);
+            int[] d = new int[5];
+            Arrays.fill(d, 1);
+            int[] r = new int[5];
+            Arrays.fill(r, 100);
 
-                cp.post(new CumulativeDecomposition(s, d, r, 100));
+            cp.post(new CumulativeDecomposition(s, d, r, 100));
 
-                SearchStatistics stats = makeDfs(cp, firstFail(s)).start();
-                assertEquals("cumulative alldiff expect all permutations", 120, stats.nSolutions);
+            SearchStatistics stats = makeDfs(cp, firstFail(s)).start();
+            assertEquals("cumulative alldiff expect all permutations", 120, stats.nSolutions);
 
-            } catch (InconsistencyException e) {
-                assert (false);
-            }
+        } catch (InconsistencyException e) {
+            assert (false);
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -67,22 +66,20 @@ public class CumulativeDecompTest {
     @Test
     public void testBasic1() {
         try {
-            try {
 
-                Solver cp = makeSolver();
+            Solver cp = makeSolver();
 
-                IntVar[] s = makeIntVarArray(cp, 2, 10);
-                int[] d = new int[]{5, 5};
-                int[] r = new int[]{1, 1};
+            IntVar[] s = makeIntVarArray(cp, 2, 10);
+            int[] d = new int[]{5, 5};
+            int[] r = new int[]{1, 1};
 
-                cp.post(new CumulativeDecomposition(s, d, r, 1));
-                equal(s[0], 0);
+            cp.post(new CumulativeDecomposition(s, d, r, 1));
+            equal(s[0], 0);
 
-                assertEquals(5, s[1].getMin());
+            assertEquals(5, s[1].getMin());
 
-            } catch (InconsistencyException e) {
-                assert (false);
-            }
+        } catch (InconsistencyException e) {
+            assert (false);
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -92,23 +89,21 @@ public class CumulativeDecompTest {
     @Test
     public void testBasic2() {
         try {
-            try {
 
-                Solver cp = makeSolver();
+            Solver cp = makeSolver();
 
-                IntVar[] s = makeIntVarArray(cp, 2, 10);
-                int[] d = new int[]{5, 5};
-                int[] r = new int[]{1, 1};
+            IntVar[] s = makeIntVarArray(cp, 2, 10);
+            int[] d = new int[]{5, 5};
+            int[] r = new int[]{1, 1};
 
-                cp.post(new CumulativeDecomposition(s, d, r, 1));
+            cp.post(new CumulativeDecomposition(s, d, r, 1));
 
-                equal(s[0], 5);
+            equal(s[0], 5);
 
-                assertEquals(0, s[1].getMax());
+            assertEquals(0, s[1].getMax());
 
-            } catch (InconsistencyException e) {
-                assert (false);
-            }
+        } catch (InconsistencyException e) {
+            assert (false);
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
@@ -118,39 +113,37 @@ public class CumulativeDecompTest {
     @Test
     public void testCapaOk() {
         try {
-            try {
 
-                Solver cp = makeSolver();
+            Solver cp = makeSolver();
 
-                IntVar[] s = makeIntVarArray(cp, 5, 10);
-                int[] d = new int[]{5, 10, 3, 6, 1};
-                int[] r = new int[]{3, 7, 1, 4, 8};
+            IntVar[] s = makeIntVarArray(cp, 5, 10);
+            int[] d = new int[]{5, 10, 3, 6, 1};
+            int[] r = new int[]{3, 7, 1, 4, 8};
 
-                cp.post(new CumulativeDecomposition(s, d, r, 12));
+            cp.post(new CumulativeDecomposition(s, d, r, 12));
 
-                DFSearch search = new DFSearch(cp.getTrail(), firstFail(s));
+            DFSearch search = new DFSearch(cp.getTrail(), firstFail(s));
 
-                SearchStatistics stats = search.start();
+            SearchStatistics stats = search.start();
 
-                search.onSolution(() -> {
-                    Rectangle[] rects = IntStream.range(0, s.length).mapToObj(i -> {
-                        int start = s[i].getMin();
-                        int end = start + d[i];
-                        int height = r[i];
-                        return new Rectangle(start, end, height);
-                    }).toArray(Rectangle[]::new);
-                    int[] discreteProfile = discreteProfile(rects);
-                    for (int h : discreteProfile) {
-                        assertTrue("capa exceeded in cumulative constraint", h <= 12);
-                    }
-                });
+            search.onSolution(() -> {
+                Rectangle[] rects = IntStream.range(0, s.length).mapToObj(i -> {
+                    int start = s[i].getMin();
+                    int end = start + d[i];
+                    int height = r[i];
+                    return new Rectangle(start, end, height);
+                }).toArray(Rectangle[]::new);
+                int[] discreteProfile = discreteProfile(rects);
+                for (int h : discreteProfile) {
+                    assertTrue("capa exceeded in cumulative constraint", h <= 12);
+                }
+            });
 
-                System.out.println(stats);
+            System.out.println(stats);
 
 
-            } catch (InconsistencyException e) {
-                assert (false);
-            }
+        } catch (InconsistencyException e) {
+            assert (false);
         } catch (NotImplementedException e) {
             NotImplementedExceptionAssume.fail(e);
         }
