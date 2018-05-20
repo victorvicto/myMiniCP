@@ -71,7 +71,7 @@ public class ThetaTree {
             isize <<= 1; //shift the pattern to the left by 1 (i.e. multiplies by 2)
         }
         //number of nodes in a complete  binary tree with isize leaf nodes is (isize*2)-1
-        nodes = new Node[(isize << 2) -1];
+        nodes = new Node[(isize << 1) -1];
         for (int i = 0; i < nodes.length; i++) {
             nodes[i] = new Node();
         }

@@ -19,7 +19,7 @@ import minicp.engine.core.IntVar;
 
 public class MaximumMatching {
 
-    public static final int NONE = -Integer.MIN_VALUE;
+    public static final int NONE = Integer.MIN_VALUE;
 
     // For each variable, the value it is mached to
     private int[] match;
