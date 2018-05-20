@@ -41,13 +41,33 @@ public class Or extends Constraint { // x1 or x2 or ... xn
 
     @Override
     public void post() throws InconsistencyException {
-        propagate();
+        x[wR.getValue()].propagateOnBind(this);
+        x[wL.getValue()].propagateOnBind(this);
     }
 
 
     @Override
     public void propagate() throws InconsistencyException {
-        // TODO: implement the filtering using watched literal technique and make sure you pass all the tests
-        throw new NotImplementedException();
+
+        if (x[wL.getValue()].isTrue() || x[wR.getValue()].isTrue())
+            return;
+
+        if (x[wL.getValue()].isFalse()) {
+            wL.increment();
+            if (wL.getValue()==wR.getValue())
+                x[wL.getValue()].assign(true);
+            else
+                if (x[wL.getValue()].isBound())
+                    propagate();
+                x[wL.getValue()].propagateOnBind(this);
+        } else {
+            wR.decrement();
+            if (wL.getValue()==wR.getValue())
+                x[wL.getValue()].assign(true);
+            else
+                if (x[wR.getValue()].isBound())
+                    propagate();
+                x[wR.getValue()].propagateOnBind(this);
+        }
     }
 }

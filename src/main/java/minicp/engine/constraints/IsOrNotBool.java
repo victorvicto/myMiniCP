@@ -21,11 +21,10 @@ import minicp.engine.core.IntVar;
 import minicp.reversible.ReversibleBool;
 import minicp.reversible.ReversibleInt;
 import minicp.util.InconsistencyException;
-import minicp.util.NotImplementedException;
 
-public class IsOr extends Constraint { // b <=> x1 or x2 or ... xn
+public class IsOrNotBool extends Constraint { // b <=> x1 or x2 or ... xn
 
-    private final BoolVar b;
+    private final IntVar b;
     private final BoolVar[] x;
     private final int n;
 
@@ -36,7 +35,7 @@ public class IsOr extends Constraint { // b <=> x1 or x2 or ... xn
 
     private final Or or;
 
-    public IsOr(BoolVar b, BoolVar[] x) {
+    public IsOrNotBool(IntVar b, BoolVar[] x) {
         super(b.getSolver());
         this.b = b;
         this.x = x;
@@ -63,9 +62,9 @@ public class IsOr extends Constraint { // b <=> x1 or x2 or ... xn
     public void propagate() throws InconsistencyException {
         if(b.isBound()) {
             if (bjustgotassigned.getValue()) {
-                if (b.isTrue())
+                if (b.contains(1))
                     cp.post(or);
-                else if (b.isFalse()) {
+                else if (b.contains(0)) {
                     for (BoolVar v : x) {
                         if (!v.isBound())
                             v.assign(false);
@@ -77,12 +76,12 @@ public class IsOr extends Constraint { // b <=> x1 or x2 or ... xn
             nUnBounds.decrement();
             for (BoolVar v : x) {
                 if (v.isTrue()) {
-                    b.assign(true);
+                    b.assign(1);
                     return;
                 }
             }
             if (nUnBounds.getValue()==0)
-                b.assign(false);
+                b.assign(0);
         }
     }
 }

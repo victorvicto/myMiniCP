@@ -19,7 +19,7 @@ import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
 import minicp.util.InconsistencyException;
 
-public class Equal extends Constraint { // x <= y
+public class Equal extends Constraint { // x == y
 
     private final IntVar x;
     private final IntVar y;

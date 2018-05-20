@@ -15,30 +15,32 @@
 
 package minicp.util;
 
+import minicp.engine.core.IntVar;
+
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.function.BiConsumer;
 
 // class written by Guillaume Derval
 public class GraphUtil {
-    public static interface Graph {
+    /*public static interface Graph {
         /**
          * @return the number of nodes in this graph. They are indexed from 0 to n-1.
-         */
+         * /
         int n();
 
         /**
          * @param idx the node to consider
          * @return the nodes ids that have an edge going from then to node idx
-         */
+         * /
         Iterable<Integer> in(int idx);
 
         /**
          * @param idx the node to consider
          * @return the nodes ids that have an edge going from node idx to them.
-         */
+         * /
         Iterable<Integer> out(int idx);
-    }
+    }*/
 
     /**
      * Transpose the graph

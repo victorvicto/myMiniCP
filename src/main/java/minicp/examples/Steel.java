@@ -15,7 +15,7 @@
 
 package minicp.examples;
 
-import minicp.engine.constraints.IsOr;
+import minicp.engine.constraints.*;
 import minicp.engine.core.BoolVar;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
@@ -53,7 +53,7 @@ public class Steel {
 
         // Reading the data
 
-        InputReader reader = new InputReader("data/steel/bench_20_0");
+        InputReader reader = new InputReader("data/steel/bench_20_01");
         int nCapa = reader.getInt();
         int[] capa = new int[nCapa];
         for (int i = 0; i < nCapa; i++) {
@@ -86,6 +86,7 @@ public class Steel {
             Solver cp = makeSolver();
             IntVar[] x = makeIntVarArray(cp, nOrder, nSlab);
             IntVar[] l = makeIntVarArray(cp, nSlab, maxCapa + 1);
+            IntVar[] minLoss = makeIntVarArray(cp, nSlab, maxCapa + 1);
 
             BoolVar[][] inSlab = new BoolVar[nSlab][nOrder]; // inSlab[j][i] = 1 if order i is placed in slab j
 
@@ -98,7 +99,7 @@ public class Steel {
 
             for (int j = 0; j < nSlab; j++) {
                 // for each color, is it present in the slab
-                IntVar[] presence = new IntVar[nCol];
+                BoolVar[] presence = new BoolVar[nCol];
 
                 for (int col = 0; col < nCol; col++) {
                     presence[col] = makeBoolVar(cp);
@@ -109,10 +110,12 @@ public class Steel {
                     }
 
                     // TODO 2: model that presence[col] is true iff at least one order with color col is placed in slab j
+                    BoolVar[] inSlabArray = inSlabWithColor.toArray(new BoolVar[inSlabWithColor.size()]);
+                    cp.post(new IsOr(presence[col],inSlabArray));
 
                 }
                 // TODO 3 : restrict the number of colors present in slab j to be <= 2
-                lessOrEqual(sum(presence),2);
+                cp.post(new SumLessOrEqual(presence,2));
             }
 
 
@@ -131,12 +134,20 @@ public class Steel {
 
 
             // TODO 1: model the objective function using element constraint + a sum constraint
-            IntVar totLoss = null;
+
+            for (int j = 0; j < nSlab; j++) {
+                cp.post(new Element1D(loss,l[j],minLoss[j]));
+            }
+
+            IntVar totLoss = sum(minLoss);
 
             //DFSearch dfs = makeDfs(cp,firstFail(x));
 
 
             // TODO 5:  add static symmetry breaking constraint (load or loss are decreasing along the slabs)
+            for(int j=0; j<l.length-1; j++) {
+                cp.post(new LessOrEqual(l[j+1],l[j]));
+            }
 
             DFSearch dfs = makeDfs(cp,firstFail(x));
 

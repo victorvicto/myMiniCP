@@ -17,6 +17,7 @@ package minicp.engine.constraints;
 
 import minicp.engine.core.Constraint;
 import minicp.engine.core.IntVar;
+import minicp.util.Graph;
 import minicp.util.GraphUtil;
 import minicp.util.GraphUtil.*;
 import minicp.util.InconsistencyException;
@@ -33,24 +34,51 @@ import java.util.Arrays;
 public class AllDifferentAC extends Constraint {
 
     private IntVar[] x;
+    private MaximumMatching mm;
+    private int baselen;
+    private int minVal;
+    private int maxVal;
 
     public AllDifferentAC(IntVar... x) {
         super(x[0].getSolver());
         this.x = x;
+        mm = new MaximumMatching(this.x);
     }
 
     @Override
     public void post() throws InconsistencyException {
-        // TODO
+        baselen = x.length;
+        minVal = Integer.MAX_VALUE;
+        maxVal = Integer.MIN_VALUE;
+        for (IntVar xi : x) {
+            if (minVal>xi.getMin())
+                minVal = xi.getMin();
+            if (maxVal<xi.getMax())
+                maxVal = xi.getMax();
+        }
+        for (IntVar xi : x) {
+            xi.propagateOnBind(this);
+        }
         propagate();
-        throw new NotImplementedException("AllDifferent AC");
     }
 
 
 
     @Override
     public void propagate() throws InconsistencyException {
-        // TODO
-        throw new NotImplementedException();
+        int[] maxMatch = new int[x.length];
+        mm.compute(maxMatch);
+        Graph g = new Graph();
+        g.MakeGraph(maxMatch, x, minVal, maxVal);
+        int[] scc = GraphUtil.stronglyConnectedComponents(g);
+        for (int i=0; i<x.length; i++) {
+            for (int xVal : x[i].getValues()) {
+                if (maxMatch[i]!=xVal) {
+                    if (scc[i]!=scc[xVal+baselen-minVal]) {
+                        x[i].remove(xVal);
+                    }
+                }
+            }
+        }
     }
 }
