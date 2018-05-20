@@ -38,8 +38,14 @@ public class ArrayIndexComparator implements Comparator<Integer>
         else if (by== 2){
             return array[index1].getMin()+duration[index1]-array[index2].getMin()-duration[index2];
         }
-        else {
+        else if (by == -2) {
+            return -array[index1].getMin()-duration[index1]+array[index2].getMin()+duration[index2];
+        }
+        else if (by == 3){
             return array[index1].getMin() - array[index2].getMin();
+        }
+        else {
+            return -array[index1].getMin() + array[index2].getMin();
         }
     }
 }

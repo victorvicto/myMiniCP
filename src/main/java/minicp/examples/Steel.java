@@ -96,13 +96,14 @@ public class Steel {
                 }
             }
 
-
+            BoolVar[][] presence = new BoolVar[nSlab][nCol];
             for (int j = 0; j < nSlab; j++) {
                 // for each color, is it present in the slab
-                BoolVar[] presence = new BoolVar[nCol];
+                //BoolVar[] presence = new BoolVar[nCol];
+                presence[j] = new BoolVar[nCol];
 
                 for (int col = 0; col < nCol; col++) {
-                    presence[col] = makeBoolVar(cp);
+                    presence[j][col] = makeBoolVar(cp);
 
                     ArrayList<BoolVar> inSlabWithColor = new ArrayList<>();
                     for (int i = 0; i < nOrder; i++) {
@@ -111,11 +112,11 @@ public class Steel {
 
                     // TODO 2: model that presence[col] is true iff at least one order with color col is placed in slab j
                     BoolVar[] inSlabArray = inSlabWithColor.toArray(new BoolVar[inSlabWithColor.size()]);
-                    cp.post(new IsOr(presence[col],inSlabArray));
+                    cp.post(new IsOr(presence[j][col],inSlabArray));
 
                 }
                 // TODO 3 : restrict the number of colors present in slab j to be <= 2
-                cp.post(new SumLessOrEqual(presence,2));
+                cp.post(new SumLessOrEqual(presence[j],2));
             }
 
 
@@ -165,6 +166,14 @@ public class Steel {
                 Set<Integer>[] colorsInSlab = new Set[nSlab];
                 for (int j = 0; j < nSlab; j++) {
                     colorsInSlab[j] = new HashSet<>();
+                    /*String p = "";
+                    int tot = 0;
+                    for (int col=0; col<nCol; col++) {
+                        p += Integer.toString(presence[j][col].getMax());
+                        tot += presence[j][col].getMax();
+                    }
+                    System.out.print(Integer.toString(tot)+" : ");
+                    System.out.println(p);*/
                 }
                 for (int i = 0; i < nOrder; i++) {
                     colorsInSlab[x[i].getMin()].add(c[i]);

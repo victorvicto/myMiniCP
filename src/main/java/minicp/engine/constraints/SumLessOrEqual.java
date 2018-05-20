@@ -64,6 +64,7 @@ public class SumLessOrEqual extends Constraint { // b <=> x <= c
             }
         }
         if (tot>c) {
+            System.out.println(tot);
             throw new InconsistencyException();
         }
         if (tot==c) {

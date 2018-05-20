@@ -50,7 +50,6 @@ public class Disjunctive extends Constraint {
 
     @Override
     public void post() throws InconsistencyException {
-        System.out.println("start");
         BoolVar[][] bij = new BoolVar[start.length][start.length];
         BoolVar[][] bji = new BoolVar[start.length][start.length];
 
@@ -69,11 +68,6 @@ public class Disjunctive extends Constraint {
             }
         }
 
-        for (int trybetter = 0;trybetter<start.length;trybetter++){
-            System.out.println("i " + trybetter);
-            System.out.println(start[trybetter].getMin());
-            System.out.println(start[trybetter].getMax());
-        }
 
         if (postMirror) {
             IntVar[] startMirror = makeIntVarArray(cp, start.length, i -> minus(end[i]));
@@ -81,7 +75,11 @@ public class Disjunctive extends Constraint {
         }
 
         // index for theta tree
-        ArrayIndexComparator comparatorT = new ArrayIndexComparator(start, duration,3);
+        int makeThisSolverGreatAgain = 3;
+        if(!postMirror){
+            makeThisSolverGreatAgain = -makeThisSolverGreatAgain;
+        }
+        ArrayIndexComparator comparatorT = new ArrayIndexComparator(start, duration,makeThisSolverGreatAgain);
         Integer[] indT = comparatorT.createIndexArray();
         Arrays.sort(indT, comparatorT);
 
@@ -94,21 +92,12 @@ public class Disjunctive extends Constraint {
 
         for (int i = 0; i < start.length; i++) {
             thetaTree.insert(indT[i],start[indexes[i]].getMin()+duration[indexes[i]],duration[indexes[i]]);
-            System.out.println("ect " + thetaTree.getECT());
             if(thetaTree.getECT()>start[indexes[i]].getMax()+duration[indexes[i]]) {
-                System.out.println("overload inconsistency");
-                System.out.println(thetaTree.getECT());
-                for (int trybetter = 0;trybetter<start.length;trybetter++){
-                    System.out.println("i " + trybetter);
-                    System.out.println(start[trybetter].getMin());
-                    System.out.println(start[trybetter].getMax());
-                }
-
                 throw new InconsistencyException();
             }
         }
 
-        System.out.println("start detect precedence");
+
         //detect precedence
         ArrayIndexComparator comparator1 = new ArrayIndexComparator(start, duration,1);
         Integer[] indexes1 = comparator1.createIndexArray();
@@ -127,7 +116,7 @@ public class Disjunctive extends Constraint {
 
         for (int i = 0; i<start.length; i++) {
             while((start[indexes2[i]].getMin()+duration[indexes2[i]]>start[indexes1[j]].getMax()) && notFinished) {
-                thetaTree2.insert(indT[j],start[indexes1[j]].getMin()+duration[indexes1[j]],duration[indexes1[j]]);
+                thetaTree2.insert(j,start[indexes1[j]].getMin()+duration[indexes1[j]],duration[indexes1[j]]);
                 j++;
                 if (j==start.length) {
                     notFinished = false;
@@ -168,7 +157,7 @@ public class Disjunctive extends Constraint {
         // i iterates on indexes 4
         for (int i = 0;i<start.length;i++) {
             while (start[indexes4[i]].getMax() + duration[indexes4[i]] > start[indexes3[k]].getMax() && !fin) {
-                thetaTree3.insert(indT[k],start[indexes3[k]].getMin()+duration[indexes3[k]],duration[indexes3[k]]);
+                thetaTree3.insert(k,start[indexes3[k]].getMin()+duration[indexes3[k]],duration[indexes3[k]]);
                 j = k;
                 k++;
                 if (k == start.length) {
@@ -178,15 +167,10 @@ public class Disjunctive extends Constraint {
             }
             thetaTree3.remove(i);
             if (thetaTree3.getECT() > start[indexes4[i]].getMax()){
-                lctPrime[indexes4[i]] = Math.min(start[indexes4[i]].getMax()+duration[indexes4[i]],start[indexes3[j]].getMax());
-                System.out.println("for lct prime");
-                System.out.println(start[indexes3[j]].getMax());
+                lctPrime[indexes4[i]] = Math.min(start[indexes4[i]].getMax()+duration[indexes4[i]],start[indexes3[k-1]].getMax());
             }
         }
         for (int i = 0; i<start.length; i++) {
-            System.out.println(lctPrime[indexes4[i]]);
-            System.out.println("should be");
-            System.out.println(start[indexes4[i]].getMax()+duration[indexes4[i]]);
             start[indexes4[i]].removeAbove(lctPrime[indexes4[i]]-duration[indexes4[i]]);
         }
 
