@@ -16,10 +16,15 @@
 package minicp.cp;
 
 
+import minicp.engine.core.BoolVar;
 import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
+import minicp.search.Alternative;
 import minicp.search.Choice;
 import minicp.search.ChoiceCombinator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static minicp.search.Selector.branch;
 import static minicp.search.Selector.selectMin;
@@ -42,6 +47,37 @@ public class Heuristics {
                                 notEqual(xi,v);
                             }
                     );
+                }
+        );
+    }
+
+    public static Choice noSymetry(IntVar[] x, BoolVar[][] inSlab) {
+        Solver cp = x[0].getSolver();
+        return selectMin(x,
+                xi -> xi.getSize() > 1,
+                xi -> xi.getSize(),
+                xi -> {
+                    List<Alternative> a = new ArrayList<>();
+                    int v = xi.getMin();
+                    for (int j=v; j<inSlab.length; j++) {
+                        int tot = 0;
+                        for (int i=0; i<inSlab[j].length; i++){
+                            if (inSlab[i][j].isTrue())
+                                tot++;
+                        }
+                        if (tot!=0) {
+                            v++;
+                        } else {
+                            break;
+                        }
+                    }
+                    for (int i=xi.getMin(); i<=v;i++) {
+                        int j = i;
+                        a.add(() -> {
+                            equal(xi, j);
+                        });
+                    }
+                    return branch(a.toArray(new Alternative[a.size()]));
                 }
         );
     }

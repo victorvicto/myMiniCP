@@ -53,7 +53,7 @@ public class Steel {
 
         // Reading the data
 
-        InputReader reader = new InputReader("data/steel/bench_20_01");
+        InputReader reader = new InputReader("data/steel/bench_20_0");
         int nCapa = reader.getInt();
         int[] capa = new int[nCapa];
         for (int i = 0; i < nCapa; i++) {
@@ -141,15 +141,16 @@ public class Steel {
 
             IntVar totLoss = sum(minLoss);
 
-            //DFSearch dfs = makeDfs(cp,firstFail(x));
+            DFSearch dfs = makeDfs(cp,firstFail(x));
 
 
             // TODO 5:  add static symmetry breaking constraint (load or loss are decreasing along the slabs)
-            for(int j=0; j<l.length-1; j++) {
-                cp.post(new LessOrEqual(l[j+1],l[j]));
-            }
+            /*for (int j=1; j<l.length-1; j++) {
+                for (int jbef=0; jbef<j; jbef++)
+                    cp.post(new LessOrEqual(l[j],l[jbef]));
+            }*/
 
-            DFSearch dfs = makeDfs(cp,firstFail(x));
+            //DFSearch dfs = makeDfs(cp,noSymetry(x,inSlab));
 
             // TODO 6 implement a dynamic symmetry breaking during search
 

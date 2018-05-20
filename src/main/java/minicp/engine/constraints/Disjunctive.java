@@ -16,36 +16,41 @@
 
 package minicp.engine.constraints;
 
-import minicp.engine.core.*;
+import minicp.engine.core.BoolVar;
+import minicp.engine.core.Constraint;
+import minicp.engine.core.IntVar;
 import minicp.util.InconsistencyException;
 
 import static minicp.cp.Factory.makeBoolVar;
 import static minicp.cp.Factory.makeIntVarArray;
 import static minicp.cp.Factory.plus;
+import static minicp.cp.Factory.minus;
+
+import java.util.Arrays;
 
 public class Disjunctive extends Constraint {
 
     private final IntVar[] start;
     private final int[] duration;
     private final IntVar[] end;
+    private final boolean postMirror;
 
 
     public Disjunctive(IntVar[] start, int[] duration) throws InconsistencyException {
+        this(start, duration, true);
+    }
+
+    public Disjunctive(IntVar[] start, int[] duration, boolean postMirror) throws InconsistencyException {
         super(start[0].getSolver());
         this.start = start;
         this.duration = duration;
         this.end = makeIntVarArray(cp,start.length, i -> plus(start[i],duration[i]));
+        this.postMirror = postMirror;
     }
-
 
     @Override
     public void post() throws InconsistencyException {
-
-        int [] demands = new int[start.length];
-        for (int i = 0; i < start.length; i++) {
-            demands[i] = 1;
-        }
-
+        System.out.println("start");
         BoolVar[][] bij = new BoolVar[start.length][start.length];
         BoolVar[][] bji = new BoolVar[start.length][start.length];
 
@@ -64,15 +69,128 @@ public class Disjunctive extends Constraint {
             }
         }
 
-        // TODO 3: add the mirror filtering as done in the Cumulative Constraint
+        for (int trybetter = 0;trybetter<start.length;trybetter++){
+            System.out.println("i " + trybetter);
+            System.out.println(start[trybetter].getMin());
+            System.out.println(start[trybetter].getMax());
+        }
 
-        // HINT: for the TODO 1-4 you'll need the ThetaTree data-structure
+        if (postMirror) {
+            IntVar[] startMirror = makeIntVarArray(cp, start.length, i -> minus(end[i]));
+            cp.post(new Disjunctive(startMirror, duration, false), false);
+        }
 
-        // TODO 4: add the OverLoadCheck algorithms
+        // index for theta tree
+        ArrayIndexComparator comparatorT = new ArrayIndexComparator(start, duration,3);
+        Integer[] indT = comparatorT.createIndexArray();
+        Arrays.sort(indT, comparatorT);
 
-        // TODO 5: add the Detectable Precedences algorithm
+        //overload checker
+        ArrayIndexComparator comparator = new ArrayIndexComparator(start, duration,0);
+        Integer[] indexes = comparator.createIndexArray();
+        Arrays.sort(indexes, comparator);
+
+        ThetaTree thetaTree = new ThetaTree(start.length);
+
+        for (int i = 0; i < start.length; i++) {
+            thetaTree.insert(indT[i],start[indexes[i]].getMin()+duration[indexes[i]],duration[indexes[i]]);
+            System.out.println("ect " + thetaTree.getECT());
+            if(thetaTree.getECT()>start[indexes[i]].getMax()+duration[indexes[i]]) {
+                System.out.println("overload inconsistency");
+                System.out.println(thetaTree.getECT());
+                for (int trybetter = 0;trybetter<start.length;trybetter++){
+                    System.out.println("i " + trybetter);
+                    System.out.println(start[trybetter].getMin());
+                    System.out.println(start[trybetter].getMax());
+                }
+
+                throw new InconsistencyException();
+            }
+        }
+
+        System.out.println("start detect precedence");
+        //detect precedence
+        ArrayIndexComparator comparator1 = new ArrayIndexComparator(start, duration,1);
+        Integer[] indexes1 = comparator1.createIndexArray();
+        Arrays.sort(indexes1, comparator1);
+
+        ArrayIndexComparator comparator2 = new ArrayIndexComparator(start, duration,2);
+        Integer[] indexes2 = comparator2.createIndexArray();
+        Arrays.sort(indexes2, comparator2);
+
+        int j = 0; // to iterate on indexes1
+        boolean notFinished = true;
+
+        ThetaTree thetaTree2 = new ThetaTree(start.length);
+        int[] estPrime = new int[start.length];
+
+
+        for (int i = 0; i<start.length; i++) {
+            while((start[indexes2[i]].getMin()+duration[indexes2[i]]>start[indexes1[j]].getMax()) && notFinished) {
+                thetaTree2.insert(indT[j],start[indexes1[j]].getMin()+duration[indexes1[j]],duration[indexes1[j]]);
+                j++;
+                if (j==start.length) {
+                    notFinished = false;
+                    j--;
+                }
+            }
+            thetaTree2.remove(i);
+            estPrime[indexes2[i]] = Math.max(start[indexes2[i]].getMin(), thetaTree2.getECT());
+        }
+        for (int i = 0; i<start.length; i++) {
+            start[indexes2[i]].removeBelow(estPrime[indexes2[i]]);
+        }
+
 
         // TODO 6: add the Not-Last algorithm
+
+        // Not last
+        int[] lctPrime = new int[start.length];
+
+
+        ArrayIndexComparator comparator3 = new ArrayIndexComparator(start, duration,1);
+        Integer[] indexes3 = comparator3.createIndexArray();
+        Arrays.sort(indexes3, comparator3);
+
+        ArrayIndexComparator comparator4 = new ArrayIndexComparator(start, duration,0);
+        Integer[] indexes4 = comparator4.createIndexArray();
+        Arrays.sort(indexes4, comparator4);
+
+        for (int i = 0;i<start.length;i++) {
+            lctPrime[indexes4[i]] = start[indexes4[i]].getMax() + duration[indexes4[i]];
+        }
+
+        int k = 0; // iterates on indexes3
+        j = -1;
+
+        ThetaTree thetaTree3 = new ThetaTree(start.length);
+        boolean fin = false;
+        // i iterates on indexes 4
+        for (int i = 0;i<start.length;i++) {
+            while (start[indexes4[i]].getMax() + duration[indexes4[i]] > start[indexes3[k]].getMax() && !fin) {
+                thetaTree3.insert(indT[k],start[indexes3[k]].getMin()+duration[indexes3[k]],duration[indexes3[k]]);
+                j = k;
+                k++;
+                if (k == start.length) {
+                    fin = true;
+                    k--;
+                }
+            }
+            thetaTree3.remove(i);
+            if (thetaTree3.getECT() > start[indexes4[i]].getMax()){
+                lctPrime[indexes4[i]] = Math.min(start[indexes4[i]].getMax()+duration[indexes4[i]],start[indexes3[j]].getMax());
+                System.out.println("for lct prime");
+                System.out.println(start[indexes3[j]].getMax());
+            }
+        }
+        for (int i = 0; i<start.length; i++) {
+            System.out.println(lctPrime[indexes4[i]]);
+            System.out.println("should be");
+            System.out.println(start[indexes4[i]].getMax()+duration[indexes4[i]]);
+            start[indexes4[i]].removeAbove(lctPrime[indexes4[i]]-duration[indexes4[i]]);
+        }
+
+
 
         // TODO 7 (optional, for a bonus): implement the Lambda-Theta tree and implement the Edge-Finding
     }
