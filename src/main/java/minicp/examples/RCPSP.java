@@ -22,11 +22,12 @@ import minicp.engine.core.IntVar;
 import minicp.engine.core.Solver;
 import minicp.search.DFSearch;
 import minicp.search.SearchStatistics;
-import minicp.util.InconsistencyException;
-import minicp.util.InputReader;
+import minicp.util.*;
+
+import java.util.ArrayList;
 
 import static minicp.cp.Factory.*;
-import static minicp.cp.Heuristics.firstFail;
+import static minicp.cp.Heuristics.*;
 
 /**
  * Resource Constrained Project Scheduling Problem (RCPSP)
@@ -39,7 +40,7 @@ public class RCPSP {
 
         // Reading the data
 
-        InputReader reader = new InputReader("data/rcpsp/j90_1_1.rcp");
+        InputReader reader = new InputReader(args[0]);
 
         int nActivities = reader.getInt();
         int nResources = reader.getInt();
@@ -105,16 +106,20 @@ public class RCPSP {
         cp.post(new Maximum(end,makespan));
 
         // TODO 4: implement the search
-        DFSearch dfs = makeDfs(cp,firstFail(start));
+        long startTime = System.currentTimeMillis();
+        DFSearch dfs = makeDfs(cp,firstFailTimeLim(end,startTime));
+        //OrderQueue oq = new OrderQueue(cp);
+        //DFSearch dfs = makeDfs(cp,and(LNSTimeLim(nodes,oq,startTime),firstFailTimeLim(start,startTime)));
         cp.post(minimize(makespan, dfs));
 
+        storingRetValues finalVals = new storingRetValues(start.length);
         dfs.onSolution(() -> {
-            System.out.println(makespan);
+            finalVals.UpdateSpan(makespan.getMin());
+            finalVals.UpdateStarts(start);
         });
-        SearchStatistics statistics = dfs.start();
-        System.out.println(statistics);
 
-
+        dfs.start();
+        finalVals.print();
 
     }
 }
